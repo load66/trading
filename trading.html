@@ -227,6 +227,23 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
   .cal-segmented{top:64px}
 }
 
+
+.fee-note{font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.55}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.switch-stack{display:flex;flex-direction:column;gap:3px}
+.switch-title{font-size:12px;font-weight:600}
+.switch-sub{font-size:10px;color:var(--text-muted);line-height:1.45}
+.switch{position:relative;display:inline-block;width:52px;height:30px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:var(--surface2);border:1px solid var(--border2);transition:.2s;border-radius:999px}
+.slider:before{position:absolute;content:'';height:22px;width:22px;left:4px;top:3px;background:#9aa5ba;transition:.2s;border-radius:50%}
+.switch input:checked + .slider{background:var(--accent-glow);border-color:rgba(0,229,160,.35)}
+.switch input:checked + .slider:before{transform:translateX(21px);background:var(--accent)}
+.dev-only{display:none}
+.dev-only.show{display:block}
+.dev-hint{margin:0 14px 10px;padding:10px 12px;border-radius:12px;background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.18);font-size:10px;color:#9fbdfc;line-height:1.5}
+.meta-line{font-size:9px;color:var(--text-muted);margin-top:5px;line-height:1.45}
+
 </style>
 </head>
 <body>
@@ -246,6 +263,10 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
       <div class="stat-card"><div class="stat-label">Win Rate</div><div class="stat-value" id="d-wr">—</div></div>
       <div class="stat-card"><div class="stat-label">Open Pos.</div><div class="stat-value neu" id="d-open">0</div></div>
       <div class="stat-card"><div class="stat-label">Today Trades</div><div class="stat-value neu" id="d-today">0</div></div>
+      <div class="stat-card"><div class="stat-label">Month Fees</div><div class="stat-value neg" id="d-fees-month">-$0.00</div></div>
+      <div class="stat-card"><div class="stat-label">Lifetime Fees</div><div class="stat-value neg" id="d-fees-life">-$0.00</div></div>
+      <div class="stat-card"><div class="stat-label">Avg Fee / Trade</div><div class="stat-value neu" id="d-fees-avg">—</div></div>
+      <div class="stat-card"><div class="stat-label">Fee Load</div><div class="stat-value neu" id="d-fees-load">—</div></div>
     </div>
     <div class="card" style="margin-top:12px">
       <div class="card-title">Quick Add — Upload Robinhood Screenshot</div>
@@ -256,8 +277,10 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
         <div class="u-sub">Buy or sell — Gemini Flash auto-fills your trade</div>
       </div>
       <div class="processing" id="dashProc" style="display:none"><div class="spinner"></div><span>Parsing with Gemini Flash…</span></div>
+      <div class="fee-note">If Robinhood shows regulatory or broker fees on the screenshot, the app now stores them and tracks your total fee drag automatically.</div>
     </div>
     <div class="sec-hdr"><div class="sec-title">Open Positions</div><button class="sec-action" onclick="go('pos')">View all →</button></div>
+    <div id="dashDevHint" class="dev-hint" style="display:none">Developer mode is on. Delete buttons are enabled only for testing so you can undo open positions safely.</div>
     <div id="dashPos"></div>
     <div class="sec-hdr"><div class="sec-title">Recent Trades</div><button class="sec-action" onclick="go('journal')">View all →</button></div>
     <div id="dashTrades"></div>
@@ -333,6 +356,42 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
       </div>
     </div>
     <div class="card">
+      <div class="card-title">Broker Fee Tracker</div>
+      <div class="settings-row">
+        <div><div class="settings-lbl">Lifetime Fees</div><div class="settings-sub">All fees already charged across closed and open positions</div></div>
+        <div class="settings-lbl neg" id="s-fees-life">-$0.00</div>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-lbl">This Month</div><div class="settings-sub">Fees charged during the current month</div></div>
+        <div class="settings-lbl neg" id="s-fees-month">-$0.00</div>
+      </div>
+      <div class="settings-row">
+        <div><div class="settings-lbl">Open Position Fees</div><div class="settings-sub">Fees already paid on positions you still have open</div></div>
+        <div class="settings-lbl neg" id="s-fees-open">-$0.00</div>
+      </div>
+      <div class="settings-row" style="border:none">
+        <div><div class="settings-lbl">Avg Fee Per Closed Trade</div><div class="settings-sub">Quick way to see if the broker is nickel-and-diming you</div></div>
+        <div class="settings-lbl neu" id="s-fees-avg">—</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Developer Mode</div>
+      <div class="switch-row">
+        <div class="switch-stack">
+          <div class="switch-title">Testing controls</div>
+          <div class="switch-sub">Turns on developer-only delete buttons for open positions so you can undo test entries without exposing those controls in normal use.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="devModeToggle" onchange="setDevMode(this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="card dev-only" id="devToolsCard">
+      <div class="card-title">Developer Tools</div>
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.7">Developer mode is active. Open position delete buttons are enabled on the Positions screen and dashboard cards for testing only.</div>
+    </div>
+    <div class="card">
       <div class="card-title">Data &amp; Tax Exports</div>
       <div class="settings-row">
         <div><div class="settings-lbl">Export All Trades</div><div class="settings-sub">Full history as CSV</div></div>
@@ -358,9 +417,9 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:11px;color:var(--text-muted);line-height:1.8">
-        TRADE_LOG v1.1 — Personal options &amp; stock journal<br>
+        TRADE_LOG v1.2 — Personal options &amp; stock journal<br>
         All data stored locally in your browser.<br>
-        AI parsing powered by Google Gemini Flash.<br>
+        Buy and sell screenshot parsing powered by Google Gemini Flash.<br>
         Host as <code style="color:var(--accent);font-size:10px">trading.html</code> on GitHub Pages.
       </div>
     </div>
@@ -395,10 +454,10 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
       <input type="file" accept="image/*" id="addInput">
       <div style="display:flex;align-items:center;gap:10px;justify-content:center">
         <span style="font-size:22px">📸</span>
-        <div><div style="font-size:12px;font-weight:700">Upload buy confirmation</div><div style="font-size:10px;color:var(--text-muted)">AI will auto-fill fields</div></div>
+        <div><div style="font-size:12px;font-weight:700">Upload buy confirmation</div><div style="font-size:10px;color:var(--text-muted)">Gemini auto-fills fields and captures fees</div></div>
       </div>
     </div>
-    <div class="processing" id="addProc" style="display:none"><div class="spinner"></div><span>Parsing with AI…</span></div>
+    <div class="processing" id="addProc" style="display:none"><div class="spinner"></div><span>Parsing with Gemini Flash…</span></div>
     <img id="addPreview" class="img-preview" style="display:none">
     <div class="divider"></div>
     <div class="form-row">
@@ -418,7 +477,10 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
       <div class="form-group"><label class="form-label">Qty *</label><input type="number" class="form-input" id="f-qty" placeholder="3" min="1"></div>
       <div class="form-group"><label class="form-label">Entry Price *</label><input type="number" class="form-input" id="f-entry" placeholder="3.54" step="0.01"></div>
     </div>
-    <div class="form-group"><label class="form-label">Open Date</label><input type="date" class="form-input" id="f-opendate"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Open Date</label><input type="date" class="form-input" id="f-opendate"></div>
+      <div class="form-group"><label class="form-label">Fees</label><input type="number" class="form-input" id="f-openfees" placeholder="0.12" step="0.01" min="0"></div>
+    </div>
     <div class="form-group"><label class="form-label">Notes / Setup</label><input type="text" class="form-input" id="f-notes" placeholder="Trade thesis, catalyst…"></div>
     <button class="btn btn-primary" style="width:100%" onclick="savePos()">Open Position</button>
   </div>
@@ -434,7 +496,7 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
       <input type="file" accept="image/*" id="closeInput">
       <div style="display:flex;align-items:center;gap:10px;justify-content:center">
         <span style="font-size:22px">📸</span>
-        <div><div style="font-size:12px;font-weight:700">Upload sell confirmation</div><div style="font-size:10px;color:var(--text-muted)">AI auto-fills exit details</div></div>
+        <div><div style="font-size:12px;font-weight:700">Upload sell confirmation</div><div style="font-size:10px;color:var(--text-muted)">Gemini auto-fills exit details and fees</div></div>
       </div>
     </div>
     <div class="processing" id="closeProc" style="display:none"><div class="spinner"></div><span>Parsing…</span></div>
@@ -446,7 +508,10 @@ nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(
       <div class="form-group"><label class="form-label">Exit Price *</label><input type="number" class="form-input" id="f-exit" placeholder="3.55" step="0.01" oninput="previewPnl()"></div>
       <div class="form-group"><label class="form-label">Qty to Close</label><input type="number" class="form-input" id="f-closeqty" min="1" oninput="previewPnl()"></div>
     </div>
-    <div class="form-group"><label class="form-label">Close Date</label><input type="date" class="form-input" id="f-closedate"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Close Date</label><input type="date" class="form-input" id="f-closedate"></div>
+      <div class="form-group"><label class="form-label">Fees</label><input type="number" class="form-input" id="f-closefees" placeholder="0.12" step="0.01" min="0" oninput="previewPnl()"></div>
+    </div>
     <div class="form-group"><label class="form-label">Exit Notes</label><input type="text" class="form-input" id="f-exitnotes" placeholder="Why you exited…"></div>
     <div class="pnl-preview" id="pnlPreview" style="display:none"></div>
     <button class="btn btn-primary" style="width:100%" onclick="execClose()">Close Position</button>
@@ -472,10 +537,14 @@ function save(){localStorage.setItem('tl_t',JSON.stringify(trades));localStorage
 function load(){
   try{trades=JSON.parse(localStorage.getItem('tl_t')||'[]')}catch{trades=[]}
   try{positions=JSON.parse(localStorage.getItem('tl_p')||'[]')}catch{positions=[]}
+  trades=normalizeLoadedTrades(trades);
+  positions=normalizeLoadedPositions(positions);
   const k=localStorage.getItem('tl_k')||'';if(k)document.getElementById('apiKeyInput').value=k;
 }
 function saveKey(){localStorage.setItem('tl_k',document.getElementById('apiKeyInput').value.trim())}
 function getKey(){return localStorage.getItem('tl_k')||''}
+function isDevMode(){return localStorage.getItem('tl_dev')==='1'}
+function setDevMode(v){localStorage.setItem('tl_dev',v?'1':'0');renderDash();renderPos();renderSettings();toast(v?'Developer mode enabled':'Developer mode disabled',v?'success':'')}
 
 // ══ NAV ══
 function go(n){
@@ -487,6 +556,7 @@ function go(n){
   if(n==='cal')renderCal();
   if(n==='pos')renderPos();
   if(n==='journal')renderJournal();
+  if(n==='settings')renderSettings();
 }
 
 // ══ TOAST ══
@@ -506,7 +576,7 @@ async function parseImg(file){
   if(!key){toast('Add Google Gemini API key in Settings','error');return null}
   const b64=await toB64(file);
   const mt=(file.type && /^image\//.test(file.type))?file.type:'image/jpeg';
-  const prompt=`You are extracting data from a Robinhood trade confirmation screenshot. Return ONLY a single JSON object with this exact schema and nothing else: {"action":"buy"|"sell","symbol":"ticker or null","type":"call"|"put"|"long"|"short"|null,"strike":number|null,"expiry":"YYYY-MM-DD"|null,"qty":number|null,"price":number|null,"date":"YYYY-MM-DD"|null,"totalCost":number|null,"credit":number|null,"realizedPnl":number|null}. Rules: 1) Use long for stock buys and short for stock sells when no option contract is shown. 2) Convert dates to YYYY-MM-DD when visible. 3) Use null for anything not readable. 4) Do not wrap JSON in markdown.`;
+  const prompt=`You are extracting data from a Robinhood trade confirmation screenshot. Return ONLY a single JSON object with this exact schema and nothing else: {"action":"buy"|"sell","symbol":"ticker or null","type":"call"|"put"|"long"|"short"|null,"strike":number|null,"expiry":"YYYY-MM-DD"|null,"qty":number|null,"price":number|null,"date":"YYYY-MM-DD"|null,"totalCost":number|null,"credit":number|null,"realizedPnl":number|null,"fees":number|null}. Rules: 1) Use long for stock buys and short for stock sells when no option contract is shown. 2) Convert dates to YYYY-MM-DD when visible. 3) If any fee, commission, or regulatory charge is shown, return the combined amount in fees. 4) price must be the per-share or per-contract fill price, not the total order value. 5) Use null for anything not readable. 6) Do not wrap JSON in markdown.`;
   const body={
     contents:[{
       parts:[
@@ -549,8 +619,9 @@ function safeParseTradeJson(txt){
   return null;
 }
 function normalizeParsedTrade(p){
+  const action=(String(p?.action||'').toLowerCase()==='sell')?'sell':'buy';
   const out={
-    action:(String(p?.action||'').toLowerCase()==='sell')?'sell':'buy',
+    action,
     symbol:p?.symbol?String(p.symbol).trim().toUpperCase():null,
     type:normalizeTradeType(p?.type),
     strike:toNumOrNull(p?.strike),
@@ -560,9 +631,33 @@ function normalizeParsedTrade(p){
     date:normalizeDateOrNull(p?.date),
     totalCost:toNumOrNull(p?.totalCost),
     credit:toNumOrNull(p?.credit),
-    realizedPnl:toNumOrNull(p?.realizedPnl)
+    realizedPnl:toNumOrNull(p?.realizedPnl),
+    fees:toNumOrNull(p?.fees)
   };
+  if(out.fees===null) out.fees=inferFees(out);
   return out;
+}
+function inferFees(p){
+  const gross=getGrossFromParsed(p);
+  if(gross===null)return null;
+  if(p.action==='buy' && p.totalCost!==null){
+    const diff=p.totalCost-gross;
+    if(diff>0 && diff<500)return round2(diff);
+  }
+  if(p.action==='sell'){
+    const netShown=p.credit!==null?p.credit:p.totalCost;
+    if(netShown!==null){
+      const diff=gross-netShown;
+      if(diff>0 && diff<500)return round2(diff);
+    }
+  }
+  return null;
+}
+function getGrossFromParsed(p){
+  const mult=(p?.type==='call'||p?.type==='put')?100:1;
+  if(p?.price===null||p?.price===undefined||p?.qty===null||p?.qty===undefined)return null;
+  const gross=Number(p.price)*Number(p.qty)*mult;
+  return Number.isFinite(gross)?gross:null;
 }
 function normalizeTradeType(v){
   const s=String(v||'').toLowerCase().trim();
@@ -617,25 +712,41 @@ function wireUpload(inputId, procId, previewId, onBuy, onSell){
 function applyBuy(p){
   if(p.symbol)document.getElementById('f-sym').value=p.symbol;
   if(p.type)document.getElementById('f-type').value=p.type;
-  if(p.strike)document.getElementById('f-strike').value=p.strike;
+  if(p.strike!==null && p.strike!==undefined)document.getElementById('f-strike').value=p.strike;
   if(p.expiry)document.getElementById('f-expiry').value=p.expiry;
   if(p.qty)document.getElementById('f-qty').value=p.qty;
   if(p.price)document.getElementById('f-entry').value=p.price;
   if(p.date)document.getElementById('f-opendate').value=p.date;
+  if(p.fees!==null && p.fees!==undefined)document.getElementById('f-openfees').value=round2(p.fees);
   toast('✓ Fields auto-filled!','success');
 }
 function applySell(p){
   if(p.price)document.getElementById('f-exit').value=p.price;
   if(p.qty)document.getElementById('f-closeqty').value=p.qty;
   if(p.date)document.getElementById('f-closedate').value=p.date;
+  if(p.fees!==null && p.fees!==undefined)document.getElementById('f-closefees').value=round2(p.fees);
   previewPnl();toast('✓ Exit details auto-filled!','success');
 }
-
+function findMatchingPosition(p){
+  const sym=(p?.symbol||'').toUpperCase();
+  if(!sym)return null;
+  const exact=positions.filter(pos=>{
+    if(pos.symbol!==sym)return false;
+    if(p.type && pos.type!==p.type)return false;
+    if(p.strike!==null && p.strike!==undefined && Number(pos.strike||0)!==Number(p.strike))return false;
+    if(p.expiry && normalizeDateOrNull(pos.expiry)!==normalizeDateOrNull(p.expiry))return false;
+    if(p.qty && Number(pos.qty||0)<Number(p.qty))return false;
+    return true;
+  }).sort((a,b)=>new Date(b.createdAt||b.openDate||0)-new Date(a.createdAt||a.openDate||0));
+  if(exact[0])return exact[0];
+  const fallback=positions.filter(pos=>pos.symbol===sym).sort((a,b)=>new Date(b.createdAt||b.openDate||0)-new Date(a.createdAt||a.openDate||0));
+  return fallback[0]||null;
+}
 function handleAuto(p){
   if(p.action==='sell'){
-    const m=positions.find(pos=>pos.symbol===(p.symbol||'').toUpperCase());
+    const m=findMatchingPosition(p);
     if(m){openCloseModal(m.id);setTimeout(()=>applySell(p),80)}
-    else{toast('No open position for '+(p.symbol||''),'error');openAddModal();setTimeout(()=>applyBuy(p),80)}
+    else{toast('No matching open position for '+(p.symbol||''),'error');openAddModal();setTimeout(()=>applyBuy(p),80)}
   }else{openAddModal();setTimeout(()=>applyBuy(p),80)}
 }
 
@@ -646,7 +757,7 @@ wireUpload('closeInput','closeProc','closePreview',null,p=>applySell(p));
 
 // ══ OPEN POSITION ══
 function openAddModal(){
-  ['f-sym','f-strike','f-expiry','f-qty','f-entry','f-notes'].forEach(id=>document.getElementById(id).value='');
+  ['f-sym','f-strike','f-expiry','f-qty','f-entry','f-notes','f-openfees'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-type').value='call';
   document.getElementById('f-opendate').value=today();
   document.getElementById('addPreview').style.display='none';
@@ -662,14 +773,15 @@ function savePos(){
   const entry=parseFloat(document.getElementById('f-entry').value);
   const openDate=document.getElementById('f-opendate').value||today();
   const notes=document.getElementById('f-notes').value.trim();
+  const openFees=Math.max(0,toNumOrZero(document.getElementById('f-openfees').value));
   if(!sym||isNaN(qty)||isNaN(entry)){toast('Symbol, Qty and Entry Price required','error');return}
   const mult=(type==='call'||type==='put')?100:1;
-  positions.push({id:uid(),symbol:sym,type,strike,expiry,qty,entryPrice:entry,openDate,notes,totalCost:entry*qty*mult,createdAt:new Date().toISOString()});
-  save();closeM('addModal');renderPos();renderDash();renderCal();
+  const grossCost=entry*qty*mult;
+  positions.push({id:uid(),symbol:sym,type,strike,expiry,qty,entryPrice:entry,openDate,notes,openFees:round2(openFees),grossCost:round2(grossCost),totalCost:round2(grossCost+openFees),createdAt:new Date().toISOString()});
+  save();closeM('addModal');renderPos();renderDash();renderCal();renderSettings();
   toast('✓ '+sym+' position opened','success');
 }
 
-// ══ CLOSE POSITION ══
 function openCloseModal(id){
   const pos=positions.find(p=>p.id===id);if(!pos)return;
   closingId=id;
@@ -678,10 +790,11 @@ function openCloseModal(id){
   document.getElementById('closePosInfo').innerHTML=
     `<span style="color:var(--text);font-weight:700">${pos.symbol}</span> · ${pos.type.toUpperCase()} · ${pos.qty}× @$${pos.entryPrice}`+
     (pos.strike?` · $${pos.strike} strike`:'')+
-    `<br><span style="color:var(--text-dim)">Opened ${fmtDate(pos.openDate)} · Cost $${(pos.entryPrice*pos.qty*mult).toFixed(2)}</span>`;
+    `<br><span style="color:var(--text-dim)">Opened ${fmtDate(pos.openDate)} · Gross $${round2(pos.entryPrice*pos.qty*mult).toFixed(2)} · Open fees $${toNumOrZero(pos.openFees).toFixed(2)}</span>`;
   document.getElementById('f-exit').value='';
   document.getElementById('f-closeqty').value=pos.qty;
   document.getElementById('f-closedate').value=today();
+  document.getElementById('f-closefees').value='';
   document.getElementById('f-exitnotes').value='';
   document.getElementById('pnlPreview').style.display='none';
   document.getElementById('closePreview').style.display='none';
@@ -692,13 +805,16 @@ function previewPnl(){
   const pos=positions.find(p=>p.id===closingId);if(!pos)return;
   const exit=parseFloat(document.getElementById('f-exit').value);
   const qty=parseFloat(document.getElementById('f-closeqty').value)||pos.qty;
+  const closeFees=Math.max(0,toNumOrZero(document.getElementById('f-closefees').value));
   const el=document.getElementById('pnlPreview');
   if(isNaN(exit)){el.style.display='none';return}
   const mult=(pos.type==='call'||pos.type==='put')?100:1;
-  const pnl=(exit-pos.entryPrice)*qty*mult;
+  const grossPnl=(exit-pos.entryPrice)*qty*mult;
+  const openFeesAllocated=pos.qty?toNumOrZero(pos.openFees)*(qty/pos.qty):0;
+  const pnl=grossPnl-openFeesAllocated-closeFees;
   el.style.display='block';
   el.style.color=pnl>=0?'var(--accent)':'var(--red)';
-  el.textContent=(pnl>=0?'+':'')+fmtD(pnl);
+  el.innerHTML=`${fmtPnl(pnl)}<div class="meta-line">Gross ${fmtPnl(grossPnl)} · Fees -$${round2(openFeesAllocated+closeFees).toFixed(2)}</div>`;
 }
 
 function execClose(){
@@ -708,20 +824,33 @@ function execClose(){
   const qty=parseInt(document.getElementById('f-closeqty').value)||pos.qty;
   const closeDate=document.getElementById('f-closedate').value||today();
   const exitNotes=document.getElementById('f-exitnotes').value.trim();
+  const closeFees=Math.max(0,toNumOrZero(document.getElementById('f-closefees').value));
   if(isNaN(exit)){toast('Enter exit price','error');return}
+  if(qty<1||qty>pos.qty){toast('Qty to close is invalid','error');return}
   const mult=(pos.type==='call'||pos.type==='put')?100:1;
-  const pnl=(exit-pos.entryPrice)*qty*mult;
-  trades.push({id:uid(),positionId:pos.id,symbol:pos.symbol,type:pos.type,strike:pos.strike,expiry:pos.expiry,qty,entryPrice:pos.entryPrice,exitPrice:exit,openDate:pos.openDate,closeDate,pnl,notes:pos.notes,exitNotes,assetType:(pos.type==='call'||pos.type==='put')?'option':'stock'});
+  const grossPnl=(exit-pos.entryPrice)*qty*mult;
+  const openFeesAllocated=pos.qty?toNumOrZero(pos.openFees)*(qty/pos.qty):0;
+  const feesTotal=round2(openFeesAllocated+closeFees);
+  const pnl=round2(grossPnl-feesTotal);
+  trades.push({id:uid(),positionId:pos.id,symbol:pos.symbol,type:pos.type,strike:pos.strike,expiry:pos.expiry,qty,entryPrice:pos.entryPrice,exitPrice:exit,openDate:pos.openDate,closeDate,pnl,grossPnl:round2(grossPnl),feesOpen:round2(openFeesAllocated),feesClose:round2(closeFees),feesTotal,notes:pos.notes,exitNotes,assetType:(pos.type==='call'||pos.type==='put')?'option':'stock'});
   const rem=pos.qty-qty;
-  if(rem<=0)positions=positions.filter(p=>p.id!==id);
-  else{const i=positions.findIndex(p=>p.id===id);positions[i].qty=rem;}
-  save();closeM('closeModal');renderDash();renderPos();renderCal();renderJournal();
-  toast('✓ Closed @$'+exit+' · '+(pnl>=0?'+':'')+fmtD(pnl),pnl>=0?'success':'');
+  if(rem<=0){
+    positions=positions.filter(p=>p.id!==id);
+  }else{
+    const i=positions.findIndex(p=>p.id===id);
+    positions[i].qty=rem;
+    positions[i].openFees=round2(Math.max(0,toNumOrZero(pos.openFees)-openFeesAllocated));
+    positions[i].grossCost=round2(pos.entryPrice*rem*mult);
+    positions[i].totalCost=round2(positions[i].grossCost+positions[i].openFees);
+  }
+  save();closeM('closeModal');renderDash();renderPos();renderCal();renderJournal();renderSettings();
+  toast(`✓ Closed ${qty} @ $${exit} · Net ${fmtPnl(pnl)}`,pnl>=0?'success':'');
 }
 
 function delPos(id){
-  if(!confirm('Delete this open position?'))return;
-  positions=positions.filter(p=>p.id!==id);save();renderPos();renderDash();renderCal();toast('Position deleted');
+  if(!isDevMode()){toast('Enable Developer Mode to delete open positions','error');return}
+  if(!confirm('Delete this open position and undo the entered data?'))return;
+  positions=positions.filter(p=>p.id!==id);save();renderPos();renderDash();renderCal();renderSettings();toast('Position deleted');
 }
 
 // ══ RENDER DASHBOARD ══
@@ -729,13 +858,23 @@ function renderDash(){
   document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
   const now=new Date();
   const mT=trades.filter(t=>{const d=new Date(t.closeDate);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
-  const mPnl=mT.reduce((s,t)=>s+t.pnl,0);
-  const wins=mT.filter(t=>t.pnl>0).length;
+  const mPnl=mT.reduce((s,t)=>s+toNumOrZero(t.pnl),0);
+  const wins=mT.filter(t=>toNumOrZero(t.pnl)>0).length;
   const wr=mT.length?Math.round(wins/mT.length*100):null;
+  const monthFees=getMonthlyFeesTotal(now);
+  const lifeFees=getLifetimeFeesTotal();
+  const avgFees=getAverageClosedTradeFee();
+  const feeLoad=getFeeLoadPct();
   const mp=document.getElementById('d-mpnl');mp.textContent=fmtPnl(mPnl);mp.className='stat-value '+(mPnl>=0?'pos':'neg');
   const wr_el=document.getElementById('d-wr');wr_el.textContent=wr===null?'—':wr+'%';wr_el.className='stat-value '+(wr===null?'neu':wr>=50?'pos':'neg');
   document.getElementById('d-open').textContent=positions.length;
   document.getElementById('d-today').textContent=trades.filter(t=>t.closeDate===today()).length;
+  document.getElementById('d-fees-month').textContent='-$'+round2(monthFees).toFixed(2);
+  document.getElementById('d-fees-life').textContent='-$'+round2(lifeFees).toFixed(2);
+  document.getElementById('d-fees-avg').textContent=trades.length?'$'+round2(avgFees).toFixed(2):'—';
+  document.getElementById('d-fees-load').textContent=feeLoad===null?'—':round2(feeLoad)+'%';
+  const devHint=document.getElementById('dashDevHint');
+  if(devHint)devHint.style.display=isDevMode()?'block':'none';
   const pe=document.getElementById('dashPos');
   pe.innerHTML=positions.length?positions.slice(0,2).map(p=>posCardHTML(p,true)).join(''):emptyHTML('📊','No open positions','Upload a buy confirmation above');
   const te=document.getElementById('dashTrades');
@@ -746,17 +885,21 @@ function renderDash(){
 // ══ RENDER POSITIONS ══
 function renderPos(){
   const el=document.getElementById('posList');
-  el.innerHTML=positions.length?positions.map(p=>posCardHTML(p,false)).join(''):emptyHTML('📈','No Open Positions','Upload a buy confirmation or tap Add Manual');
+  const devBanner=isDevMode()?'<div class="dev-hint">Developer mode is on. Delete buttons are enabled only for testing.</div>':'';
+  el.innerHTML=positions.length?devBanner+positions.map(p=>posCardHTML(p,false)).join(''):emptyHTML('📈','No Open Positions','Upload a buy confirmation or tap Add Manual');
 }
 
 function posCardHTML(p,compact){
   const isOpt=p.type==='call'||p.type==='put';
   const mult=isOpt?100:1;
-  const cost=(p.entryPrice*p.qty*mult).toFixed(2);
+  const gross=round2(p.entryPrice*p.qty*mult);
+  const fees=toNumOrZero(p.openFees);
+  const total=round2(gross+fees);
   const bc=(p.type==='call'||p.type==='long')?'badge-call':'badge-put';
   const sub=[p.strike?'$'+p.strike+' strike':'',p.expiry?'Exp '+fmtDate(p.expiry):''].filter(Boolean).join(' · ');
-  if(compact)return`<div class="pos-card" style="margin:0 14px 8px"><div class="pos-top"><div><div class="pos-symbol">${p.symbol}</div><div class="pos-sub">${p.qty}× @$${p.entryPrice}${sub?' · '+sub:''}</div></div><span class="badge ${bc}">${p.type}</span></div><button class="btn btn-danger" style="width:100%;padding:8px" onclick="openCloseModal('${p.id}')">Close Position</button></div>`;
-  return`<div class="pos-card"><div class="pos-top"><div><div class="pos-symbol">${p.symbol}</div><div class="pos-sub">${sub||p.type.toUpperCase()}</div></div><span class="badge ${bc}">${p.type}</span></div><div class="pos-grid"><div><div class="pos-detail-label">Entry</div><div class="pos-detail-val">$${p.entryPrice}</div></div><div><div class="pos-detail-label">Qty</div><div class="pos-detail-val">${p.qty}</div></div><div><div class="pos-detail-label">Total Cost</div><div class="pos-detail-val">$${cost}</div></div></div>${p.notes?`<div class="pos-notes">"${esc(p.notes)}"</div>`:''}<div class="pos-date">Opened ${fmtDate(p.openDate)}</div><div class="pos-actions"><button class="btn btn-danger" onclick="openCloseModal('${p.id}')">Close</button><button class="btn btn-secondary" onclick="delPos('${p.id}')">Delete</button></div></div>`;
+  const devDelete=isDevMode()?`<button class="btn btn-secondary" onclick="delPos('${p.id}')">Delete</button>`:'';
+  if(compact)return`<div class="pos-card" style="margin:0 14px 8px"><div class="pos-top"><div><div class="pos-symbol">${p.symbol}</div><div class="pos-sub">${p.qty}× @$${p.entryPrice}${sub?' · '+sub:''}</div><div class="meta-line">Open fees $${fees.toFixed(2)} · Total paid $${total.toFixed(2)}</div></div><span class="badge ${bc}">${p.type}</span></div><div class="pos-actions"><button class="btn btn-danger" style="padding:8px" onclick="openCloseModal('${p.id}')">Close Position</button>${devDelete}</div></div>`;
+  return`<div class="pos-card"><div class="pos-top"><div><div class="pos-symbol">${p.symbol}</div><div class="pos-sub">${sub||p.type.toUpperCase()}</div></div><span class="badge ${bc}">${p.type}</span></div><div class="pos-grid"><div><div class="pos-detail-label">Entry</div><div class="pos-detail-val">$${p.entryPrice}</div></div><div><div class="pos-detail-label">Qty</div><div class="pos-detail-val">${p.qty}</div></div><div><div class="pos-detail-label">Total Cost</div><div class="pos-detail-val">$${total.toFixed(2)}</div></div></div><div class="meta-line">Gross value $${gross.toFixed(2)} · Open fees $${fees.toFixed(2)}</div>${p.notes?`<div class="pos-notes">"${esc(p.notes)}"</div>`:''}<div class="pos-date">Opened ${fmtDate(p.openDate)}</div><div class="pos-actions"><button class="btn btn-danger" onclick="openCloseModal('${p.id}')">Close</button>${devDelete}</div></div>`;
 }
 
 // ══ RENDER JOURNAL ══
@@ -769,9 +912,12 @@ function renderJournal(){
 }
 
 function tradeHTML(t,showDel){
-  const pc=t.pnl>=0?'pos':'neg';
-  const desc=[t.type?.toUpperCase(),t.qty+'× @$'+t.entryPrice,t.strike?'$'+t.strike+' str':''].filter(Boolean).join(' · ');
-  return`<div class="trade-item"><div class="t-dot ${pc}"></div><div class="t-info"><div class="t-symbol">${t.symbol}</div><div class="t-desc">${desc}${t.exitNotes?' — '+esc(t.exitNotes):''}</div></div><div><div class="t-pnl ${pc}">${fmtPnl(t.pnl)}</div><div class="t-date">${fmtDate(t.closeDate)}</div></div>${showDel?`<button class="t-del" onclick="delTrade('${t.id}')">✕</button>`:''}</div>`;
+  const pc=toNumOrZero(t.pnl)>=0?'pos':'neg';
+  const feeTotal=getTradeFeesTotal(t);
+  const desc=[t.type?.toUpperCase(),t.qty+'× @$'+t.entryPrice,t.strike?'$'+t.strike+' str':'',feeTotal?('fees $'+round2(feeTotal).toFixed(2)):''].filter(Boolean).join(' · ');
+  const gross=toNumOrZero(t.grossPnl||t.pnl);
+  const feeMeta=feeTotal?`<div class="meta-line">Gross ${fmtPnl(gross)} · Net ${fmtPnl(toNumOrZero(t.pnl))}</div>`:'';
+  return`<div class="trade-item"><div class="t-dot ${pc}"></div><div class="t-info"><div class="t-symbol">${t.symbol}</div><div class="t-desc">${desc}${t.exitNotes?' — '+esc(t.exitNotes):''}</div>${feeMeta}</div><div><div class="t-pnl ${pc}">${fmtPnl(toNumOrZero(t.pnl))}</div><div class="t-date">${fmtDate(t.closeDate)}</div></div>${showDel?`<button class="t-del" onclick="delTrade('${t.id}')">✕</button>`:''}</div>`;
 }
 
 function delTrade(id){if(!confirm('Delete this trade?'))return;trades=trades.filter(t=>t.id!==id);save();renderJournal();renderDash();renderCal();toast('Trade deleted')}
@@ -941,29 +1087,29 @@ function showDay(dayOrDate,yr,mo){
 // ══ EXPORT / IMPORT ══
 function exportCSV(){
   if(!trades.length){toast('No trades to export','error');return}
-  const h=['Date Opened','Date Closed','Symbol','Type','Strike','Expiry','Qty','Entry','Exit','P&L','Asset Type','Notes','Exit Notes'];
-  const r=trades.map(t=>[t.openDate,t.closeDate,t.symbol,t.type,t.strike,t.expiry,t.qty,t.entryPrice,t.exitPrice,t.pnl.toFixed(2),t.assetType,`"${(t.notes||'').replace(/"/g,'""')}"`,`"${(t.exitNotes||'').replace(/"/g,'""')}"`]);
+  const h=['Date Opened','Date Closed','Symbol','Type','Strike','Expiry','Qty','Entry','Exit','Gross P&L','Open Fees','Close Fees','Total Fees','Net P&L','Asset Type','Notes','Exit Notes'];
+  const r=trades.map(t=>[t.openDate,t.closeDate,t.symbol,t.type,t.strike,t.expiry,t.qty,t.entryPrice,t.exitPrice,round2(toNumOrZero(t.grossPnl||t.pnl)).toFixed(2),round2(toNumOrZero(t.feesOpen)).toFixed(2),round2(toNumOrZero(t.feesClose)).toFixed(2),round2(getTradeFeesTotal(t)).toFixed(2),round2(toNumOrZero(t.pnl)).toFixed(2),t.assetType,`"${(t.notes||'').replace(/"/g,'""')}"`,`"${(t.exitNotes||'').replace(/"/g,'""')}"`]);
   dl('trades_'+today()+'.csv',[h.join(','),...r.map(x=>x.join(','))].join('\n'),'text/csv');
   toast('Exported '+trades.length+' trades ✓','success');
 }
 
 function exportTax(){
   if(!trades.length){toast('No trades to export','error');return}
-  const h=['Description','Date Acquired','Date Sold','Proceeds','Cost Basis','Adj Gain/Loss','Term'];
+  const h=['Description','Date Acquired','Date Sold','Proceeds','Cost Basis','Adj Gain/Loss','Term','Fees'];
   const r=trades.map(t=>{
     const mult=(t.type==='call'||t.type==='put')?100:1;
-    const proc=(t.exitPrice*t.qty*mult).toFixed(2);
-    const cost=(t.entryPrice*t.qty*mult).toFixed(2);
+    const proc=(t.exitPrice*t.qty*mult-toNumOrZero(t.feesClose)).toFixed(2);
+    const cost=(t.entryPrice*t.qty*mult+toNumOrZero(t.feesOpen)).toFixed(2);
     const desc=`${t.symbol} ${(t.type||'').toUpperCase()} ${t.strike?'$'+t.strike+' ':''}${t.qty} ${t.assetType==='option'?'contract(s)':'share(s)'}`;
     const held=t.openDate&&t.closeDate?Math.floor((new Date(t.closeDate)-new Date(t.openDate))/86400000):0;
-    return[`"${desc}"`,t.openDate,t.closeDate,proc,cost,t.pnl.toFixed(2),held>365?'Long-term':'Short-term'];
+    return[`"${desc}"`,t.openDate,t.closeDate,proc,cost,round2(toNumOrZero(t.pnl)).toFixed(2),held>365?'Long-term':'Short-term',round2(getTradeFeesTotal(t)).toFixed(2)];
   });
   dl('tax_report_'+today()+'.csv',[h.join(','),...r.map(x=>x.join(','))].join('\n'),'text/csv');
   toast('Tax report exported ✓','success');
 }
 
 function exportJSON(){
-  dl('tradelog_'+today()+'.json',JSON.stringify({trades,positions,exportedAt:new Date().toISOString(),version:'1.1'},null,2),'application/json');
+  dl('tradelog_'+today()+'.json',JSON.stringify({trades,positions,developerMode:isDevMode(),exportedAt:new Date().toISOString(),version:'1.2'},null,2),'application/json');
   toast('Backup exported ✓','success');
 }
 
@@ -975,15 +1121,20 @@ function handleImport(inp){
   reader.onload=e=>{
     const txt=e.target.result;
     if(file.name.endsWith('.json')){
-      try{const d=JSON.parse(txt);if(d.trades)trades=d.trades;if(d.positions)positions=d.positions;save();renderDash();renderJournal();renderCal();toast('Imported '+trades.length+' trades ✓','success')}
-      catch{toast('Invalid JSON','error')}
+      try{
+        const d=JSON.parse(txt);
+        if(d.trades)trades=normalizeLoadedTrades(d.trades);
+        if(d.positions)positions=normalizeLoadedPositions(d.positions);
+        if(typeof d.developerMode==='boolean')localStorage.setItem('tl_dev',d.developerMode?'1':'0');
+        save();renderDash();renderJournal();renderCal();renderPos();renderSettings();toast('Imported '+trades.length+' trades ✓','success')
+      }catch{toast('Invalid JSON','error')}
     }else{
       const lines=txt.split('\n').filter(l=>l.trim());let n=0;
       for(let i=1;i<lines.length;i++){
         const c=parseCSV(lines[i]);if(c.length<10)continue;
-        trades.push({id:uid()+i,openDate:c[0],closeDate:c[1],symbol:c[2],type:c[3],strike:+c[4]||0,expiry:c[5],qty:+c[6]||0,entryPrice:+c[7]||0,exitPrice:+c[8]||0,pnl:+c[9]||0,assetType:c[10]||'option',notes:(c[11]||'').replace(/^"|"$/g,''),exitNotes:(c[12]||'').replace(/^"|"$/g,'')});n++;
+        trades.push(normalizeLoadedTrade({id:uid()+i,openDate:c[0],closeDate:c[1],symbol:c[2],type:c[3],strike:+c[4]||0,expiry:c[5],qty:+c[6]||0,entryPrice:+c[7]||0,exitPrice:+c[8]||0,grossPnl:+c[9]||0,feesOpen:+(c[10]||0)||0,feesClose:+(c[11]||0)||0,feesTotal:+(c[12]||0)||0,pnl:+(c[13]||c[9]||0)||0,assetType:c[14]||'option',notes:(c[15]||'').replace(/^"|"$/g,''),exitNotes:(c[16]||'').replace(/^"|"$/g,'')}));n++;
       }
-      save();renderDash();renderJournal();renderCal();toast('Imported '+n+' trades ✓','success');
+      save();renderDash();renderJournal();renderCal();renderPos();renderSettings();toast('Imported '+n+' trades ✓','success');
     }
   };
   reader.readAsText(file);inp.value='';
@@ -993,7 +1144,7 @@ function parseCSV(l){const r=[];let cur='',q=false;for(const c of l){if(c==='"')
 
 function dl(name,content,type){const b=new Blob([content],{type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
 
-function clearAll(){if(!confirm('Delete ALL trades and positions? Cannot be undone.'))return;trades=[];positions=[];save();renderDash();renderPos();renderJournal();renderCal();toast('All data cleared')}
+function clearAll(){if(!confirm('Delete ALL trades and positions? Cannot be undone.'))return;trades=[];positions=[];save();renderDash();renderPos();renderJournal();renderCal();renderSettings();toast('All data cleared')}
 
 // ══ UTILS ══
 function today(){return new Date().toISOString().split('T')[0]}
@@ -1004,11 +1155,64 @@ function fmtShort(n){const a=Math.abs(n),s=n>=0?'+':'-';return a>=1000?s+'$'+(a/
 function fmtPnlCompact(n){if(isNaN(n)||n===undefined)return'$0';const a=Math.abs(n),s=n>=0?'+':'-';if(a>=1000)return s+'$'+(a/1000).toFixed(a>=10000?0:1)+'K';return s+'$'+a.toFixed(0)}
 function fullDate(s){if(!s)return'';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
 function fmtD(n){return(n>=0?'+':'')+n.toFixed(2)}
+function round2(n){return Math.round((Number(n)||0)*100)/100}
+function toNumOrZero(v){const n=Number(v);return Number.isFinite(n)?n:0}
 function esc(s){return(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function emptyHTML(icon,title,sub){return`<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-title">${title}</div><div class="empty-sub">${sub}</div></div>`}
+function getTradeFeesTotal(t){return round2(toNumOrZero(t?.feesTotal)||toNumOrZero(t?.feesOpen)+toNumOrZero(t?.feesClose))}
+function getOpenPositionFeesTotal(){return round2(positions.reduce((s,p)=>s+toNumOrZero(p.openFees),0))}
+function getClosedFeesTotal(){return round2(trades.reduce((s,t)=>s+getTradeFeesTotal(t),0))}
+function getLifetimeFeesTotal(){return round2(getClosedFeesTotal()+getOpenPositionFeesTotal())}
+function getMonthlyFeesTotal(refDate=new Date()){
+  const y=refDate.getFullYear(),m=refDate.getMonth();
+  const tradeFees=trades.filter(t=>{const d=new Date((t.closeDate||today())+'T12:00:00');return d.getFullYear()===y&&d.getMonth()===m;}).reduce((s,t)=>s+getTradeFeesTotal(t),0);
+  const openFees=positions.filter(p=>{const d=new Date((p.openDate||today())+'T12:00:00');return d.getFullYear()===y&&d.getMonth()===m;}).reduce((s,p)=>s+toNumOrZero(p.openFees),0);
+  return round2(tradeFees+openFees);
+}
+function getAverageClosedTradeFee(){return trades.length?round2(getClosedFeesTotal()/trades.length):0}
+function getFeeLoadPct(){
+  const gross=Math.abs(trades.reduce((s,t)=>s+Math.abs(toNumOrZero(t.grossPnl||t.pnl)),0));
+  if(!gross)return null;
+  return round2(getClosedFeesTotal()/gross*100);
+}
+function normalizeLoadedTrade(t){
+  const out={...t};
+  out.qty=toNumOrZero(out.qty);
+  out.entryPrice=toNumOrZero(out.entryPrice);
+  out.exitPrice=toNumOrZero(out.exitPrice);
+  out.feesOpen=round2(toNumOrZero(out.feesOpen));
+  out.feesClose=round2(toNumOrZero(out.feesClose));
+  out.feesTotal=round2(out.feesTotal!==undefined?toNumOrZero(out.feesTotal):out.feesOpen+out.feesClose);
+  out.grossPnl=round2(out.grossPnl!==undefined?toNumOrZero(out.grossPnl):toNumOrZero(out.pnl));
+  out.pnl=round2(out.pnl!==undefined?toNumOrZero(out.pnl):out.grossPnl-out.feesTotal);
+  out.assetType=out.assetType||((out.type==='call'||out.type==='put')?'option':'stock');
+  return out;
+}
+function normalizeLoadedTrades(arr){return (Array.isArray(arr)?arr:[]).map(normalizeLoadedTrade)}
+function normalizeLoadedPosition(p){
+  const out={...p};
+  out.qty=toNumOrZero(out.qty);
+  out.entryPrice=toNumOrZero(out.entryPrice);
+  out.openFees=round2(toNumOrZero(out.openFees));
+  const mult=(out.type==='call'||out.type==='put')?100:1;
+  out.grossCost=round2(out.grossCost!==undefined?toNumOrZero(out.grossCost):out.entryPrice*out.qty*mult);
+  out.totalCost=round2(out.totalCost!==undefined?toNumOrZero(out.totalCost):out.grossCost+out.openFees);
+  return out;
+}
+function normalizeLoadedPositions(arr){return (Array.isArray(arr)?arr:[]).map(normalizeLoadedPosition)}
+function renderSettings(){
+  const toggle=document.getElementById('devModeToggle');
+  if(toggle)toggle.checked=isDevMode();
+  const card=document.getElementById('devToolsCard');
+  if(card)card.classList.toggle('show',isDevMode());
+  const life=document.getElementById('s-fees-life'); if(life)life.textContent='-$'+getLifetimeFeesTotal().toFixed(2);
+  const month=document.getElementById('s-fees-month'); if(month)month.textContent='-$'+getMonthlyFeesTotal().toFixed(2);
+  const open=document.getElementById('s-fees-open'); if(open)open.textContent='-$'+getOpenPositionFeesTotal().toFixed(2);
+  const avg=document.getElementById('s-fees-avg'); if(avg)avg.textContent=trades.length?'$'+getAverageClosedTradeFee().toFixed(2):'—';
+}
 
 // ══ BOOT ══
-load();renderDash();renderCal();
+load();renderDash();renderCal();renderSettings();
 </script>
 </body>
 </html>
