@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>TRADE_LOG</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -157,6 +157,76 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)brightness(.
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+
+body{min-height:100dvh;overscroll-behavior-y:none}
+main{width:min(100%,560px);margin:0 auto;padding-bottom:calc(94px + env(safe-area-inset-bottom))}
+.app-header{padding-top:max(12px, env(safe-area-inset-top));padding-left:max(16px, env(safe-area-inset-left));padding-right:max(16px, env(safe-area-inset-right))}
+nav{padding-left:max(0px, env(safe-area-inset-left));padding-right:max(0px, env(safe-area-inset-right))}
+.form-input,.form-select{font-size:16px}
+
+.cal-wrap{padding:12px 14px 0}
+.cal-hero{background:linear-gradient(180deg,rgba(22,24,32,.96),rgba(15,17,23,.98));border:1px solid var(--border);border-radius:20px;padding:18px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.cal-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.cal-hero-title{font-family:var(--font-display);font-size:25px;font-weight:800;letter-spacing:-.7px;line-height:1.05}
+.cal-hero-sub{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.55;max-width:290px}
+.cal-mini-pill{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border-radius:999px;border:1px solid var(--border2);background:var(--surface2);font-size:9px;letter-spacing:.9px;text-transform:uppercase;color:var(--text-muted);white-space:nowrap}
+.cal-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.cal-summary-card{background:rgba(0,0,0,.18);border:1px solid var(--border);border-radius:14px;padding:12px 11px}
+.cal-summary-label{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.cal-summary-value{font-size:19px;font-weight:700;line-height:1.05}
+.cal-segmented{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:4px;margin:12px 0 14px;position:sticky;top:68px;z-index:20;backdrop-filter:blur(8px)}
+.cal-seg-btn{flex:1;border:none;border-radius:14px;background:transparent;color:var(--text-muted);font-family:var(--font-mono);font-size:10px;letter-spacing:.35px;padding:11px 8px;cursor:pointer;transition:all .2s}
+.cal-seg-btn.active{background:#f5f7fb;color:#0d1018;font-weight:700}
+.cal-view{display:flex;flex-direction:column;gap:10px;padding-bottom:10px}
+.day-summary-row,.month-summary-card,.calendar-month-card{background:var(--surface);border:1px solid var(--border);border-radius:18px}
+.day-summary-row{padding:14px 14px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+.day-summary-row:active,.calendar-day:active{opacity:.82}
+.day-summary-title{font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:-.25px}
+.day-summary-sub{font-size:10px;color:var(--text-muted);margin-top:3px;line-height:1.4}
+.day-summary-right{text-align:right;flex-shrink:0}
+.day-summary-pnl{font-size:17px;font-weight:700}
+.day-summary-trades{font-size:10px;color:var(--text-muted);margin-top:4px}
+.month-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.month-summary-card{padding:14px}
+.month-summary-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.month-summary-title{font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:-.45px}
+.month-summary-meta{font-size:10px;color:var(--text-muted);margin-top:4px}
+.month-summary-total{font-size:22px;font-weight:800;text-align:right}
+.month-summary-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.month-summary-stat{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:10px 9px}
+.month-summary-stat .label{font-size:8px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.month-summary-stat .value{font-size:14px;font-weight:700}
+.calendar-stack{display:flex;flex-direction:column;gap:12px}
+.calendar-month-card{padding:14px 12px 12px}
+.calendar-month-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
+.calendar-month-title{font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:-.5px}
+.calendar-month-sub{font-size:10px;color:var(--text-muted);margin-top:3px}
+.calendar-month-total{font-size:18px;font-weight:800;text-align:right}
+.calendar-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:5px}
+.calendar-weekday{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--text-dim);text-align:center;padding:2px 0}
+.calendar-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.calendar-day{min-height:68px;border-radius:8px;background:#0c0f15;border:1px solid #161a26;padding:6px 5px;display:flex;flex-direction:column;justify-content:flex-start;cursor:pointer;transition:border-color .18s,transform .12s;overflow:hidden}
+.calendar-day.today{border-color:rgba(245,200,66,.85)}
+.calendar-day.has-data.profit{background:rgba(146,225,145,.95);border-color:rgba(146,225,145,1);color:#0e180f}
+.calendar-day.has-data.loss{background:rgba(235,116,116,.96);border-color:rgba(235,116,116,1);color:#1f0d10}
+.calendar-day.empty{background:transparent;border-color:transparent;pointer-events:none}
+.calendar-day.idle .calendar-day-num{color:rgba(221,228,240,.78)}
+.calendar-day-num{font-size:10px;line-height:1;font-weight:700;color:inherit}
+.calendar-day-pnl{font-size:11px;font-weight:800;line-height:1.15;margin-top:8px;word-break:break-word}
+.calendar-day-trades{font-size:8px;line-height:1.2;margin-top:3px;opacity:.88;word-break:break-word}
+.calendar-day.has-data.profit .calendar-day-trades,.calendar-day.has-data.loss .calendar-day-trades{color:rgba(0,0,0,.7)}
+.cal-empty-state{padding:18px 6px}
+@media (max-width:390px){
+  .cal-wrap{padding:10px 12px 0}
+  .cal-hero{padding:16px 14px}
+  .cal-hero-title{font-size:22px}
+  .calendar-day{min-height:62px;padding:5px 4px}
+  .calendar-day-pnl{font-size:10px}
+  .calendar-day-trades{font-size:7px}
+  .cal-segmented{top:64px}
+}
+
 </style>
 </head>
 <body>
@@ -183,9 +253,9 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)brightness(.
         <input type="file" accept="image/*" id="dashInput">
         <div class="u-icon">📸</div>
         <div class="u-title">Tap to upload confirmation</div>
-        <div class="u-sub">Buy or sell — Claude AI auto-fills your trade</div>
+        <div class="u-sub">Buy or sell — Gemini Flash auto-fills your trade</div>
       </div>
-      <div class="processing" id="dashProc" style="display:none"><div class="spinner"></div><span>Parsing with Claude AI…</span></div>
+      <div class="processing" id="dashProc" style="display:none"><div class="spinner"></div><span>Parsing with Gemini Flash…</span></div>
     </div>
     <div class="sec-hdr"><div class="sec-title">Open Positions</div><button class="sec-action" onclick="go('pos')">View all →</button></div>
     <div id="dashPos"></div>
@@ -195,24 +265,30 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)brightness(.
 
   <!-- ── CALENDAR ── -->
   <section class="screen" id="scr-cal">
-    <div class="cal-header">
-      <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
-      <div class="cal-month" id="calLabel"></div>
-      <button class="cal-nav" onclick="changeMonth(1)">›</button>
+    <div class="cal-wrap">
+      <div class="cal-hero">
+        <div class="cal-hero-top">
+          <div>
+            <div class="card-title" style="margin-bottom:8px">Performance Journal</div>
+            <div class="cal-hero-title">Calendar Journal</div>
+            <div class="cal-hero-sub">A cleaner trading calendar built for iPhone Safari. Tap any green or red day to open the full trade breakdown behind it.</div>
+          </div>
+          <div class="cal-mini-pill" id="calRangeLabel">This Month</div>
+        </div>
+        <div class="cal-summary-grid">
+          <div class="cal-summary-card"><div class="cal-summary-label">Month P&amp;L</div><div class="cal-summary-value" id="calTotal">$0</div></div>
+          <div class="cal-summary-card"><div class="cal-summary-label">Trading Days</div><div class="cal-summary-value neu" id="calDays">0</div></div>
+          <div class="cal-summary-card"><div class="cal-summary-label">Day Win %</div><div class="cal-summary-value" id="calWins">—</div></div>
+          <div class="cal-summary-card"><div class="cal-summary-label">Best Day</div><div class="cal-summary-value" id="calBest">—</div></div>
+        </div>
+      </div>
+      <div class="cal-segmented" id="calSegments">
+        <button class="cal-seg-btn" data-cal-view="daily" onclick="switchCalView('daily',this)">Daily</button>
+        <button class="cal-seg-btn" data-cal-view="monthly" onclick="switchCalView('monthly',this)">Monthly</button>
+        <button class="cal-seg-btn active" data-cal-view="calendar" onclick="switchCalView('calendar',this)">Calendar</button>
+      </div>
+      <div id="calContent" class="cal-view"></div>
     </div>
-    <div class="cal-stats-row">
-      <div><div class="cal-stat-val" id="calTotal">$0</div><div class="cal-stat-sub">Month P&amp;L</div></div>
-      <div style="width:1px;height:28px;background:var(--border)"></div>
-      <div><div class="cal-stat-val" id="calDays" style="color:var(--text)">0</div><div class="cal-stat-sub">Trading Days</div></div>
-      <div style="width:1px;height:28px;background:var(--border)"></div>
-      <div><div class="cal-stat-val" id="calWins">—</div><div class="cal-stat-sub">Day Win %</div></div>
-    </div>
-    <div class="cal-day-hdrs">
-      <div class="cal-day-hdr">Su</div><div class="cal-day-hdr">Mo</div><div class="cal-day-hdr">Tu</div>
-      <div class="cal-day-hdr">We</div><div class="cal-day-hdr">Th</div><div class="cal-day-hdr">Fr</div><div class="cal-day-hdr">Sa</div>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-    <div class="week-rows" id="weekRows"></div>
   </section>
 
   <!-- ── POSITIONS ── -->
@@ -251,9 +327,9 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)brightness(.
     <div class="card">
       <div class="card-title">AI Configuration</div>
       <div class="form-group">
-        <label class="form-label">Anthropic API Key</label>
-        <input type="password" class="form-input" id="apiKeyInput" placeholder="sk-ant-api03-…" oninput="saveKey()">
-        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;line-height:1.6">Required for auto-parsing screenshots.<br>Stored locally in your browser — never sent anywhere else.</div>
+        <label class="form-label">Google Gemini API Key</label>
+        <input type="password" class="form-input" id="apiKeyInput" placeholder="AIza…" oninput="saveKey()">
+        <div style="font-size:10px;color:var(--text-muted);margin-top:6px;line-height:1.6">Required for auto-parsing screenshots.<br>Stored locally in your browser and used only for Gemini requests from this app.</div>
       </div>
     </div>
     <div class="card">
@@ -282,9 +358,9 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)brightness(.
     <div class="card">
       <div class="card-title">About</div>
       <div style="font-size:11px;color:var(--text-muted);line-height:1.8">
-        TRADE_LOG v1.0 — Personal options &amp; stock journal<br>
+        TRADE_LOG v1.1 — Personal options &amp; stock journal<br>
         All data stored locally in your browser.<br>
-        AI parsing powered by Claude (Anthropic).<br>
+        AI parsing powered by Google Gemini Flash.<br>
         Host as <code style="color:var(--accent);font-size:10px">trading.html</code> on GitHub Pages.
       </div>
     </div>
@@ -389,7 +465,7 @@ input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)brightness(.
 
 <script>
 // ══ STATE ══
-let trades=[], positions=[], calDate=new Date(), journalTab='all', closingId=null;
+let trades=[], positions=[], journalTab='all', closingId=null, calView='calendar';
 
 // ══ PERSISTENCE ══
 function save(){localStorage.setItem('tl_t',JSON.stringify(trades));localStorage.setItem('tl_p',JSON.stringify(positions))}
@@ -427,23 +503,23 @@ document.querySelectorAll('.overlay').forEach(o=>{o.addEventListener('click',e=>
 // ══ AI PARSING ══
 async function parseImg(file){
   const key=getKey();
-  if(!key){toast('Add Anthropic API key in Settings','error');return null}
+  if(!key){toast('Add Google Gemini API key in Settings','error');return null}
   const b64=await toB64(file);
   const mt=file.type||'image/jpeg';
-  const prompt=`Parse this Robinhood trading confirmation screenshot. Return ONLY valid JSON (no markdown, no explanation):
-{"action":"buy"or"sell","symbol":"ticker","type":"call"|"put"|"long"|"short","strike":numberOrNull,"expiry":"YYYY-MM-DD"orNull,"qty":number,"price":number,"date":"YYYY-MM-DD","totalCost":numberOrNull,"credit":numberOrNull,"realizedPnl":numberOrNull}`;
+  const prompt=`Extract the trade details from this Robinhood trade confirmation screenshot and return ONLY valid JSON with this exact shape: {"action":"buy"|"sell","symbol":"ticker","type":"call"|"put"|"long"|"short","strike":number|null,"expiry":"YYYY-MM-DD"|null,"qty":number|null,"price":number|null,"date":"YYYY-MM-DD"|null,"totalCost":number|null,"credit":number|null,"realizedPnl":number|null}. Rules: use long for stock buys and short for stock sells when no option contract is shown, convert any readable date into YYYY-MM-DD, and use null for unknown fields.`;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,
-        messages:[{role:'user',content:[
-          {type:'image',source:{type:'base64',media_type:mt,data:b64}},
-          {type:'text',text:prompt}
-        ]}]
-      })
-    });
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,
+      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        contents:[{parts:[
+          {text:prompt},
+          {inlineData:{mimeType:mt,data:b64}}
+        ]}],
+        generationConfig:{temperature:0.1,responseMimeType:'application/json'}
+      })});
     const d=await res.json();
-    return JSON.parse((d.content?.[0]?.text||'').replace(/```json|```/g,'').trim());
+    const txt=(d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('').trim();
+    if(!res.ok)throw new Error(d.error?.message||'Gemini request failed');
+    return JSON.parse(txt.replace(/```json|```/g,'').trim());
   }catch(e){console.error(e);return null}
 }
 function toB64(f){return new Promise((r,j)=>{const rd=new FileReader();rd.onload=()=>r(rd.result.split(',')[1]);rd.onerror=()=>j(new Error('fail'));rd.readAsDataURL(f)})}
@@ -514,7 +590,7 @@ function savePos(){
   if(!sym||isNaN(qty)||isNaN(entry)){toast('Symbol, Qty and Entry Price required','error');return}
   const mult=(type==='call'||type==='put')?100:1;
   positions.push({id:uid(),symbol:sym,type,strike,expiry,qty,entryPrice:entry,openDate,notes,totalCost:entry*qty*mult,createdAt:new Date().toISOString()});
-  save();closeM('addModal');renderPos();renderDash();
+  save();closeM('addModal');renderPos();renderDash();renderCal();
   toast('✓ '+sym+' position opened','success');
 }
 
@@ -564,13 +640,13 @@ function execClose(){
   const rem=pos.qty-qty;
   if(rem<=0)positions=positions.filter(p=>p.id!==id);
   else{const i=positions.findIndex(p=>p.id===id);positions[i].qty=rem;}
-  save();closeM('closeModal');renderDash();renderPos();
+  save();closeM('closeModal');renderDash();renderPos();renderCal();renderJournal();
   toast('✓ Closed @$'+exit+' · '+(pnl>=0?'+':'')+fmtD(pnl),pnl>=0?'success':'');
 }
 
 function delPos(id){
   if(!confirm('Delete this open position?'))return;
-  positions=positions.filter(p=>p.id!==id);save();renderPos();renderDash();toast('Position deleted');
+  positions=positions.filter(p=>p.id!==id);save();renderPos();renderDash();renderCal();toast('Position deleted');
 }
 
 // ══ RENDER DASHBOARD ══
@@ -623,62 +699,167 @@ function tradeHTML(t,showDel){
   return`<div class="trade-item"><div class="t-dot ${pc}"></div><div class="t-info"><div class="t-symbol">${t.symbol}</div><div class="t-desc">${desc}${t.exitNotes?' — '+esc(t.exitNotes):''}</div></div><div><div class="t-pnl ${pc}">${fmtPnl(t.pnl)}</div><div class="t-date">${fmtDate(t.closeDate)}</div></div>${showDel?`<button class="t-del" onclick="delTrade('${t.id}')">✕</button>`:''}</div>`;
 }
 
-function delTrade(id){if(!confirm('Delete this trade?'))return;trades=trades.filter(t=>t.id!==id);save();renderJournal();renderDash();toast('Trade deleted')}
+function delTrade(id){if(!confirm('Delete this trade?'))return;trades=trades.filter(t=>t.id!==id);save();renderJournal();renderDash();renderCal();toast('Trade deleted')}
 
 function switchTab(tab,btn){
   journalTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderJournal();
 }
 
 // ══ RENDER CALENDAR ══
-function renderCal(){
-  const yr=calDate.getFullYear(),mo=calDate.getMonth();
-  document.getElementById('calLabel').textContent=calDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  const dayMap={};
+function buildDayMap(){
+  const map={};
   trades.forEach(t=>{
-    if(!t.closeDate)return;
-    const d=new Date(t.closeDate+'T12:00:00');
-    if(d.getMonth()!==mo||d.getFullYear()!==yr)return;
-    const k=d.getDate();
-    if(!dayMap[k])dayMap[k]={pnl:0,count:0,wins:0};
-    dayMap[k].pnl+=t.pnl;dayMap[k].count++;if(t.pnl>0)dayMap[k].wins++;
+    const ds=t.closeDate;
+    if(!ds)return;
+    if(!map[ds])map[ds]={date:ds,pnl:0,count:0,wins:0,losses:0,trades:[]};
+    const pnl=Number(t.pnl)||0;
+    map[ds].pnl+=pnl;
+    map[ds].count+=1;
+    if(pnl>0)map[ds].wins+=1;
+    if(pnl<0)map[ds].losses+=1;
+    map[ds].trades.push(t);
   });
-  const vals=Object.values(dayMap);
-  const mPnl=vals.reduce((s,d)=>s+d.pnl,0);
-  const tDays=vals.length;
-  const tWinDays=vals.filter(d=>d.pnl>0).length;
-  const ct=document.getElementById('calTotal');ct.textContent=fmtShort(mPnl);ct.className='cal-stat-val '+(mPnl>=0?'pos':'neg');
-  document.getElementById('calDays').textContent=tDays;
-  const cw=document.getElementById('calWins');cw.textContent=tDays?Math.round(tWinDays/tDays*100)+'%':'—';cw.className='cal-stat-val '+(tDays&&tWinDays/tDays>=.5?'pos':'neg');
-  const firstDay=new Date(yr,mo,1).getDay();
-  const lastDay=new Date(yr,mo+1,0).getDate();
-  const tnow=new Date(),isCur=tnow.getMonth()===mo&&tnow.getFullYear()===yr;
-  let html='';
-  for(let i=0;i<firstDay;i++)html+='<div class="cal-cell empty"></div>';
-  for(let d=1;d<=lastDay;d++){
-    const data=dayMap[d];
-    const isToday=isCur&&d===tnow.getDate();
-    let cls='cal-cell';
-    if(isToday)cls+=' today';
-    if(data)cls+=(data.pnl>=0?' profit':' loss');
-    html+=`<div class="${cls}" onclick="showDay(${d},${yr},${mo})"><div class="c-num">${d}</div>${data?`<div class="c-pnl ${data.pnl>=0?'pos':'neg'}">${fmtShort(data.pnl)}</div>`:''}</div>`;
-  }
-  document.getElementById('calGrid').innerHTML=html;
-  let col=firstDay,wk={pnl:0,days:0,wins:0},weeks=[];
-  for(let d=1;d<=lastDay;d++){
-    if(dayMap[d]){wk.pnl+=dayMap[d].pnl;wk.days++;if(dayMap[d].pnl>0)wk.wins++;}
-    col++;if(col===7||d===lastDay){weeks.push({...wk});wk={pnl:0,days:0,wins:0};col=0;}
-  }
-  document.getElementById('weekRows').innerHTML=weeks.map((w,i)=>`<div class="week-row"><div><div class="week-lbl">Week ${i+1}</div><div class="week-meta">${w.days} day${w.days!==1?'s':''} · ${w.days?Math.round(w.wins/w.days*100):0}% win</div></div><div class="week-pnl ${w.pnl>=0?'pos':'neg'}">${fmtPnl(w.pnl)}</div></div>`).join('');
+  return map;
 }
 
-function changeMonth(d){calDate=new Date(calDate.getFullYear(),calDate.getMonth()+d,1);renderCal()}
+function monthKeyFromDate(ds){return (ds||'').slice(0,7)}
 
-function showDay(d,yr,mo){
-  const ds=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  const dt=trades.filter(t=>t.closeDate===ds);if(!dt.length)return;
-  const dp=dt.reduce((s,t)=>s+t.pnl,0);
-  document.getElementById('dayTitle').textContent=new Date(ds+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  document.getElementById('dayContent').innerHTML=`<div style="text-align:center;padding:14px 0 18px"><div style="font-size:30px;font-weight:700;color:${dp>=0?'var(--accent)':'var(--red)'}">${fmtPnl(dp)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${dt.length} trade${dt.length!==1?'s':''}</div></div>${dt.map(t=>tradeHTML(t,false)).join('')}`;
+function getMonthSections(limit=12){
+  const dayMap=buildDayMap();
+  const todayKey=today().slice(0,7);
+  const monthKeys=[...new Set(Object.keys(dayMap).sort((a,b)=>b.localeCompare(a)).map(monthKeyFromDate))];
+  if(!monthKeys.length)monthKeys.push(todayKey);
+    return monthKeys.slice(0,limit).map(key=>{
+    const [yr,mo]=key.split('-').map(Number);
+    const label=new Date(yr,mo-1,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+    const entries=Object.values(dayMap).filter(v=>v.date.startsWith(key)).sort((a,b)=>a.date.localeCompare(b.date));
+    const total=entries.reduce((sum,v)=>sum+v.pnl,0);
+    const tradingDays=entries.length;
+    const tradeCount=entries.reduce((sum,v)=>sum+v.count,0);
+    const winDays=entries.filter(v=>v.pnl>0).length;
+    const bestDay=entries.length?[...entries].sort((a,b)=>b.pnl-a.pnl)[0]:null;
+    const worstDay=entries.length?[...entries].sort((a,b)=>a.pnl-b.pnl)[0]:null;
+    const firstDay=new Date(yr,mo-1,1).getDay();
+    const lastDay=new Date(yr,mo,0).getDate();
+    const cells=[];
+    for(let i=0;i<firstDay;i++)cells.push({empty:true,id:`${key}-empty-${i}`});
+    for(let day=1;day<=lastDay;day++){
+      const ds=`${key}-${String(day).padStart(2,'0')}`;
+      cells.push({empty:false,day,date:ds,data:dayMap[ds]||null,isToday:ds===today()});
+    }
+    return {key,label,year:yr,month:mo-1,total,tradingDays,tradeCount,winDays,winRate:tradingDays?Math.round(winDays/tradingDays*100):0,bestDay,worstDay,cells};
+  });
+}
+
+function renderCalSummary(sections){
+  const focus=sections.find(s=>s.tradingDays)||sections[0];
+  document.getElementById('calRangeLabel').textContent=focus?.label||'This Month';
+  const totalEl=document.getElementById('calTotal');
+  const total=focus?.total||0;
+  totalEl.textContent=focus?fmtPnlCompact(total):'$0';
+  totalEl.className='cal-summary-value '+(total>0?'pos':total<0?'neg':'neu');
+  document.getElementById('calDays').textContent=focus?.tradingDays||0;
+  const winsEl=document.getElementById('calWins');
+  winsEl.textContent=focus&&focus.tradingDays?focus.winRate+'%':'—';
+  winsEl.className='cal-summary-value '+(!focus||!focus.tradingDays?'neu':focus.winRate>=50?'pos':'neg');
+  const bestEl=document.getElementById('calBest');
+  if(focus?.bestDay){
+    bestEl.textContent=fmtPnlCompact(focus.bestDay.pnl);
+    bestEl.className='cal-summary-value '+(focus.bestDay.pnl>=0?'pos':'neg');
+  }else{
+    bestEl.textContent='—';
+    bestEl.className='cal-summary-value neu';
+  }
+  document.getElementById('calDays').className='cal-summary-value neu';
+}
+
+function renderCal(){
+  const sections=getMonthSections();
+  renderCalSummary(sections);
+  document.querySelectorAll('.cal-seg-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.calView===calView));
+  if(calView==='daily')return renderCalDaily();
+  if(calView==='monthly')return renderCalMonthly(sections);
+  renderCalCalendar(sections);
+}
+
+function renderCalDaily(){
+  const dayRows=Object.values(buildDayMap()).sort((a,b)=>b.date.localeCompare(a.date));
+  const el=document.getElementById('calContent');
+  if(!dayRows.length){el.innerHTML=`<div class="card cal-empty-state">${emptyHTML('🗓️','No trading days yet','Close a position and your day-by-day journal will show up here.')}</div>`;return}
+  el.innerHTML=dayRows.map(day=>`
+    <div class="day-summary-row" onclick="showDay('${day.date}')">
+      <div>
+        <div class="day-summary-title">${fullDate(day.date)}</div>
+        <div class="day-summary-sub">${day.wins} win${day.wins!==1?'s':''} · ${day.losses} loss${day.losses!==1?'es':''} · ${day.count} trade${day.count!==1?'s':''}</div>
+      </div>
+      <div class="day-summary-right">
+        <div class="day-summary-pnl ${day.pnl>=0?'pos':'neg'}">${fmtPnl(day.pnl)}</div>
+        <div class="day-summary-trades">Tap to expand</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderCalMonthly(sections){
+  const el=document.getElementById('calContent');
+  el.innerHTML=`<div class="month-grid">${sections.map(month=>`
+    <div class="month-summary-card">
+      <div class="month-summary-top">
+        <div>
+          <div class="month-summary-title">${month.label}</div>
+          <div class="month-summary-meta">${month.tradingDays} trading day${month.tradingDays!==1?'s':''} · ${month.tradeCount} total trade${month.tradeCount!==1?'s':''}</div>
+        </div>
+        <div class="month-summary-total ${month.total>0?'pos':month.total<0?'neg':'neu'}">${fmtPnlCompact(month.total)}</div>
+      </div>
+      <div class="month-summary-stats">
+        <div class="month-summary-stat"><div class="label">Best Day</div><div class="value ${month.bestDay?(month.bestDay.pnl>=0?'pos':'neg'):'neu'}">${month.bestDay?fmtPnlCompact(month.bestDay.pnl):'—'}</div></div>
+        <div class="month-summary-stat"><div class="label">Worst Day</div><div class="value ${month.worstDay?(month.worstDay.pnl>=0?'pos':'neg'):'neu'}">${month.worstDay?fmtPnlCompact(month.worstDay.pnl):'—'}</div></div>
+        <div class="month-summary-stat"><div class="label">Trade Count</div><div class="value neu">${month.tradeCount||0}</div></div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function renderCalCalendar(sections){
+  const weekdays=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const el=document.getElementById('calContent');
+  el.innerHTML=`<div class="calendar-stack">${sections.map(month=>`
+    <div class="calendar-month-card">
+      <div class="calendar-month-head">
+        <div>
+          <div class="calendar-month-title">${month.label}</div>
+          <div class="calendar-month-sub">${month.tradingDays} day${month.tradingDays!==1?'s':''} · ${month.tradeCount} total trade${month.tradeCount!==1?'s':''}</div>
+        </div>
+        <div class="calendar-month-total ${month.total>0?'pos':month.total<0?'neg':'neu'}">${fmtPnlCompact(month.total)}</div>
+      </div>
+      <div class="calendar-weekdays">${weekdays.map(day=>`<div class="calendar-weekday">${day}</div>`).join('')}</div>
+      <div class="calendar-month-grid">${month.cells.map(cell=>{
+        if(cell.empty)return '<div class="calendar-day empty"></div>';
+        const data=cell.data;
+        const cls=['calendar-day',data?'has-data':'idle',data?(data.pnl>=0?'profit':'loss'):'',cell.isToday?'today':''].filter(Boolean).join(' ');
+        const content=data
+          ? `<div class="calendar-day-pnl">${fmtPnlCompact(data.pnl)}</div><div class="calendar-day-trades">${data.count} trade${data.count!==1?'s':''}</div>`
+          : '';
+        const tap=data?` onclick="showDay('${cell.date}')"`:'';
+        return `<div class="${cls}"${tap}><div class="calendar-day-num">${cell.day}</div>${content}</div>`;
+      }).join('')}</div>
+    </div>`).join('')}</div>`;
+}
+
+function switchCalView(view,btn){
+  calView=view;
+  document.querySelectorAll('.cal-seg-btn').forEach(b=>b.classList.remove('active'));
+  btn?.classList.add('active');
+  renderCal();
+}
+
+function showDay(dayOrDate,yr,mo){
+  const ds=typeof dayOrDate==='string'&&dayOrDate.includes('-')
+    ? dayOrDate
+    : `${yr}-${String((mo||0)+1).padStart(2,'0')}-${String(dayOrDate).padStart(2,'0')}`;
+  const dt=trades.filter(t=>t.closeDate===ds);
+  if(!dt.length)return;
+  const dp=dt.reduce((s,t)=>s+(Number(t.pnl)||0),0);
+  document.getElementById('dayTitle').textContent=fullDate(ds);
+  document.getElementById('dayContent').innerHTML=`<div style="text-align:center;padding:14px 0 18px"><div style="font-size:30px;font-weight:700;color:${dp>=0?'var(--accent)':'var(--red)'}">${fmtPnl(dp)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${dt.length} trade${dt.length!==1?'s':''}</div></div>${dt.sort((a,b)=>(b.pnl||0)-(a.pnl||0)).map(t=>tradeHTML(t,false)).join('')}`;
   openM('dayModal');
 }
 
@@ -707,7 +888,7 @@ function exportTax(){
 }
 
 function exportJSON(){
-  dl('tradelog_'+today()+'.json',JSON.stringify({trades,positions,exportedAt:new Date().toISOString(),version:'1.0'},null,2),'application/json');
+  dl('tradelog_'+today()+'.json',JSON.stringify({trades,positions,exportedAt:new Date().toISOString(),version:'1.1'},null,2),'application/json');
   toast('Backup exported ✓','success');
 }
 
@@ -719,7 +900,7 @@ function handleImport(inp){
   reader.onload=e=>{
     const txt=e.target.result;
     if(file.name.endsWith('.json')){
-      try{const d=JSON.parse(txt);if(d.trades)trades=d.trades;if(d.positions)positions=d.positions;save();renderDash();renderJournal();toast('Imported '+trades.length+' trades ✓','success')}
+      try{const d=JSON.parse(txt);if(d.trades)trades=d.trades;if(d.positions)positions=d.positions;save();renderDash();renderJournal();renderCal();toast('Imported '+trades.length+' trades ✓','success')}
       catch{toast('Invalid JSON','error')}
     }else{
       const lines=txt.split('\n').filter(l=>l.trim());let n=0;
@@ -727,7 +908,7 @@ function handleImport(inp){
         const c=parseCSV(lines[i]);if(c.length<10)continue;
         trades.push({id:uid()+i,openDate:c[0],closeDate:c[1],symbol:c[2],type:c[3],strike:+c[4]||0,expiry:c[5],qty:+c[6]||0,entryPrice:+c[7]||0,exitPrice:+c[8]||0,pnl:+c[9]||0,assetType:c[10]||'option',notes:(c[11]||'').replace(/^"|"$/g,''),exitNotes:(c[12]||'').replace(/^"|"$/g,'')});n++;
       }
-      save();renderDash();renderJournal();toast('Imported '+n+' trades ✓','success');
+      save();renderDash();renderJournal();renderCal();toast('Imported '+n+' trades ✓','success');
     }
   };
   reader.readAsText(file);inp.value='';
@@ -737,7 +918,7 @@ function parseCSV(l){const r=[];let cur='',q=false;for(const c of l){if(c==='"')
 
 function dl(name,content,type){const b=new Blob([content],{type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
 
-function clearAll(){if(!confirm('Delete ALL trades and positions? Cannot be undone.'))return;trades=[];positions=[];save();renderDash();toast('All data cleared')}
+function clearAll(){if(!confirm('Delete ALL trades and positions? Cannot be undone.'))return;trades=[];positions=[];save();renderDash();renderPos();renderJournal();renderCal();toast('All data cleared')}
 
 // ══ UTILS ══
 function today(){return new Date().toISOString().split('T')[0]}
@@ -745,12 +926,14 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function fmtDate(s){if(!s)return'';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
 function fmtPnl(n){if(isNaN(n)||n===undefined)return'$0.00';return(n>=0?'+':'-')+'$'+Math.abs(n).toFixed(2)}
 function fmtShort(n){const a=Math.abs(n),s=n>=0?'+':'-';return a>=1000?s+'$'+(a/1000).toFixed(1)+'K':s+'$'+a.toFixed(0)}
+function fmtPnlCompact(n){if(isNaN(n)||n===undefined)return'$0';const a=Math.abs(n),s=n>=0?'+':'-';if(a>=1000)return s+'$'+(a/1000).toFixed(a>=10000?0:1)+'K';return s+'$'+a.toFixed(0)}
+function fullDate(s){if(!s)return'';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
 function fmtD(n){return(n>=0?'+':'')+n.toFixed(2)}
 function esc(s){return(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function emptyHTML(icon,title,sub){return`<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-title">${title}</div><div class="empty-sub">${sub}</div></div>`}
 
 // ══ BOOT ══
-load();renderDash();
+load();renderDash();renderCal();
 </script>
 </body>
 </html>
