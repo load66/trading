@@ -107,5 +107,101 @@
     "entryGate": "Major support + intact fundamentals + attractive valuation + price confirmation",
     "never": "Never average solely because the LEAP premium is down.",
     "options": "Underlying entry first; verify live LEAP expiration, delta, IV, spread and open interest separately."
+  },
+  "contractProfiles": [
+    {
+      "ticker": "ADSK",
+      "preferred": "18–30 mo., ~0.75–0.85 delta, ITM",
+      "reference": "Jan 21 2028 $200C",
+      "ask": 64.5,
+      "breakeven": 264.5,
+      "openInterest": 65,
+      "readiness": "WATCH LIQUIDITY",
+      "sourceAsOf": "Delayed chain snapshot; feed Oct 5, 2026",
+      "source": "https://public.com/stocks/adsk/options-chain?expiration=2028-01-21",
+      "note": "Strike profile is attractive, but preferred-strike OI is below the ≥100 guideline. Verify live spread and consider nearby deeper-ITM strikes only if liquidity is better."
+    },
+    {
+      "ticker": "RDDT",
+      "preferred": "18–24+ mo., ~0.75–0.85 delta, deep ITM",
+      "reference": "Jun 16 2028 $100C",
+      "ask": 84.2,
+      "breakeven": 184.2,
+      "openInterest": 251,
+      "readiness": "CONTRACT-READY PROFILE",
+      "sourceAsOf": "Delayed public chain snapshot",
+      "source": "https://public.com/stocks/rddt/options-chain?expiration=2028-06-16",
+      "note": "Longer-dated deep-ITM structure with usable OI; recheck delta, live spread and IV before entry."
+    },
+    {
+      "ticker": "ADBE",
+      "preferred": "18–30 mo., ~0.75–0.85 delta, ITM",
+      "reference": "Jan 21 2028 $200C",
+      "ask": 76.6,
+      "breakeven": 276.6,
+      "openInterest": 20745,
+      "readiness": "STRONG REFERENCE LIQUIDITY",
+      "sourceAsOf": "Delayed chain; feed Oct 6, 2026 2:30 PM",
+      "source": "https://public.com/stocks/adbe/options-chain?expiration=2028-01-21",
+      "note": "Exceptional displayed OI makes this the cleanest reference contract in the current set. Still recheck live IV, bid/ask and delta."
+    },
+    {
+      "ticker": "ACN",
+      "preferred": "18–30 mo., ~0.70–0.85 delta, ITM",
+      "reference": "Jan 21 2028 $175C",
+      "ask": 53,
+      "breakeven": 228,
+      "openInterest": 1274,
+      "readiness": "GOOD REFERENCE LIQUIDITY",
+      "sourceAsOf": "Delayed chain; feed Oct 5, 2026",
+      "source": "https://public.com/stocks/acn/options-chain?expiration=2028-01-21",
+      "note": "Good OI and ITM structure; only enter if the underlying support setup confirms after the recent volatility."
+    },
+    {
+      "ticker": "INTU",
+      "preferred": "18–30 mo., ~0.75–0.85 delta, deeper ITM",
+      "reference": "Jan 21 2028 $200C",
+      "ask": 114,
+      "breakeven": 314,
+      "openInterest": 222,
+      "readiness": "CONSERVATIVE / HIGH CAPITAL",
+      "sourceAsOf": "Delayed chain; feed Oct 5, 2026 6:23 PM",
+      "source": "https://public.com/stocks/intu/options-chain?expiration=2028-01-21",
+      "note": "Deeper ITM improves stock-like behavior but costs more capital. Verify that the live spread is acceptable before using this strike."
+    },
+    {
+      "ticker": "CRM",
+      "preferred": "18–30 mo., ~0.75–0.85 delta, ITM",
+      "reference": "Jan 21 2028 $180C",
+      "ask": 77.5,
+      "breakeven": 257.5,
+      "openInterest": 846,
+      "readiness": "GOOD REFERENCE LIQUIDITY",
+      "sourceAsOf": "Delayed chain; feed Oct 6, 2026 3:55 PM",
+      "source": "https://public.com/stocks/crm/options-chain?expiration=2028-01-21",
+      "note": "Strong OI and meaningful intrinsic value. Underlying is near support, so wait for reversal confirmation rather than buying simply because the contract looks liquid."
+    },
+    {
+      "ticker": "HUBS",
+      "preferred": "18–30 mo., ~0.75–0.85 delta, deep ITM",
+      "reference": "Jan 21 2028 $150C",
+      "ask": 93.5,
+      "breakeven": 243.5,
+      "openInterest": 22,
+      "readiness": "NOT APPROVED — THIN OI",
+      "sourceAsOf": "Delayed public chain snapshot",
+      "source": "https://public.com/stocks/hubs/options-chain?expiration=2028-01-21",
+      "note": "Underlying can remain on watch, but the preferred deep-ITM reference strike is too thin. Wait for better liquidity or a superior expiration/strike."
+    }
+  ],
+  "contractRules": {
+    "dte": "Prefer 18–30 months; minimum 12–24+ months when liquidity dictates.",
+    "delta": "Target ~0.70–0.85; higher delta for conservative stock-like exposure.",
+    "openInterest": "Prefer ≥100, strong ≥500; avoid thin contracts unless spread/market depth is demonstrably good.",
+    "spread": "Prefer bid/ask width ≤5% of midpoint; ≤3% is better.",
+    "breakeven": "Prefer expiration breakeven roughly ≤20% above the underlying for high-probability profiles, adjusted for time and growth.",
+    "iv": "Avoid panic-volatility overpayment. Compare IV to the stock's own recent IV regime before buying.",
+    "earnings": "Avoid opening/adding immediately before earnings unless the event risk is deliberately part of the plan.",
+    "management": "Manage the thesis on the underlying first; do not let an option quote alone dictate averaging."
   }
 }
