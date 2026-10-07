@@ -611,3 +611,27 @@ For every level explain exactly why the zone exists, using evidence such as:
 - Weekly support
 
 A support zone without a specific technical reason should not be published.
+
+
+## Contract Cost Cap
+
+Hard maximum LEAP premium:
+- **$6,500 per contract**
+- Equivalent to **$65.00 option premium** for one standard 100-share contract
+
+Do NOT publish or recommend a contract above this cost ceiling.
+
+If the preferred 0.70–0.85 delta ITM contract costs more than $6,500:
+1. Do not show it as the selected contract.
+2. Search for a cheaper contract that still fits the strategy.
+3. A 0.60–0.70 delta fallback is allowed only when all of these remain true:
+   - total cost <= $6,500,
+   - contract is still ITM,
+   - current stock price remains at least $70 above the strike under the user's current fallback rule,
+   - open interest/liquidity is acceptable,
+   - spread and IV are acceptable when verifiable,
+   - the strike passes the Bear/Base fundamental valuation coverage test,
+   - expiration still provides enough time for the thesis to work.
+4. If no contract satisfies all requirements, publish **NO CONTRACT UNDER $6,500 VERIFIED — WAIT**.
+
+The stock may remain in the qualified stock universe even when no acceptable contract fits the budget. Do not lower company-quality standards or force a poor option just to create a trade.
