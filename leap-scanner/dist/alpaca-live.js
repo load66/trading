@@ -122,10 +122,11 @@
     const status=document.getElementById("alpaca-live-status");
     if(!status)return;
     status.className="alpaca-live-status "+mode;
+    status.title=mode==="error"?message:"";
     if(mode==="live"){
       const age=lastAsOf?Math.max(0,Math.round((Date.now()-Date.parse(lastAsOf))/1000)):0;
       status.textContent="ALPACA "+String(feed).toUpperCase()+" LIVE · "+age+"s";
-    }else if(mode==="error")status.textContent="LIVE PRICE ERROR · "+message;
+    }else if(mode==="error")status.textContent="LIVE PRICE ERROR · SAVED SNAPSHOT";
     else if(mode==="ready")status.textContent="OWNER MODE READY";
     else status.textContent="OWNER LIVE OFF";
   }
@@ -143,9 +144,11 @@
     }
     const desc=document.getElementById("alpaca-live-description");
     if(desc){
-      desc.textContent=signed
-        ?"Owner Live Mode is active. Qualified-stock prices refresh automatically about every 15 seconds and support/entry status recalculates with no manual action."
-        :"Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward.";
+      desc.textContent=!signed
+        ?"Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward."
+        :liveState==="error"
+          ?"Live quotes are unavailable. Showing the saved market snapshot and retrying automatically."
+          :"Owner Live Mode is active. Qualified-stock prices refresh automatically about every 15 seconds and support/entry status recalculates with no manual action.";
     }
     if(signed&&liveState==="live"&&lastAsOf&&Date.now()-Date.parse(lastAsOf)>45000){
       liveUnavailable("Quotes are stale; showing scheduled snapshot");
