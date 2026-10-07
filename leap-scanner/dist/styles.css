@@ -124,3 +124,13 @@ linear-gradient(145deg,rgba(18,27,39,.98),rgba(9,13,20,.98));box-shadow:var(--sh
 .itm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:9px 0}.itm-grid>div{padding:10px 8px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.018)}.itm-grid span,.itm-grid b{display:block}.itm-grid span{font:800 7px var(--mono);color:var(--muted);letter-spacing:.04em}.itm-grid b{margin-top:4px;font:800 12px var(--mono)}
 .coverage{padding:9px 10px;border-radius:10px;background:var(--blue2);border:1px solid rgba(110,171,255,.13);color:#bed6f6!important}.contract-reason{margin:9px 0;padding:10px;border-radius:10px;background:var(--s2);border-left:2px solid var(--blue)}.contract-reason b{font-size:9px;color:#d6e8ff}.contract-reason p{margin-top:5px!important}
 @media(max-width:430px){.contract-metrics.six{grid-template-columns:repeat(2,1fr)}.itm-grid{grid-template-columns:1fr}.target-strip b{font-size:11px}.support-reasons p{font-size:9.5px}}
+
+/* v6 research funnel + trend integrity */
+.funnel-card>p{margin-top:10px;color:var(--muted);font-size:9px;line-height:1.5}
+.funnel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}
+.funnel-grid>div{padding:10px 8px;border:1px solid var(--line);border-radius:10px;background:var(--s2)}
+.funnel-grid span,.funnel-grid b{display:block}.funnel-grid span{font:800 7px var(--mono);color:var(--dim);letter-spacing:.07em}.funnel-grid b{margin-top:4px;font:900 15px var(--mono)}
+.trend-gate-grid{display:grid;gap:7px;margin-top:12px}.trend-gate-grid>div{padding:11px;border:1px solid var(--line);border-radius:11px;background:var(--s2)}
+.trend-gate-grid b{display:block;font:800 8px var(--mono);letter-spacing:.04em}.trend-gate-grid p{margin-top:5px!important;font-size:9px!important;line-height:1.48!important}
+.trend-gate-grid>div:nth-child(1) b{color:var(--green)}.trend-gate-grid>div:nth-child(2) b{color:var(--amber)}.trend-gate-grid>div:nth-child(3) b{color:var(--red)}
+@media(max-width:430px){.funnel-grid{grid-template-columns:repeat(2,1fr)}}
