@@ -106,7 +106,9 @@ For each candidate review:
 - Stock-based compensation
 - Share dilution
 - Cash and debt
-- Guidance trend
+- Guidance trend, including explicit free-cash-flow guidance when management provides it
+- Latest 4 quarters of earnings-surprise evidence when verifiable: GAAP EPS, adjusted EPS only when explicitly reported, analyst consensus with its GAAP/adjusted basis, EPS Beat/Meet/Miss, reported revenue, revenue consensus, and revenue Beat/Meet/Miss
+- Never compare GAAP EPS to an adjusted/non-GAAP analyst consensus. If the estimate basis is not verified, store it as unavailable rather than inferring a surprise.
 - Customer/procedure/ARR/backlog metrics appropriate to the business
 
 ## Growth Catalysts
@@ -547,6 +549,23 @@ Every selected contract must still:
 - Have enough time remaining
 
 If live delta, IV, spread or OI cannot be verified, label them clearly as modeled/delayed/unverified and do not call the contract fully approved.
+
+## Publication Integrity Gate
+
+Before publishing any new research or market snapshot, validate the complete payload with `scripts/validate_publication.py` or an equivalent check.
+
+Publication must be blocked when:
+- Qualified ranks are missing, duplicated, or not sequential.
+- A qualified stock fails GAAP profitability, positive latest YoY revenue growth, positive latest-quarter FCF, or positive TTM FCF.
+- A candidate score does not equal its score-breakdown total.
+- Research-funnel qualified counts do not match the actual qualified universe.
+- Market plans or contract records refer to non-qualified stocks.
+- A contract labeled `eligible` is not ITM, lacks current delta/OI/bid/ask/IV, falls outside 0.60–0.75 delta, or has a bid/ask width above 5% of midpoint.
+- Required research/market timestamps are missing.
+
+Historical or incomplete option references must be classified as `historical_reference` or `no_verified_contract`, never as the currently eligible winner.
+
+Earnings-surprise fields must preserve the consensus basis. If GAAP-versus-adjusted comparability cannot be verified, leave the surprise unverified rather than manufacturing Beat/Meet/Miss.
 
 ## Support-Level Reasoning
 
