@@ -272,8 +272,9 @@ Profitability alone does NOT make a stock suitable for LEAPS. Before a company c
 
 ### A. Hard Reject — Structural Downtrend
 
-Classify as **STRUCTURAL DOWNTREND — REJECT** when at least 4 of these conditions are simultaneously true:
+Classify as **STRUCTURAL DOWNTREND — REJECT** only when BOTH are true:
 
+1. At least 4 of these conditions are simultaneously true:
 - Current price is below the 50DMA and 200DMA.
 - 50DMA < 100DMA < 200DMA.
 - 50DMA slope is materially negative.
@@ -284,6 +285,13 @@ Classify as **STRUCTURAL DOWNTREND — REJECT** when at least 4 of these conditi
 - At least 8 of the last 11 month-to-month closes are lower.
 - Relative performance versus SPY over 6–12 months is worse by >= 20 percentage points.
 - There is no confirmed higher-high / higher-low sequence on the weekly chart.
+
+2. At least ONE severe absolute price-damage condition is present:
+- 6-month return <= -25%, OR
+- 12-month return <= -40%, OR
+- Drawdown from the 52-week high >= 60%.
+
+This severe-damage requirement prevents a normal correction or early bottom from being mislabeled as a structural downtrend merely because several moving averages are still falling.
 
 A stock meeting this gate must NOT be published as a qualified LEAP merely because valuation appears cheap or GAAP earnings are positive.
 
