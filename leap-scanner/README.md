@@ -115,13 +115,12 @@ Each qualified stock card contains its research, support plan and a LEAP contrac
 
 The app reads Supabase first and falls back to GitHub JSON if the database feed is temporarily unavailable.
 
-### Manual research control
+### Research control
 
-The fundamental research universe is intentionally owner-controlled from the ChatGPT project chat.
-
-- Sending **`generate`** in the LEAPS project chat runs the full research refresh and publishes a new approved research snapshot.
-- Scheduled 2 PM and intraday jobs refresh **market regime, support/action labels, event risk and contract readiness only**.
-- Scheduled jobs must not add/remove candidates or alter fundamental scores.
+- Sending **`generate`** in the LEAPS project chat runs the complete detailed research refresh immediately.
+- The **2 PM weekday job runs the same full research policy** and may add, remove, or rescore candidates when evidence warrants.
+- The **intraday watcher is timing-only** and cannot change fundamental qualification or research scores.
 - Supabase research snapshots are append-only history; GitHub `research-latest.json` is the public fallback.
-- The public UI displays the latest manual research refresh time separately from the latest market scan time.
+- `MASTER_PROMPT.md` is the single canonical policy source; duplicated documentation must not override it.
+- The public UI displays research-snapshot freshness separately from market-scan freshness.
 
