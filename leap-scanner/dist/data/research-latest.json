@@ -2172,8 +2172,14 @@
     },
     {
       "ticker": "PYPL",
-      "reason": "Latest GAAP net income -12% YoY, operating income -5%, and operating margin -171bp despite positive revenue. Not the desired improving-earnings divergence.",
-      "url": "https://www.sec.gov/Archives/edgar/data/1633917/000163391726000080/pypl2q-26earningsrelease.htm"
+      "reason": "Profitable, but fails the quality-trap test today: latest GAAP net income -12% YoY, operating income -5%, and operating margin contracted 171bp while the stock's 3-year return is about -32% versus roughly +37% for SPY (about 69 percentage points of underperformance). Keep quarantined until both business momentum and trend repair are durable.",
+      "url": "https://www.sec.gov/Archives/edgar/data/1633917/000163391726000080/pypl2q-26earningsrelease.htm",
+      "trendStatus": "QUALITY TRAP — TREND REPAIR REQUIRED",
+      "trendEvidence": {
+        "threeYearReturn": -0.3195863443807626,
+        "spyThreeYearReturn": 0.3721204649524481,
+        "relativeUnderperformancePoints": 69.1706809333211
+      }
     },
     {
       "ticker": "SAP",
@@ -2259,5 +2265,25 @@
     "ownerCommand": "generate",
     "behavior": "Full research refresh, publish to Supabase and GitHub, then verify Railway deployment.",
     "scheduledJobs": "Market/entry timing only; core candidate universe remains unchanged until manual generate."
+  },
+  "researchFunnel": {
+    "universeScanned": 20,
+    "passedProfitability": null,
+    "passedCashFlow": null,
+    "passedRevenueGrowth": null,
+    "deepReviewCount": 20,
+    "qualifiedCount": 8,
+    "tier1Count": 4,
+    "tier2Count": 4,
+    "tier3Count": 0,
+    "actionableToday": 0,
+    "rejectedCount": 11,
+    "scanMode": "legacy-curated-snapshot",
+    "universeDefinition": "This published snapshot was produced from a legacy curated 20-name research set. The next manual `generate` is required to use the new broad 150–300 stock discovery funnel. Counts that were not tracked by the legacy pass are left null rather than invented."
+  },
+  "trendIntegrityPolicy": {
+    "structuralReject": "Reject when persistent trend deterioration stacks across moving-average structure, negative slopes, severe 6/12-month returns, large drawdown, repeated lower monthly closes and weak relative strength.",
+    "qualityTrap": "Quarantine profitable chronic underperformers when long-term relative-price damage is combined with at least two business-deterioration flags.",
+    "reentry": "Quarantined names require business repair plus at least three technical repair signals; prior structural-downtrend rejects require at least four."
   }
 }
