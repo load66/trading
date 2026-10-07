@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07090d">
 <title>LEAPS Desk</title>
-<meta name="description" content="Public mobile-first LEAPS research, entry planning and contract-quality dashboard.">
+<meta name="description" content="Public mobile-first LEAPS research, entry planning, valuation and contract-quality dashboard.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="styles.css?v=20261007-pro-v6">
-<script src="app.js?v=20261007-pro-v6" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261007-desk-v7">
+<script src="app.js?v=20261007-desk-v7" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -17,105 +17,113 @@
   <div class="fresh"><span id="data-mode">CONNECTING</span><strong id="fresh-time">—</strong></div>
 </header>
 
-<main>
-<section class="screen on" id="screen-desk">
-  <div class="hero">
+<main class="desk-page">
+  <section class="hero" id="market">
     <div class="hero-top">
       <div><span class="kicker">MARKET REGIME</span><h1 id="market-state">Loading…</h1></div>
       <span class="state-pill" id="trigger-pill">SCANNING</span>
     </div>
     <p id="market-message">Loading the latest automated LEAPS scan.</p>
     <div class="market-grid" id="market-grid"></div>
-  </div>
+  </section>
 
-  <div class="section-head"><div><span class="kicker">QUALIFIED OPPORTUNITY QUEUE</span><h2>All qualified setups</h2><p class="home-queue-note">Every currently qualified stock is shown below. Ranked by today’s action first, then research score.</p></div></div>
-  <div id="top-setups" class="stack"></div>
-
-  <div class="rule-strip">
-    <div><span>ENTRY GATE</span><strong>Support + intact thesis + confirmation</strong></div>
-    <div><span>POSITION PLAN</span><strong>30% / 30% / 40%</strong></div>
-    <div><span>CONTRACT BIAS</span><strong>18–30 mo · 0.70–0.85 Δ</strong></div>
-  </div>
-</section>
-
-<section class="screen" id="screen-setups">
-  <div class="page-head"><span class="kicker">QUALIFIED UNIVERSE</span><h1>Setups</h1><p>Profitable companies only. Deep-discount names and quality compounders can both qualify.</p></div>
-  <div class="filters" role="tablist">
-    <button class="filter on" data-filter="all">All</button>
-    <button class="filter" data-filter="actionable">Actionable</button>
-    <button class="filter" data-filter="deep">Deep Discount</button>
-    <button class="filter" data-filter="compounder">Compounders</button>
-  </div>
-  <div id="setup-list" class="stack"></div>
-</section>
-
-<section class="screen" id="screen-contracts">
-  <div class="page-head"><span class="kicker">CONTRACT QUALITY</span><h1>LEAP Contracts</h1><p>The underlying qualifies first. The option must independently pass liquidity, time and pricing checks.</p></div>
-  <div class="contract-rules">
-    <div><b>18–30 mo.</b><span>Preferred duration</span></div>
-    <div><b>0.70–0.85 Δ</b><span>ITM bias</span></div>
-    <div><b>OI ≥100</b><span>≥500 strong</span></div>
-    <div><b>Spread ≤5%</b><span>≤3% better</span></div>
-  </div>
-  <div id="contract-list" class="stack"></div>
-</section>
-
-<section class="screen" id="screen-research">
-  <div class="page-head"><span class="kicker">RESEARCH ENGINE</span><h1>Method & history</h1><p>The model stays strict on business quality but no longer rejects good companies simply because they are hardware-based or exposed to temporary tariff policy.</p></div>
-  <div class="method-card research-control">
-    <div><span class="kicker">RESEARCH CONTROL</span><h3>Manual research · automated market timing</h3></div>
-    <p>The qualified company universe is refreshed manually from the owner’s ChatGPT project chat for accuracy. Scheduled jobs update market regime, support, action labels and contract readiness without silently changing the research universe.</p>
-    <div class="control-meta"><div><span>MANUAL COMMAND</span><b>generate</b></div><div><span>LAST RESEARCH REFRESH</span><b id="research-refresh-time">Loading…</b></div></div>
-  </div>
-  <div class="method-card funnel-card">
-    <div><span class="kicker">RESEARCH FUNNEL</span><h3>How broad was the scan?</h3></div>
-    <div id="research-funnel" class="funnel-grid"></div>
-    <p id="research-funnel-note">Loading scan coverage…</p>
-  </div>
-  <div class="method-card trend-gate-card">
-    <div><span class="kicker">TREND INTEGRITY GATE</span><h3>Profitability is not enough.</h3></div>
-    <div class="trend-gate-grid">
-      <div><b>HEALTHY / REPAIRING</b><p>Can qualify when fundamentals are strong and price structure is stabilizing or improving.</p></div>
-      <div><b>QUALITY TRAP — QUARANTINE</b><p>Profitable chronic underperformer with business deterioration. Must prove both business and chart repair.</p></div>
-      <div><b>STRUCTURAL DOWNTREND — REJECT</b><p>Persistent lower highs/lows, falling averages, severe drawdown and weak relative strength. No LEAP until repair.</p></div>
+  <section class="desk-section" id="setups">
+    <div class="section-head">
+      <div>
+        <span class="kicker">QUALIFIED OPPORTUNITY QUEUE</span>
+        <h2>All qualified setups</h2>
+        <p class="home-queue-note">Every qualified stock is shown here with valuation, sector context, major-support reasoning and thesis details. Ranked by today’s action first, then research score.</p>
+      </div>
     </div>
-  </div>
+    <div id="top-setups" class="stack"></div>
+  </section>
 
-  <div class="method-card">
-    <h3>Two-lane qualification</h3>
-    <div class="lane"><span>A</span><div><b>Deep Discount / Recovery</b><p>Usually 30–70% below a meaningful high with fundamentals intact.</p></div></div>
-    <div class="lane"><span>B</span><div><b>Quality Compounder Pullback</b><p>Elite profitable compounders can qualify on a smaller pullback when valuation and support create attractive 18–30 month risk/reward.</p></div></div>
-    <div class="policy"><b>Tariff rule</b><p>Tariffs are context only—not a qualification filter and not a scoring penalty.</p></div>
-  </div>
-
-  <div class="section-head"><div><span class="kicker">RANKINGS</span><h2>Current research leaders</h2></div></div>
-  <div id="rankings" class="rank-grid"></div>
-
-  <div class="section-head"><div><span class="kicker">SCAN HISTORY</span><h2>Automated updates</h2></div></div>
-  <div id="scan-history" class="history"></div>
-
-  <details class="method-card rules-detail">
-    <summary>Scoring & scanner rules</summary>
-    <div class="score-grid">
-      <span>25 Fundamental quality</span><span>20 Earnings momentum</span><span>15 Valuation / drawdown</span><span>15 Future catalysts</span><span>10 Competitive advantage</span><span>5 Business durability</span><span>5 Technical quality</span><span>5 LEAP option quality</span>
+  <section class="desk-section">
+    <div class="rule-strip">
+      <div><span>ENTRY GATE</span><strong>Support + intact thesis + confirmation</strong></div>
+      <div><span>POSITION PLAN</span><strong>30% / 30% / 40%</strong></div>
+      <div><span>CONTRACT BIAS</span><strong>18–30 mo · 0.70–0.85 Δ</strong></div>
     </div>
-    <p>Hard gates: current GAAP profitability, positive YoY revenue, positive TTM FCF or strong operating cash generation, no going-concern/accounting crisis, and a credible long-term growth runway.</p>
-    <a class="text-link" href="https://github.com/load66/trading/blob/main/leap-scanner/MASTER_PROMPT.md" target="_blank" rel="noopener">View full master scanner prompt</a>
-  </details>
+  </section>
 
-  <details class="method-card rules-detail">
-    <summary>Rejected / not actionable</summary>
-    <div id="rejected-list"></div>
-  </details>
-</section>
+  <section class="desk-section" id="contracts">
+    <div class="section-head">
+      <div>
+        <span class="kicker">CONTRACT QUALITY</span>
+        <h2>LEAP contract desk</h2>
+        <p class="home-queue-note">The underlying qualifies first. The option must independently pass time, liquidity, strike-cushion and Bear/Base/Bull valuation tests.</p>
+      </div>
+    </div>
+    <div class="contract-rules">
+      <div><b>18–30 mo.</b><span>Preferred duration</span></div>
+      <div><b>0.70–0.85 Δ</b><span>Primary ITM bias</span></div>
+      <div><b>OI ≥100</b><span>≥500 strong</span></div>
+      <div><b>Spread ≤5%</b><span>≤3% better</span></div>
+    </div>
+    <div id="contract-list" class="stack"></div>
+  </section>
+
+  <section class="desk-section" id="research">
+    <div class="section-head">
+      <div>
+        <span class="kicker">RESEARCH ENGINE</span>
+        <h2>Research, controls & history</h2>
+        <p class="home-queue-note">Core research is manually generated in the owner’s ChatGPT project chat. Automated jobs update market timing without silently changing the approved universe.</p>
+      </div>
+    </div>
+
+    <div class="method-card research-control">
+      <div><span class="kicker">RESEARCH CONTROL</span><h3>Manual research · automated market timing</h3></div>
+      <p>The qualified universe is refreshed manually for accuracy. Scheduled jobs update market regime, support, action labels and contract readiness only.</p>
+      <div class="control-meta">
+        <div><span>MANUAL COMMAND</span><b>generate</b></div>
+        <div><span>LAST RESEARCH REFRESH</span><b id="research-refresh-time">Loading…</b></div>
+      </div>
+    </div>
+
+    <div class="method-card funnel-card">
+      <div><span class="kicker">RESEARCH FUNNEL</span><h3>How broad was the scan?</h3></div>
+      <div id="research-funnel" class="funnel-grid"></div>
+      <p id="research-funnel-note">Loading scan coverage…</p>
+    </div>
+
+    <div class="method-card trend-gate-card">
+      <div><span class="kicker">TREND INTEGRITY GATE</span><h3>Profitability is not enough.</h3></div>
+      <div class="trend-gate-grid">
+        <div><b>HEALTHY / REPAIRING</b><p>Can qualify when fundamentals are strong and price structure is stabilizing or improving.</p></div>
+        <div><b>QUALITY TRAP — QUARANTINE</b><p>Profitable chronic underperformer with business deterioration. Must prove both business and chart repair.</p></div>
+        <div><b>STRUCTURAL DOWNTREND — REJECT</b><p>Persistent lower highs/lows, falling averages, severe drawdown and weak relative strength. No LEAP until repair.</p></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <h3>Two-lane qualification</h3>
+      <div class="lane"><span>A</span><div><b>Deep Discount / Recovery</b><p>Usually 30–70% below a meaningful high with fundamentals intact.</p></div></div>
+      <div class="lane"><span>B</span><div><b>Quality Compounder Pullback</b><p>Elite profitable compounders can qualify on a smaller pullback when valuation and support create attractive long-term risk/reward.</p></div></div>
+      <div class="policy"><b>Tariff rule</b><p>Tariffs are context only—not a qualification filter and not a scoring penalty.</p></div>
+    </div>
+
+    <div class="section-head subhead"><div><span class="kicker">RANKINGS</span><h2>Current research leaders</h2></div></div>
+    <div id="rankings" class="rank-grid"></div>
+
+    <div class="section-head subhead"><div><span class="kicker">SCAN HISTORY</span><h2>Automated updates</h2></div></div>
+    <div id="scan-history" class="history"></div>
+
+    <details class="method-card rules-detail">
+      <summary>Scoring & scanner rules</summary>
+      <div class="score-grid">
+        <span>25 Fundamental quality</span><span>20 Earnings momentum</span><span>15 Valuation / drawdown</span><span>15 Future catalysts</span><span>10 Competitive advantage</span><span>5 Business durability</span><span>5 Technical quality</span><span>5 LEAP option quality</span>
+      </div>
+      <p>Hard gates include current GAAP profitability, positive YoY revenue, positive TTM FCF or strong operating cash generation, no going-concern/accounting crisis, credible long-term growth, and the trend-integrity filter.</p>
+      <a class="text-link" href="https://github.com/load66/trading/blob/main/leap-scanner/MASTER_PROMPT.md" target="_blank" rel="noopener">View full master scanner prompt</a>
+    </details>
+
+    <details class="method-card rules-detail">
+      <summary>Rejected / quarantined / not actionable</summary>
+      <div id="rejected-list"></div>
+    </details>
+  </section>
 </main>
-
-<nav class="bottom-nav" aria-label="Primary">
-  <button class="nav-btn on" data-screen="desk" aria-label="Desk"><span>⌁</span><b>Desk</b></button>
-  <button class="nav-btn" data-screen="setups" aria-label="Setups"><span>◎</span><b>Setups</b></button>
-  <button class="nav-btn" data-screen="contracts" aria-label="Contracts"><span>Δ</span><b>Contracts</b></button>
-  <button class="nav-btn" data-screen="research" aria-label="Research"><span>≡</span><b>Research</b></button>
-</nav>
 </div>
 
 <div id="toast" class="toast" role="status"></div>
