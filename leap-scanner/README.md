@@ -1,12 +1,12 @@
-# Leap Scanner
+# LEAPS Desk
 
-A dated LEAPS research dashboard with eight shortlisted candidate image cards and a 36-company research list. This first scan uses October 6, 2026 closing prices and was uploaded October 7. It is research, not a trading recommendation or a live market scanner.
+Production mobile-first LEAPS research and entry-planning dashboard.
 
-## View
+Permanent public app: https://leaps-desk.up.railway.app/
 
-Private app: https://leap-scanner.philipbenedicto.chatgpt.site
+The current production architecture uses GitHub as source/fallback, Supabase for append-only research and market snapshots, Railway for hosting, Massive + AlphaStocks + current web research for evidence, a complete detailed 2 PM weekday research scan, and an intraday market-timing watcher.
 
-The `dist/` folder is a static website. Serve it with any static web server; opening the HTML with `file://` will not allow the JSON fetch. Example: `python3 -m http.server 8000 --directory dist`.
+`MASTER_PROMPT.md` is the canonical research-policy source. `GENERATE_WORKFLOW.md` defines the publication workflow. Historical sections below document earlier versions and must not override those two files.
 
 ## Research files
 
@@ -70,12 +70,12 @@ Each qualified name can carry up to three underlying-stock support zones using a
 
 The first dated entry map is prepared for the October 7, 2026 session using October 6 closing data. It correctly reports no A+ broad-market dip trigger. Live option contract selection remains separate and must verify expiration, delta, IV, bid/ask spread and open interest before any contract is chosen.
 
-### Intended automation
+### Current automation
 
-1. **2:00 PM America/Chicago on U.S. trading weekdays:** always create the daily LEAPS market/entry report.
-2. **Intraday condition watch:** check market conditions during the session and notify only when SPY/QQQ/VIX/macro conditions produce a meaningful dip.
-3. On a triggered scan, refresh the market regime first, then evaluate the qualified company list against support, thesis integrity, valuation and reversal confirmation.
-4. If GitHub write access is available during the scheduled run, update `dist/data/market-latest.json` with the new dated snapshot. Do not modify historical strict-scan files merely because market prices moved.
+1. **2:00 PM America/Chicago on U.S. trading weekdays:** run the complete detailed `MASTER_PROMPT.md` research workflow, including broad discovery, hard GAAP/revenue/FCF gates, rescoring, qualification changes, valuation, support and contract-readiness research.
+2. **Intraday condition watch:** market/entry-timing only. It may refresh market regime, support/action labels, event risk and contract readiness, but it must not change the fundamental qualified universe or research scores.
+3. Every publication must pass `scripts/validate_publication.py` (or an equivalent integrity check) before Supabase/GitHub publication.
+4. Historical snapshots stay append-only. The public app always uses the permanent research rank; intraday action status never renumbers the qualified list.
 
 
 ## Professional mobile public app (v3)
