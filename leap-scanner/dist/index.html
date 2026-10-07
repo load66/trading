@@ -7,8 +7,8 @@
 <title>LEAPS Desk</title>
 <meta name="description" content="Public mobile-first LEAPS research, entry planning, valuation and contract-quality dashboard.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="styles.css?v=20261007-desk-v12-contracts">
-<script src="app.js?v=20261007-desk-v12-contracts" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261007-desk-v13-unified">
+<script src="app.js?v=20261007-desk-v13-unified" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -40,11 +40,12 @@
   </section>
 
   <section class="desk-section" id="setups">
+    <span id="contracts" class="section-anchor" aria-hidden="true"></span>
     <div class="section-head">
       <div>
         <span class="kicker">QUALIFIED OPPORTUNITY QUEUE</span>
         <h2>All qualified setups</h2>
-        <p class="home-queue-note">Every qualified stock is shown here with valuation, sector context, major-support reasoning and thesis details. Ranked by today’s action first, then research score.</p>
+        <p class="home-queue-note">Each qualified stock includes its research, support plan and eligible LEAP contract reference. Ranked by today’s action first, then research score.</p>
       </div>
     </div>
     <div id="top-setups" class="stack"></div>
@@ -56,23 +57,6 @@
       <div><span>POSITION PLAN</span><strong>30% / 30% / 40%</strong></div>
       <div><span>CONTRACT BIAS</span><strong>18–30 mo · 0.70–0.75 Δ</strong></div>
     </div>
-  </section>
-
-  <section class="desk-section" id="contracts">
-    <div class="section-head">
-      <div>
-        <span class="kicker">CONTRACT QUALITY</span>
-        <h2>LEAP contract desk</h2>
-        <p class="home-queue-note">The underlying qualifies first. The option must independently pass time, liquidity, strike-cushion and Bear/Base/Bull valuation tests.</p>
-      </div>
-    </div>
-    <div class="contract-rules">
-      <div><b>18–30 mo.</b><span>Preferred duration</span></div>
-      <div><b>0.70–0.75 Δ</b><span>Primary ITM bias</span></div>
-      <div><b>OI ≥100</b><span>≥500 strong</span></div>
-      <div><b>Spread ≤5%</b><span>≤3% better</span></div>
-    </div>
-    <div id="contract-list" class="stack"></div>
   </section>
 
   <section class="desk-section scan-summary" id="scan-summary">
