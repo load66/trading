@@ -19,7 +19,19 @@ async function json(path){
 function toast(msg){const e=document.getElementById("toast");e.textContent=msg;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200);}
 function actionTone(a){a=String(a||"").toUpperCase();if(a.includes("BUY")||a.includes("ADD")||a.includes("HIGH-CONVICTION"))return"buy";if(a.includes("BROKEN")||a.includes("AVOID")||a.includes("DO NOT"))return"stop";return"watch";}
 function actionRank(a){a=String(a||"").toUpperCase();if(a.includes("HIGH-CONVICTION"))return 0;if(a.includes("BUY ZONE"))return 1;if(a.includes("ADD ZONE"))return 2;if(a.includes("NEAR SUPPORT"))return 3;if(a.includes("WAIT FOR REVERSAL"))return 4;if(a.includes("WATCH"))return 5;return 6;}
-function readinessTone(r){r=String(r||"").toUpperCase();if(r.includes("NOT APPROVED")||r.includes("POOR"))return"bad";if(r.includes("GOOD")||r.includes("STRONG")||r.includes("READY"))return"good";return"watch";}
+function readinessTone(r){
+  r=String(r||"").toUpperCase();
+  if(r.includes("REJECT")||r.includes("POOR")||r.includes("FAILED"))return"bad";
+  if((r.includes("APPROVED")&&!r.includes("NOT")&&!r.includes("REFERENCE"))||r.includes("STRONG LIQUIDITY"))return"good";
+  return"reference";
+}
+function readinessLabel(r){
+  const s=String(r||"").toUpperCase();
+  if(s.includes("REFERENCE")||s.includes("VERIFY")||s.includes("WAIT"))return"REFERENCE · VERIFY LIVE";
+  if(s.includes("APPROVED")&&!s.includes("NOT"))return"APPROVED";
+  if(s.includes("REJECT")||s.includes("POOR")||s.includes("FAILED"))return"NOT SUITABLE";
+  return"REVIEW LIVE";
+}
 function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
 function sourceMode(mode,time){const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="LIVE DATA"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=time?dateFmt.format(new Date(time)):"Dated snapshot";}
 function marketStat(label,x){
@@ -82,7 +94,7 @@ function contractCard(c){
   const iv=Number.isFinite(c.modeledIV)?(c.modeledIV*100).toFixed(1)+"%":"LIVE VERIFY";
   const intrinsic=Number.isFinite(c.currentIntrinsic)?money.format(c.currentIntrinsic):"—";
   const extrinsic=Number.isFinite(c.currentExtrinsic)?money.format(c.currentExtrinsic):"—";
-  return'<article class="contract-card"><div class="contract-card-head"><div><h3>'+safe(c.ticker)+'</h3><div class="ref">'+safe(c.reference)+'</div><small class="contract-exp">'+safe(c.expiration||"Expiration verify")+' · '+safe(c.preferredHorizonStatus||"")+'</small></div><span class="readiness '+readinessTone(readiness)+'">'+safe(readiness)+'</span></div>'+
+  return'<article class="contract-card"><div class="contract-card-head"><div><h3>'+safe(c.ticker)+'</h3><div class="ref">'+safe(c.reference)+'</div><small class="contract-exp">'+safe(c.expiration||"Expiration verify")+' · '+safe(c.preferredHorizonStatus||"")+'</small></div><span class="readiness '+readinessTone(readiness)+'">'+safe(readinessLabel(readiness))+'</span></div>'+
   '<div class="beginner-note"><b>What matters most</b><span>We want a long-dated call that is already ITM, liquid enough to trade, and still likely to remain ITM even in our conservative valuation case.</span></div>'+
   '<div class="contract-metrics six"><div><span>DELTA</span><b>'+delta+'</b><small>Higher = more stock-like</small></div><div><span>OPEN INTEREST</span><b>'+(Number.isFinite(c.openInterest)?Number(c.openInterest).toLocaleString():"—")+'</b><small>More can mean better liquidity</small></div><div><span>ASK PRICE</span><b>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</b><small>Reference premium</small></div><div><span>COST / CONTRACT</span><b>'+(Number.isFinite(c.costPerContract)?money.format(c.costPerContract):"—")+'</b><small>Premium × 100 shares</small></div><div><span>BREAKEVEN</span><b>'+(Number.isFinite(c.breakeven)?money.format(c.breakeven):"—")+'</b><small>Needed at expiration to cover premium</small></div><div><span>MODELED IV</span><b>'+iv+'</b><small>Volatility estimate, not live</small></div></div>'+
   '<div class="itm-grid"><div><span>BEAR CASE · '+(em.bear||"—")+'</span><b>'+ (Number.isFinite(ft.bear)?money.format(ft.bear):"—") +'</b><small>Conservative business value</small></div><div><span>BASE CASE · '+(em.base||"—")+'</span><b>'+ (Number.isFinite(ft.base)?money.format(ft.base):"—") +'</b><small>Most reasonable value</small></div><div><span>BULL CASE · '+(em.bull||"—")+'</span><b>'+ (Number.isFinite(ft.bull)?money.format(ft.bull):"—") +'</b><small>Strong execution value</small></div></div>'+
@@ -90,7 +102,18 @@ function contractCard(c){
   '<div class="contract-reason"><b>Why this contract was chosen</b><p>'+safe(c.selectionReason||c.note||"Verify live chain before entry.")+'</p></div>'+
   '<details class="contract-more"><summary>More contract details</summary><div class="contract-more-body"><div class="contract-metrics three"><div><span>STOCK ABOVE STRIKE</span><b>'+stockAbove+'</b></div><div><span>INTRINSIC VALUE</span><b>'+intrinsic+'</b></div><div><span>EXTRINSIC VALUE</span><b>'+extrinsic+'</b></div></div><p><b>Target profile:</b> '+safe(c.preferred)+'</p><p><b>Selection rule:</b> '+safe(c.selectionRule||"Use verified 0.70–0.85 delta ITM contracts.")+'</p><p><b>Greek note:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">Delayed chain source ↗</a></div></details></article>';
 }
-function renderContracts(){const list=(market&&market.contractProfiles)||[];document.getElementById("contract-list").innerHTML=list.length?list.map(contractCard).join(""):'<div class="loading">No contract references loaded.</div>';}
+function renderContracts(){
+  const qualified=new Set(((research&&research.candidates)||[]).filter(c=>c.qualified).map(c=>c.ticker));
+  const list=((market&&market.contractProfiles)||[])
+    .filter(c=>qualified.has(c.ticker))
+    .sort((a,b)=>{
+      const ca=companyFor(a.ticker),cb=companyFor(b.ticker);
+      return (cb&&cb.score||0)-(ca&&ca.score||0);
+    });
+  document.getElementById("contract-list").innerHTML=list.length
+    ?list.map(contractCard).join("")
+    :'<div class="loading">No qualified-stock contract references are available yet.</div>';
+}
 function renderAll(){renderDesk();renderContracts();}
 
 async function load(){
