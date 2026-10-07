@@ -28,14 +28,45 @@ function readinessLabel(value){const tone=readinessTone(value);return tone==="go
 function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
 function formatTime(value){const time=new Date(value||"");return Number.isNaN(time.getTime())?"Timestamp unrecorded":dateFmt.format(time);}
 function sourceMode(mode,time){const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="DATABASE SNAPSHOT"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=formatTime(time);}
-function renderFreshness(){document.getElementById("market-saved-time").textContent=formatTime(marketSavedAt||market&&market.scanCompletedAt);document.getElementById("research-saved-time").textContent=formatTime(researchSavedAt||research&&research.scanCompletedAt);document.getElementById("price-cutoff").textContent=market&&market.marketAsOf?market.marketAsOf:"Price cutoff unverified";const observed=Date.parse(market&&market.market&&market.market.spy&&market.market.spy.observedAt||"");const age=Number.isFinite(observed)?Math.max(0,Math.floor((Date.now()-observed)/60000)):null;document.getElementById("feed-note").textContent=(age===null?"Price observation time is unverified. ":"Prices were observed "+age+" minutes ago. ")+"Saved research snapshots; prices and option references may be delayed. A new upload does not make the quotes live.";}
+function renderFreshness(){
+  document.getElementById("market-saved-time").textContent=formatTime(marketSavedAt||market&&market.scanCompletedAt);
+  document.getElementById("research-saved-time").textContent=formatTime(researchSavedAt||research&&research.scanCompletedAt);
+  const cutoff=document.getElementById("price-cutoff"),note=document.getElementById("feed-note");
+  const savedCutoff=market&&market.marketAsOf?market.marketAsOf:"Price cutoff unverified";
+  const owner=typeof window!=="undefined"?window.leapsOwnerPriceState:null;
+  if(owner?.active){
+    document.getElementById("data-mode").textContent="OWNER ALPACA "+String(owner.feed||"IEX").toUpperCase();
+    document.getElementById("data-mode").style.color="var(--green)";
+    document.getElementById("fresh-time").textContent=formatTime(owner.asOf);
+    cutoff.textContent="Owner Alpaca "+String(owner.feed||"IEX").toUpperCase()+" response "+formatTime(owner.asOf)+". Saved public cutoff: "+savedCutoff;
+    note.textContent="Private owner quotes update qualified-stock prices, SPY and QQQ. VIX, market regime, fundamentals and option references remain on the latest published snapshot; individual trade timestamps may differ.";
+    return;
+  }
+  sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
+  cutoff.textContent=savedCutoff;
+  const observed=Date.parse(market&&market.market&&market.market.spy&&market.market.spy.observedAt||"");
+  const age=Number.isFinite(observed)?Math.max(0,Math.floor((Date.now()-observed)/60000)):null;
+  note.textContent=(age===null?"Price observation time is unverified. ":"Prices were observed "+age+" minutes ago. ")+"Saved research snapshots; prices and option references may be delayed. A new upload does not make the quotes live.";
+}
+function ownerQuoteFor(t){
+  if(typeof window==="undefined"||!window.leapsOwnerPriceState?.active)return null;
+  const q=window.leapsOwnerQuotes?.[t];
+  return Number.isFinite(q?.price)&&q.price>0?q:null;
+}
 function marketStat(label,x){
+  const live=(label==="SPY"||label==="QQQ")?ownerQuoteFor(label):null;
+  if(live)x={...(x||{}),close:live.price,dayChangePct:Number.isFinite(live.dayChangePct)?live.dayChangePct:null};
+  const source=live?" · ALPACA IEX":label==="VIX"&&typeof window!=="undefined"&&window.leapsOwnerPriceState?.active?" · SAVED":"";
   if(!x||!Number.isFinite(label==="VIX"?x.value:x.close)||(label==="VIX"?x.value:x.close)<=0)return'<div class="market-stat"><span>'+label+'</span><b>—</b><small class="flat">Unavailable</small></div>';
   const val=label==="VIX"?Number(x.value).toFixed(2):money.format(x.close);
   const move=Number.isFinite(x.dayChangePct)?x.dayChangePct:null;
-  return'<div class="market-stat"><span>'+label+'</span><b>'+val+'</b><small class="'+(move>0?"up":move<0?"down":"flat")+'">'+fmtMove(move)+'</small></div>';
+  return'<div class="market-stat"><span>'+label+source+'</span><b>'+val+'</b><small class="'+(move>0?"up":move<0?"down":"flat")+'">'+fmtMove(move)+'</small></div>';
 }
-function planFor(t){return market&&market.candidatePlans?market.candidatePlans.find(x=>x.ticker===t):null}
+function planFor(t){
+  const base=market&&market.candidatePlans?market.candidatePlans.find(x=>x.ticker===t):null;
+  const q=ownerQuoteFor(t);
+  return base&&q?{...base,price:q.price,todayPct:Number.isFinite(q.dayChangePct)?q.dayChangePct:base.todayPct,quoteObservedAt:q.observedAt,livePriceSource:"ALPACA "+String(q.feed||"IEX").toUpperCase()}:base;
+}
 function contractDelta(c){return Number.isFinite(c.delta)?c.delta:Number.isFinite(c.modeledDelta)?c.modeledDelta:null;}
 function contractSpread(c){
   if(!Number.isFinite(c.bid)||!Number.isFinite(c.ask)||c.bid<=0||c.ask<c.bid)return null;
@@ -187,19 +218,21 @@ function matchesFilter(c){
   if(activeFilter==="tier1")return Number(c.tier)===1;
   if(activeFilter==="tier2")return Number(c.tier)===2;
   if(activeFilter==="tier3")return Number(c.tier)===3;
-  if(activeFilter==="support")return a.includes("NEAR SUPPORT")||actionTone(a)==="buy";
-  if(activeFilter==="wait")return a.includes("WAIT")||a.includes("DO NOT");
+  if(activeFilter==="support"){const s=supportTiming(p);return s.state==="in"||s.state==="near";}
+  if(activeFilter==="wait")return entryTimingStatus(p).label.includes("WAIT")||a.includes("DO NOT");
   if(activeFilter==="contract")return Boolean(contractFor(c.ticker));
   return true;
 }
 function todayPriority(c){
-  const a=normalizedStatus((planFor(c.ticker)||{}).action);
+  const p=planFor(c.ticker)||{},a=normalizedStatus(p.action),support=supportTiming(p),entry=entryTimingStatus(p);
   if(actionTone(a)==="buy")return 0;
-  if(a.includes("NEAR SUPPORT"))return 1;
-  if(a.includes("WAIT FOR REVERSAL"))return 2;
-  if(a==="WATCH")return 3;
-  if(a.includes("DO NOT"))return 5;
-  return 4;
+  if(entry.label==="RED-DAY ENTRY WATCH")return 1;
+  if(support.state==="in")return 2;
+  if(support.state==="near")return 3;
+  if(a.includes("WAIT FOR REVERSAL"))return 4;
+  if(a==="WATCH")return 5;
+  if(a.includes("DO NOT"))return 7;
+  return 6;
 }
 function supportTimingBadge(p){
   const s=supportTiming(p),e=entryTimingStatus(p);
@@ -216,12 +249,13 @@ function setupCard(c,compact){
   const sector='<div class="sector-line"><span>'+safe(c.sector||"Sector N/A")+'</span><b>'+safe(c.industry||"")+'</b></div>';
   const sectorDetail=(c.sectorLongTermGood||c.sectorLongTermRisk)?'<div class="sector-box"><div><b>Sector tailwinds</b><p>'+safe((c.sectorLongTermGood||[]).join(" · "))+'</p></div><div><b>Sector risks</b><p>'+safe((c.sectorLongTermRisk||[]).join(" · "))+'</p></div></div>':"";
   const price=(p.price!=null?p.price:c.price);
+  const drawdown=ownerQuoteFor(c.ticker)&&Number.isFinite(c.high)&&c.high>0?Math.max(0,(c.high-price)/c.high):c.drawdown;
   const rev=c.quarter&&c.quarter.revg&&c.quarter.revg[0]!=null?(Number(c.quarter.revg[0])>=0?"+":"")+Number(c.quarter.revg[0]).toFixed(1)+"%":"—";
   const contractSummary=contract?'<span class="contract-ready">VERIFIED ELIGIBLE</span>':historical?'<span class="contract-reference-only">HISTORICAL / VERIFY</span>':'<span class="contract-none">NO VERIFIED CONTRACT</span>';
   const optionBody=contract?contractCard(contract,true):'<section class="contract-pending"><p>No current contract has complete verified delta, IV, bid/ask and OI that passes the 0.60–0.75 delta / ≤5% spread rules.</p>'+(historical?'<div class="historical-reference"><b>Saved reference only</b><span>'+safe(historical.reference||"Historical chain reference")+'</span><small>'+safe(historical.sourceAsOf||"Timestamp unavailable")+'</small></div>':"")+'</section>';
   return '<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'" data-ticker="'+safe(c.ticker)+'">'+
     '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span>'+rankMovement(c)+'</div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">Tier '+safe(c.tier||"—")+' · '+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
-    '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b><small>52W high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest quarter</small></div></div>'+
+    '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(drawdown)+'</b><small>52W high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest quarter</small></div></div>'+
     qualificationGates(c)+rankMovementDetail(c)+supportTimingBadge(p)+
     '<p class="business-summary"><b>'+safe(c.netSummary)+'</b> · FCF '+safe(c.fcfSummary)+'<br>Technical: '+safe(p.technicalState||c.state||"Unverified")+' · '+contractSummary+'</p>'+
     '<div class="card-section-stack">'+
@@ -316,11 +350,12 @@ function renderRobinhoodAlerts(allCards){
 }
 function renderDesk(){
   const state=market&&market.marketState?market.marketState:"UNAVAILABLE";
+  const ownerLive=typeof window!=="undefined"&&window.leapsOwnerPriceState?.active===true;
   document.getElementById("market-state").textContent=state;
   const trig=document.getElementById("trigger-pill");
-  trig.textContent=market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";
+  trig.textContent=ownerLive?"PUBLISHED SCAN":market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";
   trig.className="state-pill "+(market&&market.triggered?"hot":"good");
-  document.getElementById("market-message").textContent=market&&market.message?market.message:"No current market message.";
+  document.getElementById("market-message").textContent=(ownerLive?"Saved market-regime assessment; owner prices below refresh separately. ":"")+(market&&market.message?market.message:"No current market message.");
   document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
 
   const allCards=((research&&research.candidates)||[]).filter(c=>c.qualified).sort((a,b)=>{
@@ -342,7 +377,7 @@ function renderDesk(){
   set("decision-buy",buyCount);set("decision-support",supportCount);set("decision-wait",waitCount);set("decision-stop",stopCount);
   const today=allCards.slice().sort((a,b)=>todayPriority(a)-todayPriority(b)||a.rank-b.rank).slice(0,3);
   const topToday=document.getElementById("decision-top3");
-  if(topToday)topToday.innerHTML=today.map(c=>'<span><b>#'+safe(c.rank)+' '+safe(c.ticker)+'</b><small>'+safe((planFor(c.ticker)||{}).action||"RESEARCH ONLY")+'</small></span>').join("");
+  if(topToday)topToday.innerHTML=today.map(c=>{const p=planFor(c.ticker)||{};return '<span><b>#'+safe(c.rank)+' '+safe(c.ticker)+'</b><small>'+safe(ownerLive?entryTimingStatus(p).label:p.action||"RESEARCH ONLY")+'</small></span>';}).join("");
 
   const f=(research&&research.researchFunnel)||{};
   set("coverage-universe",f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString());
@@ -429,3 +464,4 @@ document.addEventListener("click",e=>{
   activeFilter=b.dataset.filter||"all";
   renderAll();
 });
+

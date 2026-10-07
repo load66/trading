@@ -18,34 +18,41 @@ const localStorage={
   removeItem:key=>delete storage[key]
 };
 storage['leaps-owner-auth']=JSON.stringify({access_token:'test-token',refresh_token:'test-refresh',expires_at:Math.floor(Date.now()/1000)+3600});
-let fail=false,holdQuote=false,releaseQuote,unauthorizedNext=false,rendered=[];
-const window={
-  planFor:()=>({price:210,todayPct:-1,entry1:'$200–205'}),
-  renderAll:()=>rendered.push(window.planFor('ADSK').price),
-  addEventListener:(name,fn)=>listeners[name]=fn
-};
+let fail=false,holdQuote=false,releaseQuote,unauthorizedNext=false,rendered=[],requested=[];
+const window={addEventListener:(name,fn)=>listeners[name]=fn};
+const context=vm.createContext({window,document,localStorage,Date,Number,Object,String,Boolean,Intl,console});
+const appSource=fs.readFileSync(path.join(__dirname,'../dist/app.js'),'utf8').split('load().catch(')[0];
+vm.runInContext(appSource,context);
+vm.runInContext('market={candidatePlans:[{ticker:"ADSK",price:210,todayPct:-1,entry1:"$200–205",add2:"$180–185",finalAdd:"$160–165"}]}',context);
+window.renderAll=()=>rendered.push(vm.runInContext('planFor("ADSK").price',context));
 const fetch=async url=>{
   if(url.includes('leap_research_snapshots'))return {ok:true,json:async()=>[{payload:{candidates:[{ticker:'ADSK',qualified:true}]}}]};
   if(url.includes('/quotes')){
+    requested.push(url);
     if(fail)throw new Error('Network unavailable');
     if(unauthorizedNext){unauthorizedNext=false;return {ok:false,status:401,json:async()=>({error:'Unauthorized'})};}
     if(holdQuote)await new Promise(resolve=>{releaseQuote=resolve;});
-    return {ok:true,json:async()=>({feed:'iex',asOf:new Date().toISOString(),quotes:{ADSK:{price:200,dayChangePct:-3,observedAt:new Date().toISOString()}}})};
+    return {ok:true,json:async()=>({feed:'iex',asOf:new Date().toISOString(),quotes:{ADSK:{price:200,dayChangePct:-3,observedAt:new Date().toISOString()},SPY:{price:500,dayChangePct:-2,observedAt:new Date().toISOString()},QQQ:{price:400,dayChangePct:-3,observedAt:new Date().toISOString()}}})};
   }
   throw new Error('Unexpected request: '+url);
 };
 let statusTick;
-vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../dist/alpaca-live.js'),'utf8'),{
-  window,document,localStorage,fetch,Date,Number,Object,String,Boolean,
-  setTimeout:()=>1,clearTimeout:()=>{},setInterval:fn=>{statusTick=fn;}
-});
+Object.assign(context,{fetch,setTimeout:()=>1,clearTimeout:()=>{},setInterval:fn=>{statusTick=fn;}});
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../dist/alpaca-live.js'),'utf8'),context);
 const drain=async()=>{for(let i=0;i<8;i++)await new Promise(setImmediate);};
 (async()=>{
   await drain();
   assert.equal(rendered.at(-1),200);
+  assert.ok(requested[0].includes('ADSK')&&requested[0].includes('SPY')&&requested[0].includes('QQQ'),'Owner batch includes qualified stocks and market ETFs');
+  assert.equal(vm.runInContext('supportTiming(planFor("ADSK")).state',context),'in');
+  assert.equal(vm.runInContext('supportTiming({price:225.14,entry1:"$221–225",add2:"$198–203",finalAdd:"$154–160"}).state',context),'near');
+  assert.equal(vm.runInContext('supportTiming({price:224.61,entry1:"$221–225",add2:"$198–203",finalAdd:"$154–160"}).state',context),'in');
+  assert.ok(vm.runInContext('marketStat("SPY",{close:190,dayChangePct:-1})',context).includes('$500.00'));
+  assert.ok(vm.runInContext('marketStat("VIX",{value:16,dayChangePct:1})',context).includes('VIX · SAVED'));
   assert.match(elements['alpaca-live-status'].textContent,/ALPACA IEX LIVE/);
   fail=true;listeners.focus();await drain();
   assert.equal(rendered.at(-1),210,'Failed poll restores scheduled plan');
+  assert.ok(vm.runInContext('marketStat("SPY",{close:190,dayChangePct:-1})',context).includes('$190.00'));
   assert.match(elements['alpaca-live-status'].textContent,/LIVE PRICE ERROR/);
   statusTick();
   assert.match(elements['alpaca-live-status'].textContent,/LIVE PRICE ERROR/,'Status timer must preserve error');

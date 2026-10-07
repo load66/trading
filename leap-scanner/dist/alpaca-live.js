@@ -4,8 +4,9 @@
   const LIVE_API="https://leaps-alpaca-live-production.up.railway.app";
   const STORAGE_KEY="leaps-owner-auth";
   const POLL_MS=15000;
-  let session=null, timer=null, liveQuotes={}, feed="iex", lastAsOf=null, liveState="off", liveError="";
-  const originalPlanFor=window.planFor;
+  let session=null, timer=null, liveQuotes={}, feed="iex", lastAsOf=null, liveState="off", liveError="", pollSerial=0;
+  window.leapsOwnerQuotes={};
+  window.leapsOwnerPriceState={active:false};
 
   function readSession(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");}catch{return null;}}
   function saveSession(s){
@@ -15,6 +16,7 @@
     return session;
   }
   function clearSession(){
+    pollSerial++;
     session=null;
     localStorage.removeItem(STORAGE_KEY);
     clearQuotes();
@@ -24,11 +26,12 @@
     updateUi();
   }
   function clearQuotes(){
-    if(Object.keys(liveQuotes).length){
-      liveQuotes={};
-      if(typeof window.renderAll==="function")window.renderAll();
-    }
+    const hadQuotes=Object.keys(liveQuotes).length>0;
+    liveQuotes={};
+    window.leapsOwnerQuotes={};
+    window.leapsOwnerPriceState={active:false};
     lastAsOf=null;
+    if(hadQuotes&&typeof window.renderAll==="function")window.renderAll();
   }
   function liveUnavailable(message){
     clearQuotes();
@@ -57,16 +60,8 @@
     const r=await fetch(SB_URL+"/rest/v1/leap_research_snapshots?select=payload&order=snapshot_time.desc&limit=1",{headers:{apikey:SB_KEY},cache:"no-store"});
     if(!r.ok)throw new Error("Could not load qualified list");
     const rows=await r.json();
-    return ((rows[0]?.payload?.candidates)||[]).filter(c=>c.qualified).map(c=>c.ticker).filter(Boolean);
-  }
-  function mergedPlan(ticker){
-    const base=typeof originalPlanFor==="function"?originalPlanFor(ticker):null;
-    const q=liveQuotes[ticker];
-    if(!base||!q||!Number.isFinite(q.price))return base;
-    return {...base,price:q.price,todayPct:Number.isFinite(q.dayChangePct)?q.dayChangePct:base.todayPct,quoteObservedAt:q.observedAt||lastAsOf,livePriceSource:"ALPACA "+String(q.feed||feed).toUpperCase()};
-  }
-  if(typeof originalPlanFor==="function"){
-    window.planFor=mergedPlan;
+    const qualified=((rows[0]?.payload?.candidates)||[]).filter(c=>c.qualified).map(c=>c.ticker).filter(Boolean);
+    return [...new Set([...qualified,"SPY","QQQ"])];
   }
   function decorate(){
     document.querySelectorAll(".setup-card[data-ticker]").forEach(card=>{
@@ -81,12 +76,14 @@
       }
     });
   }
-  function applyQuotes(payload){
+  function applyQuotes(payload,required){
     const quotes=payload?.quotes||{};
-    if(!Object.values(quotes).some(q=>Number.isFinite(q?.price)))throw new Error("No current quotes returned");
+    if(required.some(symbol=>!Number.isFinite(quotes[symbol]?.price)||quotes[symbol].price<=0))throw new Error("Incomplete owner quotes; showing saved snapshot");
     liveQuotes=quotes;
     feed=payload?.feed||feed;
     lastAsOf=payload?.asOf||new Date().toISOString();
+    window.leapsOwnerQuotes=quotes;
+    window.leapsOwnerPriceState={active:true,feed,asOf:lastAsOf};
     liveState="live";
     liveError="";
     if(typeof window.renderAll==="function")window.renderAll();
@@ -95,21 +92,27 @@
   }
   async function poll(){
     if(document.visibilityState==="hidden"||!session?.access_token)return;
+    const serial=++pollSerial;
     try{
       session=await restoreSession();
-      if(!session)return;
+      if(!session||serial!==pollSerial)return;
       const symbols=await qualifiedSymbols();
-      if(!session?.access_token||document.visibilityState==="hidden")return;
+      if(serial!==pollSerial||!session?.access_token||document.visibilityState==="hidden")return;
       if(!symbols.length){clearQuotes();liveState="ready";updateUi();return;}
       const requestToken=session.access_token;
-      const r=await fetch(LIVE_API+"/quotes?symbols="+encodeURIComponent(symbols.join(",")),{headers:{Authorization:"Bearer "+requestToken},cache:"no-store"});
-      const payload=await r.json().catch(()=>({}));
-      if(session?.access_token!==requestToken||document.visibilityState==="hidden")return;
-      if(r.status===401){clearSession();return;}
-      if(!r.ok)throw new Error(payload.error||"Live quote request failed");
-      applyQuotes(payload);
+      const batches=[];
+      for(let i=0;i<symbols.length;i+=50)batches.push(symbols.slice(i,i+50));
+      const responses=await Promise.all(batches.map(async batch=>{
+        const r=await fetch(LIVE_API+"/quotes?symbols="+encodeURIComponent(batch.join(",")),{headers:{Authorization:"Bearer "+requestToken},cache:"no-store"});
+        return {status:r.status,ok:r.ok,payload:await r.json().catch(()=>({}))};
+      }));
+      if(serial!==pollSerial||session?.access_token!==requestToken||document.visibilityState==="hidden")return;
+      if(responses.some(r=>r.status===401)){clearSession();return;}
+      const failed=responses.find(r=>!r.ok);
+      if(failed)throw new Error(failed.payload.error||"Live quote request failed");
+      applyQuotes({quotes:Object.assign({},...responses.map(r=>r.payload.quotes||{})),feed:responses[0]?.payload.feed,asOf:responses[0]?.payload.asOf},symbols);
     }catch(e){
-      if(session?.access_token)liveUnavailable(e?.message||"Live price unavailable");
+      if(serial===pollSerial&&session?.access_token)liveUnavailable(e?.message||"Live price unavailable");
     }
   }
   function stopPolling(){if(timer)clearTimeout(timer);timer=null;}
@@ -148,7 +151,7 @@
         ?"Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward."
         :liveState==="error"
           ?"Live quotes are unavailable. Showing the saved market snapshot and retrying automatically."
-          :"Owner Live Mode is active. Qualified-stock prices refresh automatically about every 15 seconds and support/entry status recalculates with no manual action.";
+          :"Owner Live Mode is active. Qualified-stock prices, SPY and QQQ refresh about every 15 seconds; support and entry status recalculate automatically. VIX, research and option references use the published snapshot.";
     }
     if(signed&&liveState==="live"&&lastAsOf&&Date.now()-Date.parse(lastAsOf)>45000){
       liveUnavailable("Quotes are stale; showing scheduled snapshot");
@@ -192,6 +195,7 @@
     document.addEventListener("visibilitychange",()=>{
       if(!session)return;
       if(document.visibilityState==="hidden"){
+        pollSerial++;
         clearQuotes();
         liveState="ready";
         updateUi();
