@@ -35,3 +35,14 @@ Select a shortlisted candidate and tap Share image. Supported phones share the a
 The prominent Share top 15 image button exports one PNG containing the first 15 ranked research stocks. It includes revenue growth, profit growth, high-reference drawdown, prices, catalysts, shortlist/watch labels and the original result upload timestamp. Seven additional names remain watchlist entries; they are not reclassified as strict shortlist passes.
 
 Regenerate this combined report with `python3 scripts/render_top15.py` after verifying and updating its source data and compact catalyst/exception descriptions. The asset is `dist/cards/top-15-research-2026-10-07.png`. The individual stock sharing control is labeled Share this stock.
+
+
+## Fresh strict scan — October 7, 2026
+
+Research began 06:54:40 UTC and completed 07:11:33 UTC (02:11:33 CDT). Prices are October 6 closes. The strict JSON/CSV and HTML report contain seven company research candidates, one excluded early valuation watch, and 12 rejections. Earlier scan files are retained as historical artifacts and are not the current screen.
+
+Massive daily adjusted price history supplied moving averages and support references; AlphaStocks supplied quote cross-checks. Current company filings override conflicting legacy/secondary calculations. No live option-chain snapshot was entitled; all scores receive 0/5 option-quality points. Contract spreads, IV, delta, open interest and liquidity remain unverified.
+
+Update `scripts/build_strict_scan.py` only after a fresh manual financial audit; `render_strict.py` renders the current data to one combined PNG, eight individual cards and a ZIP. `strict_technicals.json` is a dated snapshot, not a data feed. Do not rerun the one-time UI migration script on an already migrated checkout.
+
+Share tests cover cached file preparation, synchronous native-share invocation, cancellation, fallback preview and full-list selection. No physical phone/browser share-sheet test was available. Mobile CSS retains 44px+ controls and readable horizontal scrolling for quarterly evidence.
