@@ -95,27 +95,53 @@ function cashFlowPanel(c){
   const trend=yoy===null?"UNVERIFIED":yoy>0.05?"IMPROVING":yoy<-.05?"WEAKENING":"STABLE";
   return '<div class="fcf-panel"><div class="mini-section-head"><h4>Cash-flow quality</h4><span class="'+(trend==="WEAKENING"?"bad-text":trend==="IMPROVING"?"good-text":"")+'">'+trend+'</span></div>'+
     '<div class="fcf-grid"><div><span>LATEST FCF</span><b>'+(latest===null?"—":money.format(latest)+"M")+'</b></div><div><span>YOY CHANGE</span><b>'+(yoy===null?"—":fmtMove(yoy*100))+'</b></div><div><span>TTM FCF</span><b>'+(ttm===null?"—":money.format(ttm)+"M")+'</b></div><div><span>FCF MARGIN</span><b>'+(margin===null?"—":pct(margin))+'</b></div></div>'+
-    '<p>'+safe(c.cash||c.fcfSummary||"Cash-flow commentary unavailable.")+'</p></div>';
+    '<p>'+safe(c.cash||c.fcfSummary||"Cash-flow commentary unavailable.")+'</p>'+
+    '<p class="fcf-guidance"><b>FCF guidance:</b> '+safe(c.fcfGuidance||c.fcfGuidanceTrend||"Not separately stored in this snapshot; verify in the latest company guidance.")+'</p></div>';
 }
 function earningsQuality(c){
-  const q=c.quarter||{},periods=(q.periods||[]).slice(0,4),eps=(q.eps||c.eps||[]),nyoy=q.nyoy||[];
-  const surprises=Array.isArray(c.earningsSurprises)?c.earningsSurprises:[];
+  const q=c.quarter||{},periods=(q.periods||[]).slice(0,4),eps=(q.eps||c.eps||[]),surprises=Array.isArray(c.earningsSurprises)?c.earningsSurprises:[];
+  const resultBadge=v=>v?'<span class="surprise '+safe(String(v).toLowerCase().replace(/[^a-z]+/g,"-"))+'">'+safe(v)+'</span>':'<span class="surprise neutral">UNVERIFIED</span>';
   const rows=periods.map((period,i)=>{
-    const x=surprises[i]||{},cons=Number.isFinite(x.consensus)?money.format(x.consensus):"—";
-    const actual=Number.isFinite(eps[i])?money.format(eps[i]):"—";
-    const result=x.result?'<span class="surprise '+safe(String(x.result).toLowerCase())+'">'+safe(x.result)+'</span>':'<span class="surprise neutral">NOT STORED</span>';
-    return '<tr><th scope="row">'+safe(period)+'</th><td>'+actual+'</td><td>'+(Number.isFinite(nyoy[i])?fmtMove(nyoy[i]):"—")+'</td><td>'+cons+'</td><td>'+result+'</td></tr>';
+    const x=surprises[i]||{};
+    const gaap=Number.isFinite(eps[i])?money.format(eps[i]):"—";
+    const adj=Number.isFinite(x.adjustedEps)?money.format(x.adjustedEps):"—";
+    const epsConsensus=Number.isFinite(x.epsConsensus)?money.format(x.epsConsensus):(Number.isFinite(x.consensus)?money.format(x.consensus):"—");
+    const epsResult=x.epsResult||x.result||null;
+    const basis=String(x.epsBasis||x.basis||"").toUpperCase();
+    const epsCell=(epsConsensus!=="—"?'<b>'+epsConsensus+'</b><small>'+(basis?basis+" CONSENSUS":"BASIS UNVERIFIED")+'</small>':"—")+(epsResult?resultBadge(epsResult):"");
+    const revActual=Number.isFinite(x.revenueActual)?money.format(x.revenueActual)+"M":(Array.isArray(q.revenues)&&Number.isFinite(q.revenues[i])?money.format(q.revenues[i])+"M":"—");
+    const revConsensus=Number.isFinite(x.revenueConsensus)?money.format(x.revenueConsensus)+"M":"—";
+    const revCell='<b>'+revActual+'</b><small>vs '+revConsensus+'</small>'+resultBadge(x.revenueResult||null);
+    return '<tr><th scope="row">'+safe(period)+'</th><td>'+gaap+'</td><td>'+adj+'</td><td>'+epsCell+'</td><td>'+revCell+'</td></tr>';
   }).join("");
-  return '<div class="earnings-quality"><div class="mini-section-head"><h4>Earnings quality & surprise</h4><span>GAAP FIRST</span></div><div class="table-scroll"><table class="fundamental-table"><thead><tr><th>Quarter</th><th>GAAP EPS</th><th>Net income YoY</th><th>Consensus*</th><th>Result*</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="history-note">*Consensus surprise is shown only when the research snapshot explicitly stores the estimate basis. GAAP EPS is never compared against an adjusted-EPS consensus.</p></div>';
+  return '<div class="earnings-quality"><div class="mini-section-head"><h4>Earnings quality & surprise</h4><span>GAAP FIRST</span></div><div class="table-scroll"><table class="fundamental-table earnings-table"><thead><tr><th>Quarter</th><th>GAAP EPS</th><th>Adjusted EPS*</th><th>EPS vs estimate*</th><th>Revenue vs estimate*</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="history-note">*Adjusted EPS and consensus comparisons appear only when the snapshot stores the estimate basis. Never compare GAAP EPS against an adjusted-EPS consensus. Missing estimate data stays UNVERIFIED rather than being inferred.</p></div>';
+}
+function previousCandidate(c){
+  return previousResearch&&Array.isArray(previousResearch.candidates)?previousResearch.candidates.find(x=>x.ticker===c.ticker&&x.qualified):null;
 }
 function rankMovement(c){
+  const p=previousCandidate(c);
   if(!previousResearch||!Array.isArray(previousResearch.candidates))return '<span class="rank-move flat">FIRST</span>';
-  const p=previousResearch.candidates.find(x=>x.ticker===c.ticker&&x.qualified);
   if(!p||!Number.isFinite(p.rank))return '<span class="rank-move new">NEW</span>';
   const d=p.rank-c.rank;
   if(d>0)return '<span class="rank-move up">↑'+d+'</span>';
   if(d<0)return '<span class="rank-move down">↓'+Math.abs(d)+'</span>';
   return '<span class="rank-move flat">—</span>';
+}
+function rankMovementDetail(c){
+  const p=previousCandidate(c);
+  if(!p||!Number.isFinite(p.rank)||!Number.isFinite(c.rank))return "";
+  const d=p.rank-c.rank,changes=[],current=c.scoreBreakdown||{},prior=p.scoreBreakdown||{};
+  Object.keys(current).forEach(k=>{
+    if(Number.isFinite(current[k])&&Number.isFinite(prior[k])){
+      const delta=current[k]-prior[k];
+      if(delta)changes.push({k,delta,abs:Math.abs(delta)});
+    }
+  });
+  changes.sort((a,b)=>b.abs-a.abs||a.k.localeCompare(b.k));
+  const factors=changes.slice(0,2).map(x=>x.k.replace(" / Drawdown","").replace(" / Macro Resilience","")+" "+(x.delta>0?"+":"")+x.delta).join(" · ");
+  const move=d>0?"Rank improved "+d:d<0?"Rank fell "+Math.abs(d):"Rank unchanged";
+  return '<div class="rank-context">'+safe(move)+(factors?" · "+safe(factors):"")+'</div>';
 }
 function matchesFilter(c){
   const p=planFor(c.ticker)||{},a=normalizedStatus(p.action);
@@ -152,7 +178,7 @@ function setupCard(c,compact){
   return '<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'" data-ticker="'+safe(c.ticker)+'">'+
     '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span>'+rankMovement(c)+'</div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">Tier '+safe(c.tier||"—")+' · '+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
     '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b><small>52W high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest quarter</small></div></div>'+
-    qualificationGates(c)+
+    qualificationGates(c)+rankMovementDetail(c)+
     '<p class="business-summary"><b>'+safe(c.netSummary)+'</b> · FCF '+safe(c.fcfSummary)+'<br>Technical: '+safe(p.technicalState||c.state||"Unverified")+' · '+contractSummary+'</p>'+
     '<div class="card-section-stack">'+
       '<details class="card-more" data-detail-key="entry:'+safe(c.ticker)+'"><summary>Entry plan & support <span>⌄</span></summary><div class="deep-detail">'+ladder+reasons+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+'</div></details>'+
