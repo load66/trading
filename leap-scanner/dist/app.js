@@ -35,11 +35,11 @@ function renderFreshness(){
   const savedCutoff=market&&market.marketAsOf?market.marketAsOf:"Price cutoff unverified";
   const owner=typeof window!=="undefined"?window.leapsOwnerPriceState:null;
   if(owner?.active){
-    document.getElementById("data-mode").textContent="OWNER ALPACA "+String(owner.feed||"IEX").toUpperCase();
+    document.getElementById("data-mode").textContent="OWNER ALPACA "+String(owner.feed||"IEX").toUpperCase()+(owner.count<owner.total?" · "+owner.count+"/"+owner.total:"");
     document.getElementById("data-mode").style.color="var(--green)";
     document.getElementById("fresh-time").textContent=formatTime(owner.asOf);
     cutoff.textContent="Owner Alpaca "+String(owner.feed||"IEX").toUpperCase()+" response "+formatTime(owner.asOf)+". Saved public cutoff: "+savedCutoff;
-    note.textContent="Private owner quotes update qualified-stock prices, SPY and QQQ. VIX, market regime, fundamentals and option references remain on the latest published snapshot; individual trade timestamps may differ.";
+    note.textContent="Private owner quotes update "+owner.count+" of "+owner.total+" qualified stocks/ETFs with recent trades. Any remaining prices, VIX, market regime, fundamentals and option references use the latest published snapshot.";
     return;
   }
   sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);

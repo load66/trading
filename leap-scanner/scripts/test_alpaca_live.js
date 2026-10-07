@@ -18,7 +18,7 @@ const localStorage={
   removeItem:key=>delete storage[key]
 };
 storage['leaps-owner-auth']=JSON.stringify({access_token:'test-token',refresh_token:'test-refresh',expires_at:Math.floor(Date.now()/1000)+3600});
-let fail=false,holdQuote=false,releaseQuote,unauthorizedNext=false,rendered=[],requested=[];
+let fail=false,holdQuote=false,releaseQuote,unauthorizedNext=false,staleQqq=false,rendered=[],requested=[];
 const window={addEventListener:(name,fn)=>listeners[name]=fn};
 const context=vm.createContext({window,document,localStorage,Date,Number,Object,String,Boolean,Intl,console});
 const appSource=fs.readFileSync(path.join(__dirname,'../dist/app.js'),'utf8').split('load().catch(')[0];
@@ -32,7 +32,7 @@ const fetch=async url=>{
     if(fail)throw new Error('Network unavailable');
     if(unauthorizedNext){unauthorizedNext=false;return {ok:false,status:401,json:async()=>({error:'Unauthorized'})};}
     if(holdQuote)await new Promise(resolve=>{releaseQuote=resolve;});
-    return {ok:true,json:async()=>({feed:'iex',asOf:new Date().toISOString(),quotes:{ADSK:{price:200,dayChangePct:-3,observedAt:new Date().toISOString()},SPY:{price:500,dayChangePct:-2,observedAt:new Date().toISOString()},QQQ:{price:400,dayChangePct:-3,observedAt:new Date().toISOString()}}})};
+    return {ok:true,json:async()=>({feed:'iex',asOf:new Date().toISOString(),quotes:{ADSK:{price:200,dayChangePct:-3,observedAt:new Date().toISOString()},SPY:{price:500,dayChangePct:-2,observedAt:new Date().toISOString()},QQQ:{price:400,dayChangePct:-3,observedAt:new Date(Date.now()-(staleQqq?600000:0)).toISOString()}}})};
   }
   throw new Error('Unexpected request: '+url);
 };
@@ -50,6 +50,12 @@ const drain=async()=>{for(let i=0;i<8;i++)await new Promise(setImmediate);};
   assert.ok(vm.runInContext('marketStat("SPY",{close:190,dayChangePct:-1})',context).includes('$500.00'));
   assert.ok(vm.runInContext('marketStat("VIX",{value:16,dayChangePct:1})',context).includes('VIX · SAVED'));
   assert.match(elements['alpaca-live-status'].textContent,/ALPACA IEX LIVE/);
+  staleQqq=true;listeners.focus();await drain();
+  assert.equal(window.leapsOwnerPriceState.count,2);
+  assert.ok(vm.runInContext('marketStat("QQQ",{close:390,dayChangePct:-1})',context).includes('$390.00'),'Stale ETF trade uses saved price');
+  assert.match(elements['alpaca-live-status'].textContent,/2\/3/);
+  staleQqq=false;listeners.focus();await drain();
+  assert.equal(window.leapsOwnerPriceState.count,3);
   fail=true;listeners.focus();await drain();
   assert.equal(rendered.at(-1),210,'Failed poll restores scheduled plan');
   assert.ok(vm.runInContext('marketStat("SPY",{close:190,dayChangePct:-1})',context).includes('$190.00'));

@@ -4,6 +4,7 @@
   const LIVE_API="https://leaps-alpaca-live-production.up.railway.app";
   const STORAGE_KEY="leaps-owner-auth";
   const POLL_MS=15000;
+  const MAX_QUOTE_AGE_MS=300000;
   let session=null, timer=null, liveQuotes={}, feed="iex", lastAsOf=null, liveState="off", liveError="", pollSerial=0;
   window.leapsOwnerQuotes={};
   window.leapsOwnerPriceState={active:false};
@@ -78,12 +79,17 @@
   }
   function applyQuotes(payload,required){
     const quotes=payload?.quotes||{};
-    if(required.some(symbol=>!Number.isFinite(quotes[symbol]?.price)||quotes[symbol].price<=0))throw new Error("Incomplete owner quotes; showing saved snapshot");
-    liveQuotes=quotes;
+    const now=Date.now(),fresh={};
+    for(const symbol of required){
+      const q=quotes[symbol],age=now-Date.parse(q?.observedAt||"");
+      if(Number.isFinite(q?.price)&&q.price>0&&Number.isFinite(age)&&age>=0&&age<=MAX_QUOTE_AGE_MS)fresh[symbol]=q;
+    }
+    if(!Object.keys(fresh).length)throw new Error("No recent Alpaca trades; showing saved snapshot");
+    liveQuotes=fresh;
     feed=payload?.feed||feed;
     lastAsOf=payload?.asOf||new Date().toISOString();
-    window.leapsOwnerQuotes=quotes;
-    window.leapsOwnerPriceState={active:true,feed,asOf:lastAsOf};
+    window.leapsOwnerQuotes=fresh;
+    window.leapsOwnerPriceState={active:true,feed,asOf:lastAsOf,count:Object.keys(fresh).length,total:required.length};
     liveState="live";
     liveError="";
     if(typeof window.renderAll==="function")window.renderAll();
@@ -128,7 +134,8 @@
     status.title=mode==="error"?message:"";
     if(mode==="live"){
       const age=lastAsOf?Math.max(0,Math.round((Date.now()-Date.parse(lastAsOf))/1000)):0;
-      status.textContent="ALPACA "+String(feed).toUpperCase()+" LIVE · "+age+"s";
+      const state=window.leapsOwnerPriceState||{};
+      status.textContent="ALPACA "+String(feed).toUpperCase()+" LIVE"+(state.count<state.total?" · "+state.count+"/"+state.total:"")+" · "+age+"s";
     }else if(mode==="error")status.textContent="LIVE PRICE ERROR · SAVED SNAPSHOT";
     else if(mode==="ready")status.textContent="OWNER MODE READY";
     else status.textContent="OWNER LIVE OFF";
@@ -151,7 +158,7 @@
         ?"Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward."
         :liveState==="error"
           ?"Live quotes are unavailable. Showing the saved market snapshot and retrying automatically."
-          :"Owner Live Mode is active. Qualified-stock prices, SPY and QQQ refresh about every 15 seconds; support and entry status recalculate automatically. VIX, research and option references use the published snapshot.";
+          :"Owner Live Mode checks qualified stocks, SPY and QQQ about every 15 seconds. Recent trades update prices and support status; symbols without a recent trade stay on the saved snapshot. VIX, research and option references use the published snapshot.";
     }
     if(signed&&liveState==="live"&&lastAsOf&&Date.now()-Date.parse(lastAsOf)>45000){
       liveUnavailable("Quotes are stale; showing scheduled snapshot");
