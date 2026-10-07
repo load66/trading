@@ -29,3 +29,9 @@ The GitHub copy is in the isolated `leap-scanner/` directory of `load66/trading`
 Select a shortlisted candidate and tap Share image. Supported phones share the actual PNG file; on iPhone, select Save Image in the share sheet. Browsers without file sharing show a full-size image preview with save instructions and a PNG download. Cancellation does not trigger a download. Images are prepared before the tap so native sharing retains user activation.
 
 `dist/data/scan-metadata.json` separates research completion, verified results upload, price cutoff and app update times. Original scan completion time was not recorded and remains null. Times display in America/Chicago with seconds and the CDT/CST designation. For future scans, record actual UTC scan start/completion times at those events; never infer scan time from a UI or app deployment. Set the results upload time from its verified publication event. Feature-only updates must preserve the previous research completion, results upload and price cutoff.
+
+## Share the top 15 as one image
+
+The prominent Share top 15 image button exports one PNG containing the first 15 ranked research stocks. It includes revenue growth, profit growth, high-reference drawdown, prices, catalysts, shortlist/watch labels and the original result upload timestamp. Seven additional names remain watchlist entries; they are not reclassified as strict shortlist passes.
+
+Regenerate this combined report with `python3 scripts/render_top15.py` after verifying and updating its source data and compact catalyst/exception descriptions. The asset is `dist/cards/top-15-research-2026-10-07.png`. The individual stock sharing control is labeled Share this stock.

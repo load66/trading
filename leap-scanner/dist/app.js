@@ -7,9 +7,10 @@ function renderTimestamps(meta){for(const [key,id] of [['resultsUploadedAt','res
 const members=()=>scan.candidates.filter(r=>group==='shortlist'?scan.shortlist.includes(r.ticker):!scan.shortlist.includes(r.ticker));
 const cardCache=new Map();
 let sharingImage=false;
-const cardPath=ticker=>`cards/${ticker}-2026-10-07.png`;
-function shareStatus(ticker,message){if(selected===ticker){const status=document.getElementById('share-status');if(status)status.textContent=message;}}
-function updateShareButton(ticker){if(selected!==ticker)return;const button=document.querySelector('[data-share-image]');if(!button)return;const loading=cardCache.get(ticker)?.loading;button.disabled=Boolean(loading||sharingImage);button.textContent=loading?'Preparing image…':sharingImage?'Sharing image…':'Share image';}
+const cardPath=ticker=>ticker==='top15'?'cards/top-15-research-2026-10-07.png':`cards/${ticker}-2026-10-07.png`;
+const cardTitle=ticker=>ticker==='top15'?'Top 15 research stocks':`${ticker} research image`;
+function shareStatus(ticker,message){if(ticker==='top15'||selected===ticker){const status=document.getElementById(ticker==='top15'?'top15-share-status':'share-status');if(status)status.textContent=message;}}
+function updateShareButton(ticker){if(ticker!=='top15'&&selected!==ticker)return;const button=document.querySelector(ticker==='top15'?'[data-share-top15]':'[data-share-image]');if(!button)return;const loading=cardCache.get(ticker)?.loading;button.disabled=Boolean(loading||sharingImage);button.textContent=loading?'Preparing image…':sharingImage?'Sharing image…':ticker==='top15'?'Share top 15 image':'Share this stock';}
 function prepareCard(ticker){
  if(cardCache.has(ticker)){updateShareButton(ticker);return;}
  if(typeof navigator.share!=='function'||typeof navigator.canShare!=='function'||typeof File==='undefined'){cardCache.set(ticker,{file:null,loading:false});updateShareButton(ticker);return;}
@@ -19,20 +20,20 @@ function prepareCard(ticker){
 function showSavePreview(ticker){
  document.getElementById('image-preview')?.close();
  const dialog=document.createElement('dialog');dialog.id='image-preview';dialog.className='image-preview';dialog.setAttribute('aria-labelledby','image-preview-title');
- dialog.innerHTML=`<div class="preview-top"><h2 id="image-preview-title">${safe(ticker)} research image</h2><button type="button" class="preview-close">Close</button></div><p>On iPhone, touch and hold the image, then choose Save Image or Add to Photos. If those options are unavailable, open the image in Safari.</p><img src="${cardPath(ticker)}" alt="${safe(ticker)} LEAPS research card with dated financial metrics, catalyst and risk"><div class="preview-actions"><a href="${cardPath(ticker)}" download>Download PNG</a><a href="${cardPath(ticker)}" target="_blank" rel="noopener">Open image</a></div>`;
+ dialog.innerHTML=`<div class="preview-top"><h2 id="image-preview-title">${safe(cardTitle(ticker))}</h2><button type="button" class="preview-close">Close</button></div><p>On iPhone, touch and hold the image, then choose Save Image or Add to Photos. If those options are unavailable, open the image in Safari. Pinch to zoom after saving.</p><img src="${cardPath(ticker)}" alt="${safe(cardTitle(ticker))} with dated financial metrics, catalysts and research notes"><div class="preview-actions"><a href="${cardPath(ticker)}" download>Download PNG</a><a href="${cardPath(ticker)}" target="_blank" rel="noopener">Open image</a></div>`;
  dialog.querySelector('.preview-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});dialog.querySelector('img').addEventListener('error',()=>{dialog.querySelector('p').textContent='The image could not load. Close this preview and reload the page to try again.';});document.body.append(dialog);dialog.showModal();
 }
 async function shareCandidateImage(ticker){
- if(sharingImage||!scan?.shortlist.includes(ticker))return;
+ if(sharingImage||!scan||(ticker!=='top15'&&!scan.shortlist.includes(ticker)))return;
  const entry=cardCache.get(ticker);if(entry?.loading)return;
  try{
   if(!entry?.file||typeof navigator.share!=='function'||typeof navigator.canShare!=='function'||!navigator.canShare({files:[entry.file]})){showSavePreview(ticker);return;}
-  sharingImage=true;updateShareButton(ticker);
+  sharingImage=true;updateShareButton(selected);updateShareButton('top15');
   // The PNG is prepared before the tap, preserving phone user activation.
-  await navigator.share({files:[entry.file],title:`${ticker} · Leap Scanner`});
+  await navigator.share({files:[entry.file],title:`${cardTitle(ticker)} · Leap Scanner`});
   shareStatus(ticker,'Choose Save Image in the share menu to keep the card in Photos.');
- }catch(error){if(error.name==='AbortError')shareStatus(ticker,'Sharing cancelled. Tap Share image to try again.');else showSavePreview(ticker);}
- finally{sharingImage=false;updateShareButton(selected);}
+ }catch(error){if(error.name==='AbortError')shareStatus(ticker,'Sharing cancelled. Tap the share button to try again.');else showSavePreview(ticker);}
+ finally{sharingImage=false;updateShareButton(selected);updateShareButton('top15');}
 }
 function render(){
  document.querySelectorAll('[data-group]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.group===group)));
@@ -46,8 +47,9 @@ function render(){
  if(short){prepareCard(r.ticker);if(matchMedia('(max-width:760px)').matches){const actions=document.querySelector('.image-actions'),head=document.querySelector('.detail-head');if(actions&&head)head.after(actions);}}
 }
 function choose(ticker){const r=scan?.candidates.find(r=>r.ticker===ticker);if(!r)throw new Error('Unknown candidate');selected=ticker;group=scan.shortlist.includes(ticker)?'shortlist':'broader';render();return {ticker,group,price:r.price,asOf:scan.asOf,drawdown:1-r.price/r.high,catalyst:r.catalyst};}
-document.addEventListener('click',e=>{const button=e.target.closest('[data-ticker],[data-group],[data-share-image]');if(!button||!scan)return;if(button.dataset.shareImage){void shareCandidateImage(button.dataset.shareImage);return;}if(button.dataset.group){group=button.dataset.group;selected=members()[0].ticker;render();}else{choose(button.dataset.ticker);if(matchMedia('(max-width:760px)').matches)document.querySelector('.detail').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});}});
+document.addEventListener('click',e=>{const button=e.target.closest('[data-ticker],[data-group],[data-share-image],[data-share-top15]');if(!button||!scan)return;if(button.hasAttribute('data-share-top15')){void shareCandidateImage('top15');return;}if(button.dataset.shareImage){void shareCandidateImage(button.dataset.shareImage);return;}if(button.dataset.group){group=button.dataset.group;selected=members()[0].ticker;render();}else{choose(button.dataset.ticker);if(matchMedia('(max-width:760px)').matches)document.querySelector('.detail').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});}});
 document.querySelector('.tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const target=e.key==='Home'?'shortlist':e.key==='End'?'broader':group==='shortlist'?'broader':'shortlist';document.getElementById(target+'-tab').click();document.getElementById(target+'-tab').focus();});
 async function start(){try{const res=await fetch('data/scan-2026-10-07.json');if(!res.ok)throw new Error('Research file unavailable');scan=await res.json();render();const context=document.modelContext;if(context?.registerTool){const lifecycle=new AbortController();window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});try{await context.registerTool({name:'view_leap_candidate',title:'View LEAPS candidate',description:'Select a researched ticker and display its dated metrics, catalyst and risks. Does not place trades or refresh quotes.',inputSchema:{type:'object',properties:{ticker:{type:'string'}},required:['ticker'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:true},execute(input){if(!input||typeof input.ticker!=='string'||Object.keys(input).some(k=>k!=='ticker'))throw new Error('Supply one ticker string');return choose(input.ticker.toUpperCase());}},{signal:lifecycle.signal});}catch(e){console.info('Candidate tool unavailable',e.message);}}}catch(e){document.getElementById('rows').innerHTML='<tr><td colspan="4">Research could not load. Reload to try again.</td></tr>';document.getElementById('detail').innerHTML='<p class="error">Research is temporarily unavailable. The workbook and image downloads remain accessible.</p>';}}
 fetch('data/scan-metadata.json',{cache:'no-store'}).then(res=>{if(!res.ok)throw new Error('Timestamp unavailable');return res.json();}).then(renderTimestamps).catch(()=>{document.getElementById('app-update-time').textContent='Timestamp unavailable';});
 start();
+prepareCard('top15');
