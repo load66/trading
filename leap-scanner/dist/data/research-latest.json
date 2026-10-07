@@ -28,10 +28,10 @@
       "netIncome": 3138.8,
       "netGrowth": 0.2037122258015034,
       "catalyst": "Worldwide da Vinci/Ion procedures continue compounding, increasing recurring instruments, accessories and service revenue. da Vinci 5 adoption expands the installed base and can support higher utilization and recurring ecosystem revenue. Ion procedure growth expands Intuitive beyond traditional surgery into minimally invasive lung diagnostics. Digital workflow, analytics and AI-assisted capabilities can deepen hospital integration and switching costs.",
-      "window": "2026\u20132029 installed-base and procedure compounding",
+      "window": "2026–2029 installed-base and procedure compounding",
       "risk": "Premium valuation, procedure-growth deceleration, hospital budgets, product competition and tariff/refund variability.",
       "quality": "Q2 GAAP gross margin 67.8% versus 66.3%; operating margin 33.6% versus 30.5%. A $28M tariff refund helped results and must not be extrapolated.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q2 2026",
@@ -110,10 +110,10 @@
       "fcf": [
         948.4,
         808.6,
-        730.0,
+        730,
         735.6,
         560.1,
-        465.0,
+        465,
         510.6,
         458.6
       ],
@@ -164,7 +164,7 @@
         "lowerMonthlyCloses": 8,
         "weeklyHigherHighHigherLow": false,
         "weeklyMethod": "Last two confirmed one-week fractal swing highs and lows, using completed weeks only; a provisional pattern, not a discretionary chart confirmation.",
-        "previousDayLow": 402.0,
+        "previousDayLow": 402,
         "previousWeekLow": 391.39,
         "previousMonthLow": 345.25,
         "averageVolume30": 2208715.2599309334,
@@ -204,7 +204,7 @@
       "drawdown": 0.31367159038219516,
       "upsideToHigh": 0.4570284225256962,
       "leapQuality": "Good LEAP Vehicle (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "fcfTTM": 3222.6,
       "fcfGrowth": 0.6159053301910442,
       "fcfSummary": "TTM +61.6%",
@@ -331,10 +331,10 @@
       "netIncome": 1642,
       "netGrowth": 0.5743048897411314,
       "catalyst": "Direct sales and sales reorganization can retain channel economics and expand operating margins. Construction Cloud and design/manufacturing subscriptions can increase product attach and recurring revenue. MaintainX can add maintenance-software subscriptions and cross-selling, offset by integration costs. AI design/workflow features can support higher-value subscription tiers; incremental AI revenue is not separately verified.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
+      "window": "2026–2028 execution; upcoming earnings updates",
       "risk": "Construction cyclicality, MaintainX integration and AI competitive pressure; cash-growth rates are not a perpetual forecast.",
-      "quality": "Q2 FY27 GAAP operating margin 29.2% versus 25.5%; operating income $598M versus $450M. Latest revenue growth slowed to 16.1% from roughly 18\u201319%.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "quality": "Q2 FY27 GAAP operating margin 29.2% versus 25.5%; operating income $598M versus $450M. Latest revenue growth slowed to 16.1% from roughly 18–19%.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q2 2027",
@@ -412,14 +412,14 @@
         1.6
       ],
       "fcf": [
-        561.0,
-        876.0,
-        972.0,
-        430.0,
-        451.0,
-        556.0,
-        678.0,
-        199.0
+        561,
+        876,
+        972,
+        430,
+        451,
+        556,
+        678,
+        199
       ],
       "state": "BUILDING BASE",
       "macro": "Medium",
@@ -427,8 +427,8 @@
       "pfcf": 17.17,
       "evfcf": null,
       "down": "Software valuation compression, AI disruption concerns, sales-channel changes and cash-flow guidance affected by MaintainX acquisition costs. The historical 2024 cash-flow-practices investigations closed in August 2025; shareholder litigation remains a governance risk.",
-      "cash": "TTM unadjusted OCF-minus-PPE FCF $2.84B, +50.7%; latest $561M, +24.4%. Direct-sales changes affect collection timing. FY27 FCF guidance $2.725\u20132.750B includes transaction costs.",
-      "margins": "Q2 FY27 GAAP operating margin 29.2% versus 25.5%; operating income $598M versus $450M. Latest revenue growth slowed to 16.1% from roughly 18\u201319%.",
+      "cash": "TTM unadjusted OCF-minus-PPE FCF $2.84B, +50.7%; latest $561M, +24.4%. Direct-sales changes affect collection timing. FY27 FCF guidance $2.725–2.750B includes transaction costs.",
+      "margins": "Q2 FY27 GAAP operating margin 29.2% versus 25.5%; operating income $598M versus $450M. Latest revenue growth slowed to 16.1% from roughly 18–19%.",
       "balance": "About $4.16B cash/investments versus $3.71B total debt including leases (secondary aggregation). FY27 SBC guidance about 9% of revenue. Latest diluted shares 211M versus 215M a year earlier.",
       "catalysts": [
         "Direct sales and sales reorganization can retain channel economics and expand operating margins.",
@@ -508,8 +508,8 @@
       "drawdown": 0.2964132434089516,
       "upsideToHigh": 0.4212888327305999,
       "leapQuality": "Good LEAP Vehicle (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
-      "fcfTTM": 2839.0,
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "fcfTTM": 2839,
       "fcfGrowth": 0.506900212314225,
       "fcfSummary": "TTM +50.7%",
       "revenueSummary": "Latest +16.1%; 4/4 up",
@@ -635,10 +635,10 @@
       "netIncome": 871.0899999999999,
       "netGrowth": 3.026299976889299,
       "catalyst": "AI-assisted Max ad campaigns and creative automation can improve advertiser conversion and ad pricing. Shopify integration and performance ads can broaden paying advertisers and commerce ad spend. International monetization: Q2 international revenue +84% and ARPU +31%; translation expands accessible audiences. Data licensing can add high-margin revenue, but new large agreements are not assumed in the base case.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
+      "window": "2026–2028 execution; upcoming earnings updates",
       "risk": "Dependence on search referrals, weaker US user growth, advertising budgets and data/privacy regulation.",
-      "quality": "Q2 GAAP gross margin 91.3% versus 90.8%; operating margin 28.8% versus 13.6%. Revenue growth slowed to 61.1% from roughly 68\u201370%, while still exceptional.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "quality": "Q2 GAAP gross margin 91.3% versus 90.8%; operating margin 28.8% versus 13.6%. Revenue growth slowed to 61.1% from roughly 68–70%, while still exceptional.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q2 2026",
@@ -732,7 +732,7 @@
       "evfcf": null,
       "down": "High-growth valuation compression and concerns that search engines and AI summaries will divert traffic. The Q2 earnings selloff occurred despite revenue and profit growth; revenue growth slowed from about 69% to 61%.",
       "cash": "TTM FCF $1.02B, +156.7% YoY. Latest FCF $260.7M, +135.3%; OCF $261.9M. Latest FCF margin 32.4% versus 22.2%.",
-      "margins": "Q2 GAAP gross margin 91.3% versus 90.8%; operating margin 28.8% versus 13.6%. Revenue growth slowed to 61.1% from roughly 68\u201370%, while still exceptional.",
+      "margins": "Q2 GAAP gross margin 91.3% versus 90.8%; operating margin 28.8% versus 13.6%. Revenue growth slowed to 61.1% from roughly 68–70%, while still exceptional.",
       "balance": "Q2 cash/investments $2.79B; reported diluted share count grew only 0.2% YoY. Buybacks reduce liquidity and do not eliminate SBC economics.",
       "catalysts": [
         "AI-assisted Max ad campaigns and creative automation can improve advertiser conversion and ad pricing.",
@@ -813,7 +813,7 @@
       "drawdown": 0.43795045083508577,
       "upsideToHigh": 0.7792025658338964,
       "leapQuality": "Good LEAP Vehicle (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "fcfTTM": 1018.64,
       "fcfGrowth": 1.5667489794889886,
       "fcfSummary": "TTM +156.7%",
@@ -932,10 +932,10 @@
       "netIncome": 7284,
       "netGrowth": 0.04700301854247524,
       "catalyst": "Firefly subscriptions and generative-credit consumption can turn AI use into paid recurring revenue. Acrobat AI Assistant and business document workflows can upsell the installed document base. Enterprise content generation/orchestration can expand marketing-platform contracts. AI-first ARR exceeded $650M and grew >150% YoY; AI monetization remains small versus total revenue.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
+      "window": "2026–2028 execution; upcoming earnings updates",
       "risk": "AI-native creation and pricing competition may be structural. A large drawdown and low multiple do not settle that question.",
       "quality": "Latest GAAP operating margin 34.8% versus 36.3%; gross margin 88.7% versus 89.3%. Four GAAP profit increases coexist with margin contraction.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q3 2026",
@@ -1013,14 +1013,14 @@
         4.45
       ],
       "fcf": [
-        2438.0,
-        2107.0,
-        2921.0,
-        3126.0,
-        2126.0,
-        2144.0,
-        2456.0,
-        2873.0
+        2438,
+        2107,
+        2921,
+        3126,
+        2126,
+        2144,
+        2456,
+        2873
       ],
       "state": "STILL FALLING",
       "macro": "Medium",
@@ -1108,8 +1108,8 @@
       "drawdown": 0.3742095133351664,
       "upsideToHigh": 0.5979789103690685,
       "leapQuality": "Good LEAP Vehicle (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
-      "fcfTTM": 10592.0,
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "fcfTTM": 10592,
       "fcfGrowth": 0.10344827586206895,
       "fcfSummary": "TTM +10.3%",
       "revenueSummary": "Latest +12.9%; 4/4 up",
@@ -1227,10 +1227,10 @@
       "netIncome": 8367,
       "netGrowth": 0.0895949993488736,
       "catalyst": "Convert $22.17B quarterly consulting/managed-services bookings into recognized revenue. AI/data implementation, model integration and governance generate project fees rather than hypothetical AI exposure. Managed-services contracts can expand recurring multi-year delivery revenue. AI-assisted delivery can improve utilization and margins, provided clients do not capture all productivity savings through lower prices.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
+      "window": "2026–2028 execution; upcoming earnings updates",
       "risk": "AI-driven price reductions, labor-fee compression and discretionary enterprise spending. Latest FCF weakness needs reversal.",
       "quality": "Latest GAAP operating margin 15.3% versus 11.6%. The unusually easy comparison includes prior restructuring; versus the prior adjusted margin the gain is only about 20bp.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q4 2026",
@@ -1308,13 +1308,13 @@
         3.54
       ],
       "fcf": [
-        2845.0,
-        3600.0,
-        3668.0,
-        1508.0,
-        3806.0,
-        3515.0,
-        2683.0,
+        2845,
+        3600,
+        3668,
+        1508,
+        3806,
+        3515,
+        2683,
         870.28
       ],
       "state": "BUILDING BASE",
@@ -1401,8 +1401,8 @@
       "drawdown": 0.3283864097014668,
       "upsideToHigh": 0.48895140664961634,
       "leapQuality": "Good LEAP Vehicle (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
-      "fcfTTM": 11621.0,
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "fcfTTM": 11621,
       "fcfGrowth": 0.06866845437123192,
       "fcfSummary": "TTM +6.9%",
       "revenueSummary": "Latest +6.2%; 4/4 up",
@@ -1520,10 +1520,10 @@
       "netIncome": 324.61,
       "netGrowth": 0.05805084745762712,
       "catalyst": "SaaS migrations expand subscription revenue and renewals across a large installed government base. For The Record adds paid legal-grade AI transcription to court workflows. Cross-selling court, payments and public-safety modules can expand recurring wallet share.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
+      "window": "2026–2028 execution; upcoming earnings updates",
       "risk": "Government procurement timing, slower transaction revenue, acquisition execution and debt-funded buybacks; latest operating profit was slightly lower.",
       "quality": "Q2 GAAP operating income $95.1M versus $95.6M; operating margin 14.7% versus 16.0%. SaaS revenue grew 21.7%, but total revenue grew 8.2%.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q2 2026",
@@ -1695,7 +1695,7 @@
       "drawdown": 0.3699826478271647,
       "upsideToHigh": 0.5872578692493946,
       "leapQuality": "Acceptable (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "fcfTTM": 714.28,
       "fcfGrowth": 0.13659219655018773,
       "fcfSummary": "TTM +13.7%",
@@ -1806,10 +1806,10 @@
       "netIncome": 9662,
       "netGrowth": 0.45009755365451,
       "catalyst": "Agentforce premium editions and usage/Flex Credits can generate incremental subscription and consumption revenue. Data 360/Informatica can monetize data preparation required for enterprise agents. Slackbot and workflow automation can expand paid platform use beyond CRM seats. Agentforce ARR exceeded $1.5B, but its Q2 definition broadened to include Slackbot and Headless 360; do not treat all reported growth as comparable organic growth.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
+      "window": "2026–2028 execution; upcoming earnings updates",
       "risk": "AI monetization, Informatica integration, investment-gain distortion and debt-funded repurchases. Organic growth trails reported acquired growth.",
       "quality": "Primary Q2 FY27 GAAP operating income $2.331B versus $2.332B; margin 20.5% versus 22.8%. Reported EPS $4.29 contains $2.43 investment gains; without that contribution it is $1.86 versus $1.96.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q2 2027",
@@ -1887,14 +1887,14 @@
         2.19
       ],
       "fcf": [
-        1098.0,
-        6556.0,
-        5323.0,
-        2177.0,
-        605.0,
-        6297.0,
-        3816.0,
-        1779.0
+        1098,
+        6556,
+        5323,
+        2177,
+        605,
+        6297,
+        3816,
+        1779
       ],
       "state": "BUILDING BASE",
       "macro": "Medium",
@@ -1902,7 +1902,7 @@
       "pfcf": 12.96,
       "evfcf": null,
       "down": "AI agents threaten seat-based pricing; organic growth is slower than reported growth. Informatica integration and a debt-funded $25B accelerated buyback increase financial complexity.",
-      "cash": "TTM FCF $15.15B, +21.2%. Latest FCF $1.10B, +81.5%; H1 grew 10.9%. FY27 FCF growth guidance only 4\u20135%, meaning cash-growth deceleration is expected.",
+      "cash": "TTM FCF $15.15B, +21.2%. Latest FCF $1.10B, +81.5%; H1 grew 10.9%. FY27 FCF growth guidance only 4–5%, meaning cash-growth deceleration is expected.",
       "margins": "Primary Q2 FY27 GAAP operating income $2.331B versus $2.332B; margin 20.5% versus 22.8%. Reported EPS $4.29 contains $2.43 investment gains; without that contribution it is $1.86 versus $1.96.",
       "balance": "Total debt including leases about $42.38B, debt/FCF ~2.8x. SBC guidance ~9% of revenue. Buybacks reduce shares but add leverage; Enterprise Value/FCF is less flattering than equity P/FCF.",
       "catalysts": [
@@ -1980,8 +1980,8 @@
       "drawdown": 0.1716770094013601,
       "upsideToHigh": 0.2072585348346867,
       "leapQuality": "Good LEAP Vehicle (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
-      "fcfTTM": 15154.0,
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "fcfTTM": 15154,
       "fcfGrowth": 0.2126110266463952,
       "fcfSummary": "TTM +21.3%",
       "revenueSummary": "Latest +10.8%; 4/4 up",
@@ -2103,10 +2103,10 @@
       "netIncome": 4566,
       "netGrowth": 0.18014990953734822,
       "catalyst": "QuickBooks AI bookkeeping/collections agents can increase automation value, subscription tiers and retention. Enterprise Suite can move QuickBooks customers into higher-revenue midmarket contracts. TurboTax Live/expert services can raise revenue per filer despite pressure on do-it-yourself units. Credit Karma referrals/payments can monetize users, with credit and interest-rate sensitivity.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
-      "risk": "Severe price weakness, FY27 revenue-growth guidance of 9\u201310% versus FY26 14%, declining TurboTax units and weak Mailchimp growth.",
+      "window": "2026–2028 execution; upcoming earnings updates",
+      "risk": "Severe price weakness, FY27 revenue-growth guidance of 9–10% versus FY26 14%, declining TurboTax units and weak Mailchimp growth.",
       "quality": "FY26 GAAP operating income $5.884B, +20%. Q4 $475M versus $339M; a conflicting secondary $768M figure is excluded. Q4 GAAP net income declined 4.7%.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q4 2026",
@@ -2183,14 +2183,16 @@
         2.48,
         1.59
       ],
-      "fcf": null,
+      "fcf": [
+        1258
+      ],
       "state": "STILL FALLING",
       "macro": "Medium",
       "pe": 17.74,
       "pfcf": 9.4,
       "evfcf": null,
       "down": "Growth/valuation reset, weak Mailchimp and softer FY27 guidance; management prioritized customer growth. TurboTax units declined ~2%, a competitive warning rather than a pure sentiment issue.",
-      "cash": "FY26 OCF $8.84B; capex $221M; FCF $8.62B, +41.7%. Cash growth includes tax/working-capital timing and should not be treated as a repeatable 42% trend. Annual company cash-flow totals override a conflicting secondary quarterly aggregation.",
+      "cash": "Latest-quarter FCF is verified positive. Conservative derived Q4 FY2026 FCF floor is about $1.258B; TTM FCF is about $8.617B. Quarterly value is derived from FY less 9M cash-flow disclosures and intentionally conservative.",
       "margins": "FY26 GAAP operating income $5.884B, +20%. Q4 $475M versus $339M; a conflicting secondary $768M figure is excluded. Q4 GAAP net income declined 4.7%.",
       "balance": "Company-reported $7.20B corporate cash/investments versus $7.70B funded debt (customer funds excluded); secondary debt aggregation including leases is $8.42B. FY26 SBC ~$2.06B (~9.6% of revenue); diluted annual shares fell about 2%.",
       "catalysts": [
@@ -2272,7 +2274,7 @@
       "drawdown": 0.5763744794462904,
       "upsideToHigh": 1.3605754410001714,
       "leapQuality": "Good LEAP Vehicle (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "fcfTTM": 8617,
       "fcfGrowth": 0.417,
       "fcfSummary": "TTM +41.7%",
@@ -2294,6 +2296,10 @@
         {
           "label": "Quarterly historical financial series (secondary)",
           "url": "https://stockanalysis.com/stocks/intu/financials/?p=quarterly"
+        },
+        {
+          "label": "FY2026 10-K cash-flow verification",
+          "url": "https://www.sec.gov/Archives/edgar/data/896878/000089687826000037/intu-20260731.htm"
         }
       ],
       "strategyLane": "Deep Discount / Recovery",
@@ -2379,7 +2385,10 @@
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
       "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
-      "qualificationNote": "Included per the owner\u2019s updated policy: technical weakness no longer automatically excludes a profitable company. This is a Tier 3 research candidate, not a confirmed entry."
+      "qualificationNote": "Included per the owner’s updated policy: technical weakness no longer automatically excludes a profitable company. This is a Tier 3 research candidate, not a confirmed entry.",
+      "fcfLatestMethod": "Conservative Q4 FY2026 derived minimum: FY2026 operating cash flow less 9M operating cash flow, minus Q4 property/equipment capex and the full-year internal-use software capitalization amount to avoid overstating quarterly FCF.",
+      "fcfLatestSource": "SEC FY2026 10-K and Q3 FY2026 earnings release",
+      "fcfLatestVerifiedPositive": true
     },
     {
       "rank": 9,
@@ -2392,10 +2401,10 @@
       "netIncome": 1523.2930000000001,
       "netGrowth": 0.08750481001597055,
       "catalyst": "Large underdiagnosed sleep-apnea market supports long-duration patient growth. Connected AirSense/AirCurve devices and digital tools deepen recurring mask, accessory and engagement economics. Home healthcare and sleep-health awareness remain structural demand tailwinds. Product refreshes and international penetration can support unit and mix growth.",
-      "window": "2026\u20132029 sleep-health and connected-care compounding",
+      "window": "2026–2029 sleep-health and connected-care compounding",
       "risk": "Latest margin/cash deterioration, MatrixCare divestiture execution, product competition and GLP-1 effects on sleep-apnea demand.",
       "quality": "FY26 GAAP gross/operating margins improved to 61.1%/33.4%. Latest Q4 deteriorated: gross 58.8% versus 60.8%, operating 30.7% versus 33.7%; operating income fell about 1%.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q4 2026",
@@ -2536,7 +2545,7 @@
       "drawdown": 0.20939375855653453,
       "upsideToHigh": 0.26485214456975403,
       "leapQuality": "Acceptable (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "fcfTTM": 1600,
       "fcfGrowth": null,
       "fcfSummary": "Latest ~-20%; annual FCF positive",
@@ -2678,16 +2687,16 @@
       "ticker": "HUBS",
       "company": "HubSpot",
       "price": 214.63,
-      "high": 503.0,
+      "high": 503,
       "basis": "52-week intraday high from adjusted daily bars",
       "revenueGrowth": 0.21106536582282698,
       "netIncome": 146.854,
       "netGrowth": null,
       "catalyst": "Paid Breeze agents and credit consumption can monetize prospecting, customer support and marketing automation. Multi-Hub adoption can lift average customer spending through CRM cross-selling. Upmarket customer expansion can increase contract sizes, offset by more complex sales cycles. Embedded AI can improve customer productivity, but pricing must cover inference costs and prevent gross-margin erosion.",
-      "window": "2026\u20132028 execution; upcoming earnings updates",
+      "window": "2026–2028 execution; upcoming earnings updates",
       "risk": "Severe price weakness, decelerating Q3 revenue guidance near 14%, lower GAAP subscription margin and substantial SBC/AI hosting costs.",
       "quality": "Q2 GAAP operating margin +4.8% versus -3.2%, but gross margin fell to ~82.4% from ~83.9%, including hosting/AI costs. Four positive net-income quarters are verified; the absolute GAAP margin remains modest.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q2 2026",
@@ -2806,7 +2815,7 @@
         "low20": 190.03,
         "low60": 185.05,
         "low252": 169.63,
-        "high52": 503.0,
+        "high52": 503,
         "highDate": "2025-10-06",
         "return3m": 0.09741178849459109,
         "relative3mVsSPY": 0.052214578942672674,
@@ -2861,7 +2870,7 @@
       "drawdown": 0.5733001988071571,
       "upsideToHigh": 1.343568000745469,
       "leapQuality": "Acceptable (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "fcfTTM": 658.437,
       "fcfGrowth": null,
       "fcfSummary": "Latest strict FCF +44.5%",
@@ -2980,7 +2989,7 @@
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
       "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
-      "qualificationNote": "Included per the owner\u2019s updated policy: technical weakness no longer automatically excludes a profitable company. This is a Tier 3 research candidate, not a confirmed entry."
+      "qualificationNote": "Included per the owner’s updated policy: technical weakness no longer automatically excludes a profitable company. This is a Tier 3 research candidate, not a confirmed entry."
     },
     {
       "rank": 11,
@@ -2990,13 +2999,13 @@
       "high": 269.44,
       "basis": "52-week intraday high from adjusted daily bars",
       "revenueGrowth": 0.08364746006103041,
-      "netIncome": 805.0,
+      "netIncome": 805,
       "netGrowth": 0.24497370862975565,
       "catalyst": "Healthcare procedure growth supports recurring sterilization service and consumable demand. Higher-margin service and consumable share can support margin expansion. Applied Sterilization Technologies benefits from regulated outsourced sterilization needs. Manufacturing restructuring can improve efficiency if executed without disrupting customers.",
-      "window": "2026\u20132029 infection-prevention and sterilization compounding",
+      "window": "2026–2029 infection-prevention and sterilization compounding",
       "risk": "FCF guidance cut, higher capex and restructuring costs; slow price repair and hospital spending risk.",
       "quality": "GAAP profits remain positive and growing, but latest cash flow weakened. New restructuring and chemistries investment add execution risk.",
-      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "options": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "quarter": {
         "periods": [
           "Q1 2027",
@@ -3170,7 +3179,7 @@
       "drawdown": 0.2224985154394299,
       "upsideToHigh": 0.2861711776218434,
       "leapQuality": "Acceptable (provisional)",
-      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60\u20130.75 delta, ITM, preferably 18\u201330 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
+      "optionNote": "Underlying qualifies. LEAP contract still requires live liquidity, IV, spread, delta and open-interest verification. Target 0.60–0.75 delta, ITM, preferably 18–30 months; no premium/cost cap. Highest OI wins only after an acceptable spread is verified.",
       "fcfSummary": "Latest -14.4%; guidance cut",
       "revenueSummary": "Latest +7.3%; 4/4 up",
       "netSummary": "4/4 profits; 4/4 higher",
@@ -3395,7 +3404,7 @@
     ],
     "bestDipToday": []
   },
-  "method": "Broad discovery followed by focused verification. Two lanes: 30\u201370% drawdown recovery and elite quality-compounder pullbacks. Business-quality, GAAP-profitability, cash-flow, valuation and thesis checks remain. Per owner instruction, price-trend damage and long-term underperformance are descriptive risks, not automatic qualification filters. No arbitrary qualified count or forced trade.",
+  "method": "Broad discovery followed by focused verification. Two lanes: 30–70% drawdown recovery and elite quality-compounder pullbacks. Business-quality, GAAP-profitability, cash-flow, valuation and thesis checks remain. Per owner instruction, price-trend damage and long-term underperformance are descriptive risks, not automatic qualification filters. No arbitrary qualified count or forced trade.",
   "qualificationModel": {
     "hardGates": [
       "GAAP profitable now",
@@ -3403,7 +3412,7 @@
       "Positive TTM free cash flow or clearly strong operating cash generation",
       "No going-concern/accounting crisis or structurally broken core business"
     ],
-    "laneA": "Deep Discount / Recovery: usually 30\u201370% below a meaningful high.",
+    "laneA": "Deep Discount / Recovery: usually 30–70% below a meaningful high.",
     "laneB": "Quality Compounder Pullback: elite profitable compounders can qualify with a smaller pullback when valuation compression, major support or a broad-market dislocation creates an attractive setup.",
     "tariffRule": "Tariffs are not a qualification filter or score penalty. They may be noted only as temporary earnings/macro context.",
     "hardwareRule": "Hardware, med-tech and asset-heavier businesses are allowed when margins, balance sheet, recurring ecosystem economics and long-term growth quality are strong."
