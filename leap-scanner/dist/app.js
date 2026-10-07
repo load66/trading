@@ -56,7 +56,7 @@ function ownerQuoteFor(t){
 function marketStat(label,x){
   const live=(label==="SPY"||label==="QQQ")?ownerQuoteFor(label):null;
   if(live)x={...(x||{}),close:live.price,dayChangePct:Number.isFinite(live.dayChangePct)?live.dayChangePct:null};
-  const source=live?" · ALPACA IEX":label==="VIX"&&typeof window!=="undefined"&&window.leapsOwnerPriceState?.active?" · SAVED":"";
+  const source=live?" · ALPACA IEX":label==="VIX"?" · SAVED":"";
   if(!x||!Number.isFinite(label==="VIX"?x.value:x.close)||(label==="VIX"?x.value:x.close)<=0)return'<div class="market-stat"><span>'+label+'</span><b>—</b><small class="flat">Unavailable</small></div>';
   const val=label==="VIX"?Number(x.value).toFixed(2):money.format(x.close);
   const move=Number.isFinite(x.dayChangePct)?x.dayChangePct:null;
