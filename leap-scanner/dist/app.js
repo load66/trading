@@ -45,7 +45,7 @@ function contractFor(t){
   const company=companyFor(t);
   if(!(market&&market.contractProfiles)||!company||!company.qualified)return null;
   return market.contractProfiles.filter(x=>{
-    if(x.ticker!==t||!Number.isFinite(x.strike)||x.strike>=company.price)return false;
+    if(x.ticker!==t||x.classification!=="eligible"||!Number.isFinite(x.strike)||x.strike>=company.price)return false;
     const delta=Number.isFinite(x.delta)?x.delta:null;
     const spread=contractSpread(x);
     const iv=Number.isFinite(x.iv)?x.iv:Number.isFinite(x.impliedVolatility)?x.impliedVolatility:null;
@@ -108,7 +108,7 @@ function earningsQuality(c){
     const epsConsensus=Number.isFinite(x.epsConsensus)?money.format(x.epsConsensus):(Number.isFinite(x.consensus)?money.format(x.consensus):"—");
     const epsResult=x.epsResult||x.result||null;
     const basis=String(x.epsBasis||x.basis||"").toUpperCase();
-    const epsCell=(epsConsensus!=="—"?'<b>'+epsConsensus+'</b><small>'+(basis?basis+" CONSENSUS":"BASIS UNVERIFIED")+'</small>':"—")+(epsResult?resultBadge(epsResult):"");
+    const epsCell=(epsConsensus!=="—"?'<b>'+epsConsensus+'</b><small>'+(basis?basis+" CONSENSUS":"BASIS UNVERIFIED")+'</small>':"—")+resultBadge(epsResult||null);
     const revActual=Number.isFinite(x.revenueActual)?money.format(x.revenueActual)+"M":(Array.isArray(q.revenues)&&Number.isFinite(q.revenues[i])?money.format(q.revenues[i])+"M":"—");
     const revConsensus=Number.isFinite(x.revenueConsensus)?money.format(x.revenueConsensus)+"M":"—";
     const revCell='<b>'+revActual+'</b><small>vs '+revConsensus+'</small>'+resultBadge(x.revenueResult||null);
@@ -237,7 +237,8 @@ function contractCard(c,embedded=false){
   const deltaValue=contractDelta(c);
   const delta=Number.isFinite(deltaValue)?(Number.isFinite(c.delta)?"":"~")+deltaValue.toFixed(2):"—";
   const spread=contractSpread(c);
-  const iv=Number.isFinite(c.modeledIV)?(c.modeledIV*100).toFixed(1)+"%":"—";
+  const ivValue=Number.isFinite(c.iv)?c.iv:Number.isFinite(c.impliedVolatility)?c.impliedVolatility:Number.isFinite(c.modeledIV)?c.modeledIV:null;
+  const iv=Number.isFinite(ivValue)?((Number.isFinite(c.iv)||Number.isFinite(c.impliedVolatility)?"":"~")+(ivValue*100).toFixed(1)+"%"):"—";
   const expiry=new Date(String(c.expiration||"")+"T12:00:00Z");
   const expiryText=Number.isNaN(expiry.getTime())?"Expiration unverified":new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"}).format(expiry);
   const reference=Number.isFinite(c.strike)?expiryText+" · "+money.format(c.strike)+" call":c.reference||"Contract reference unavailable";
