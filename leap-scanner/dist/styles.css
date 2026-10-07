@@ -105,3 +105,12 @@ linear-gradient(145deg,rgba(18,27,39,.98),rgba(9,13,20,.98));box-shadow:var(--sh
   .setup-meta b{font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+
+.research-control{background:linear-gradient(145deg,rgba(110,171,255,.055),var(--s1) 52%)}
+.research-control h3{margin-top:5px}
+.control-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.control-meta>div{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--s2)}
+.control-meta span,.control-meta b{display:block}
+.control-meta span{font:700 7px var(--mono);letter-spacing:.09em;color:var(--dim)}
+.control-meta b{font:800 10px/1.35 var(--mono);margin-top:4px;color:var(--blue)}
+@media(max-width:370px){.control-meta{grid-template-columns:1fr}}
