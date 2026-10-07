@@ -99,14 +99,17 @@
       session=await restoreSession();
       if(!session)return;
       const symbols=await qualifiedSymbols();
+      if(!session?.access_token||document.visibilityState==="hidden")return;
       if(!symbols.length){clearQuotes();liveState="ready";updateUi();return;}
-      const r=await fetch(LIVE_API+"/quotes?symbols="+encodeURIComponent(symbols.join(",")),{headers:{Authorization:"Bearer "+session.access_token},cache:"no-store"});
+      const requestToken=session.access_token;
+      const r=await fetch(LIVE_API+"/quotes?symbols="+encodeURIComponent(symbols.join(",")),{headers:{Authorization:"Bearer "+requestToken},cache:"no-store"});
       const payload=await r.json().catch(()=>({}));
+      if(session?.access_token!==requestToken||document.visibilityState==="hidden")return;
       if(r.status===401){clearSession();return;}
       if(!r.ok)throw new Error(payload.error||"Live quote request failed");
       applyQuotes(payload);
     }catch(e){
-      liveUnavailable(e?.message||"Live price unavailable");
+      if(session?.access_token)liveUnavailable(e?.message||"Live price unavailable");
     }
   }
   function stopPolling(){if(timer)clearTimeout(timer);timer=null;}

@@ -16,7 +16,7 @@ const localStorage={
   removeItem:key=>delete storage[key]
 };
 storage['leaps-owner-auth']=JSON.stringify({access_token:'test-token',refresh_token:'test-refresh',expires_at:Math.floor(Date.now()/1000)+3600});
-let fail=false,rendered=[];
+let fail=false,holdQuote=false,releaseQuote,rendered=[];
 const window={
   planFor:()=>({price:210,todayPct:-1,entry1:'$200–205'}),
   renderAll:()=>rendered.push(window.planFor('ADSK').price),
@@ -26,6 +26,7 @@ const fetch=async url=>{
   if(url.includes('leap_research_snapshots'))return {ok:true,json:async()=>[{payload:{candidates:[{ticker:'ADSK',qualified:true}]}}]};
   if(url.includes('/quotes')){
     if(fail)throw new Error('Network unavailable');
+    if(holdQuote)await new Promise(resolve=>{releaseQuote=resolve;});
     return {ok:true,json:async()=>({feed:'iex',asOf:new Date().toISOString(),quotes:{ADSK:{price:200,dayChangePct:-3,observedAt:new Date().toISOString()}}})};
   }
   throw new Error('Unexpected request: '+url);
@@ -48,7 +49,10 @@ const drain=async()=>{for(let i=0;i<8;i++)await new Promise(setImmediate);};
   fail=false;listeners.focus();await drain();
   assert.equal(rendered.at(-1),200);
   assert.match(elements['alpaca-live-status'].textContent,/ALPACA IEX LIVE/);
+  holdQuote=true;listeners.focus();await drain();
   document.visibilityState='hidden';listeners.visibilitychange();
   assert.equal(rendered.at(-1),210,'Hidden tab must release the old quote overlay');
+  releaseQuote();await drain();
+  assert.equal(rendered.at(-1),210,'In-flight quotes cannot restore a hidden overlay');
   console.log('Owner live quote fallback and recovery passed.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
