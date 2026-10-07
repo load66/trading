@@ -62,8 +62,7 @@ function renderDesk(){
   const trig=document.getElementById("trigger-pill");trig.textContent=market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";trig.className="state-pill "+(market&&market.triggered?"hot":"good");
   document.getElementById("market-message").textContent=market&&market.message?market.message:"No current market message.";
   document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
-  const plans=[...((market&&market.candidatePlans)||[])].sort((a,b)=>actionRank(a.action)-actionRank(b.action));
-  const cards=plans.slice(0,3).map(p=>companyFor(p.ticker)).filter(Boolean);
+  const cards=((research&&research.candidates)||[]).filter(c=>c.qualified).sort((a,b)=>actionRank(planFor(a.ticker)&&planFor(a.ticker).action)-actionRank(planFor(b.ticker)&&planFor(b.ticker).action)||b.score-a.score);
   document.getElementById("top-setups").innerHTML=cards.length?cards.map(c=>setupCard(c,true)).join(""):'<div class="loading">No qualified setups are loaded.</div>';
 }
 function renderSetups(){
