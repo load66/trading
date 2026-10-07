@@ -7,8 +7,8 @@
 <title>LEAPS Desk</title>
 <meta name="description" content="Public mobile-first LEAPS research, entry planning and contract-quality dashboard.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="styles.css?v=20261007-pro-v5">
-<script src="app.js?v=20261007-pro-v5" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261007-pro-v6">
+<script src="app.js?v=20261007-pro-v6" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -67,6 +67,20 @@
     <p>The qualified company universe is refreshed manually from the owner’s ChatGPT project chat for accuracy. Scheduled jobs update market regime, support, action labels and contract readiness without silently changing the research universe.</p>
     <div class="control-meta"><div><span>MANUAL COMMAND</span><b>generate</b></div><div><span>LAST RESEARCH REFRESH</span><b id="research-refresh-time">Loading…</b></div></div>
   </div>
+  <div class="method-card funnel-card">
+    <div><span class="kicker">RESEARCH FUNNEL</span><h3>How broad was the scan?</h3></div>
+    <div id="research-funnel" class="funnel-grid"></div>
+    <p id="research-funnel-note">Loading scan coverage…</p>
+  </div>
+  <div class="method-card trend-gate-card">
+    <div><span class="kicker">TREND INTEGRITY GATE</span><h3>Profitability is not enough.</h3></div>
+    <div class="trend-gate-grid">
+      <div><b>HEALTHY / REPAIRING</b><p>Can qualify when fundamentals are strong and price structure is stabilizing or improving.</p></div>
+      <div><b>QUALITY TRAP — QUARANTINE</b><p>Profitable chronic underperformer with business deterioration. Must prove both business and chart repair.</p></div>
+      <div><b>STRUCTURAL DOWNTREND — REJECT</b><p>Persistent lower highs/lows, falling averages, severe drawdown and weak relative strength. No LEAP until repair.</p></div>
+    </div>
+  </div>
+
   <div class="method-card">
     <h3>Two-lane qualification</h3>
     <div class="lane"><span>A</span><div><b>Deep Discount / Recovery</b><p>Usually 30–70% below a meaningful high with fundamentals intact.</p></div></div>
