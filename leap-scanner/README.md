@@ -23,3 +23,9 @@ The initial shortlist is profitable and has three or four recent reports showing
 Card generation: `python3 scripts/render_cards.py`. Requires Pillow. Run after reviewing the dated JSON; change the explicit input date when making a new scan. Preserve old dated results instead of silently overwriting them.
 
 The GitHub copy is in the isolated `leap-scanner/` directory of `load66/trading`. Existing trading files are unaffected.
+
+## Mobile sharing and timestamps
+
+Select a shortlisted candidate and tap Share image. Supported phones share the actual PNG file; on iPhone, select Save Image in the share sheet. Browsers without file sharing show a full-size image preview with save instructions and a PNG download. Cancellation does not trigger a download. Images are prepared before the tap so native sharing retains user activation.
+
+`dist/data/scan-metadata.json` separates research completion, verified results upload, price cutoff and app update times. Original scan completion time was not recorded and remains null. Times display in America/Chicago with seconds and the CDT/CST designation. For future scans, record actual UTC scan start/completion times at those events; never infer scan time from a UI or app deployment. Set the results upload time from its verified publication event. Feature-only updates must preserve the previous research completion, results upload and price cutoff.
