@@ -50,24 +50,6 @@
       "finalAddReason": "$345–355 surrounds the recent 20-day swing low near $345.25. This is a major reset zone; below it, the next structural low near $328.57 becomes an invalidation/reassessment level rather than an automatic fourth add."
     },
     {
-      "ticker": "NOW",
-      "price": 137.97,
-      "action": "NEAR SUPPORT — WATCH",
-      "entry1": "$134–138",
-      "add2": "$126–131",
-      "finalAdd": "$114–119",
-      "entry1Label": "1st Major Support",
-      "add2Label": "2nd Major Support",
-      "finalAddLabel": "Final Deep Support",
-      "entry1Reason": "$134–138 surrounds the current price and the 20DMA near $136.16. NOW has repaired above its major moving averages, so this is the first pullback area where buyers should prove that the new uptrend is holding.",
-      "add2Reason": "$126–131 combines the 50DMA near $130.58 with the recent 20-day swing low near $126.75. That confluence makes it a materially stronger second demand zone.",
-      "finalAddReason": "$114–119 surrounds both the 100DMA near $117.53 and the 200DMA near $115.57. This is the strongest long-term trend-support confluence and should only be used if fundamentals remain intact.",
-      "invalidation": "A decisive loss of the 100/200DMA zone plus weakening subscription/cRPO growth or material margin deterioration.",
-      "confirmation": "Prefer a hold of the 20DMA, a higher low, or a clean reclaim after an intraday undercut. Do not chase strength far above the first support zone.",
-      "basis": "20DMA/current-price shelf; 50DMA + recent swing low; 100DMA/200DMA confluence.",
-      "eventRisk": "Estimated earnings Oct. 28, 2026 — recheck IV and guidance risk before opening a new LEAP."
-    },
-    {
       "ticker": "ADSK",
       "price": 231.28,
       "action": "NEAR SUPPORT — WATCH",
@@ -82,24 +64,6 @@
       "add2Reason": "$198–203 aligns with the 20-day and 60-day swing-low cluster around $199.18, making it a materially stronger historical demand zone.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$184–189 surrounds the 252-session low near $185.50. A test here would represent a much deeper valuation reset; only add if fundamentals and guidance remain intact."
-    },
-    {
-      "ticker": "RMD",
-      "price": 220.69,
-      "action": "NEAR SUPPORT — WATCH",
-      "entry1": "$215–219",
-      "add2": "$209–213",
-      "finalAdd": "$188–193",
-      "entry1Label": "1st Major Support",
-      "add2Label": "2nd Major Support",
-      "finalAddLabel": "Final Deep Support",
-      "entry1Reason": "$215–219 brackets the recent 20-day swing low near $215.80. It is the nearest proven demand area beneath the current price.",
-      "add2Reason": "$209–213 surrounds the 100DMA near $211.43. A successful test here would keep the medium-term repair structure intact.",
-      "finalAddReason": "$188–193 surrounds the major 60-day swing low near $190.21. This is a deep reset zone; below it, the 52-week low near $180 becomes a reassessment level rather than an automatic fourth add.",
-      "invalidation": "Sustained break below the $180–190 structural area plus deteriorating device/mask share, revenue growth or margins.",
-      "confirmation": "Prefer a reversal from $215–219 or a reclaim of the 50/200-day area. Do not buy simply because the stock is below its prior high.",
-      "basis": "Recent swing low; 100DMA; major 60-day demand zone.",
-      "eventRisk": "Confirmed earnings Oct. 29, 2026 — avoid paying elevated pre-earnings IV unless the event risk is intentional."
     },
     {
       "ticker": "RDDT",
@@ -214,6 +178,42 @@
       "add2Reason": "$183–187 surrounds the 60-day low near $185.05. Because it is close to the first zone, require a clear failed breakdown or reclaim before adding.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$168–172 surrounds the 252-session low near $169.63. This is the deepest planned support and should not be used if profitability or SBC economics worsen."
+    },
+    {
+      "ticker": "RMD",
+      "price": 220.69,
+      "action": "NEAR SUPPORT — WATCH",
+      "entry1": "$215–220",
+      "add2": "$208–213",
+      "finalAdd": "$188–193",
+      "entry1Label": "1st Major Support",
+      "add2Label": "2nd Major Support",
+      "finalAddLabel": "Final Deep Support",
+      "entry1Reason": "$215–220 brackets the recent 20-day swing low near $215.80 and sits just below the current price. It is the first area where recent demand can prove itself.",
+      "add2Reason": "$208–213 surrounds the 100DMA near $211.43, giving a stronger medium-term trend-support level if the first shelf fails.",
+      "finalAddReason": "$188–193 surrounds the recent 60-day swing low near $190.21. A break toward the 52-week low near $180 should trigger reassessment rather than an automatic fourth add.",
+      "invalidation": "Break below the deep support area plus weakening revenue/margin/FCF trends.",
+      "confirmation": "Prefer a hold/reclaim of $215–220 or a higher low. Earnings are Oct. 29, so avoid overpaying for event IV immediately before results.",
+      "basis": "Recent swing-low support, 100DMA, and 60-day demand zone.",
+      "eventRisk": "Confirmed earnings Oct. 29, 2026 after close"
+    },
+    {
+      "ticker": "NOW",
+      "price": 137.97,
+      "action": "WAIT FOR EARNINGS / VALUATION",
+      "entry1": "$133–137",
+      "add2": "$126–131",
+      "finalAdd": "$114–119",
+      "entry1Label": "1st Major Support",
+      "add2Label": "2nd Major Support",
+      "finalAddLabel": "Final Deep Support",
+      "entry1Reason": "$133–137 surrounds the 20DMA near $136.16 and the current breakout/retest area. It is only an observation zone until GAAP margin quality improves.",
+      "add2Reason": "$126–131 surrounds the 50DMA near $130.58 and the recent 20-day low near $126.75, creating a stronger trend-and-price confluence.",
+      "finalAddReason": "$114–119 surrounds the 100DMA near $117.53 and 200DMA near $115.57. This is the major long-term trend-support cluster.",
+      "invalidation": "Persistent GAAP margin/FCF deterioration or a sustained failure below the 100/200DMA support cluster.",
+      "confirmation": "Wait for Oct. 28 earnings, better GAAP margin visibility, and a support hold/reclaim before considering Entry 1.",
+      "basis": "20DMA, 50DMA/recent low, then 100DMA/200DMA confluence.",
+      "eventRisk": "Estimated earnings Oct. 28, 2026 after close"
     }
   ],
   "rules": {
@@ -264,44 +264,6 @@
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
-      "ticker": "NOW",
-      "preferred": "18–30 mo.; prefer an ITM strike that passes both liquidity and Bear-case valuation coverage",
-      "reference": "Dec 15 2028 $100C",
-      "ask": 63.7,
-      "breakeven": 163.7,
-      "openInterest": 145,
-      "readiness": "BEST VERIFIED BALANCE — NOT FULLY APPROVED",
-      "approval": "REFERENCE ONLY — FAILS BEAR-CASE COVERAGE",
-      "sourceAsOf": "Delayed chain snapshot; Oct. 2026 research",
-      "source": "https://whalequant.io/en/stocks/NOW/options/2028-12-15",
-      "note": "The $100C has acceptable displayed OI and a long enough expiration, but the conservative Bear valuation is below the $100 strike. The deeper $80C passes Bear coverage but displayed OI is only 48. No strike currently passes every preferred rule, so wait for a better live chain/price.",
-      "expiration": "2028-12-15",
-      "strike": 100,
-      "modeledDelta": 0.816,
-      "modeledIV": 0.6806,
-      "deltaSource": "Modeled from delayed IV/price assumptions; NOT a live broker Greek.",
-      "currentIntrinsic": 37.97,
-      "currentExtrinsic": 25.73,
-      "stockAboveStrike": 37.97,
-      "costPerContract": 6370,
-      "durationMonths": 26.3,
-      "preferredHorizonStatus": "WITHIN 18–30 MONTH TARGET",
-      "fundamentalTargets": {
-        "bear": 86.2547,
-        "base": 133.4185,
-        "bull": 174.7549
-      },
-      "expirationMoneyness": {
-        "bear": "OTM",
-        "base": "ITM",
-        "bull": "DEEP ITM",
-        "coverage": "2/3 scenarios ITM or better"
-      },
-      "bearCaseCushion": -0.137453,
-      "selectionRule": "Prefer 0.70–0.85 delta ITM with OI ≥100 and strike below the Bear target. A 0.60–0.70 delta fallback is allowed only if the stock is at least $70 above strike and all valuation/liquidity rules still pass.",
-      "selectionReason": "The $100C is the best currently verified balance of duration and OI, but it fails the Bear-case strike test. The $80C improves valuation survivability but its OI is only 48. Therefore NOW has no fully approved LEAP contract yet."
-    },
-    {
       "ticker": "ADSK",
       "preferred": "18–30 mo., ~0.75–0.85 delta, ITM",
       "reference": "Jan 21 2028 $200C",
@@ -338,43 +300,6 @@
       "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
       "selectionReason": "Strike stays ITM in all three modeled fundamental scenarios, but bear-case cushion is thin; treat as conditional rather than high-conviction.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
-    },
-    {
-      "ticker": "RMD",
-      "preferred": "18–30 mo., roughly 0.70–0.85 delta ITM with acceptable OI/spread",
-      "reference": "No 18–30 month contract verified",
-      "ask": null,
-      "breakeven": null,
-      "openInterest": null,
-      "readiness": "UNDERLYING QUALIFIES — WAIT FOR LEAP CHAIN",
-      "approval": "NO CONTRACT APPROVED",
-      "sourceAsOf": "Public delayed chain checked Oct. 2026",
-      "source": "https://public.com/stocks/rmd/options-chain",
-      "note": "The public chain currently shows expirations only through roughly April 2027, far shorter than the preferred 18–30 month window. The stock qualifies, but the option does not.",
-      "expiration": null,
-      "strike": null,
-      "modeledDelta": null,
-      "modeledIV": null,
-      "deltaSource": "No long-dated contract verified; no Greek is inferred.",
-      "currentIntrinsic": null,
-      "currentExtrinsic": null,
-      "stockAboveStrike": null,
-      "costPerContract": null,
-      "durationMonths": null,
-      "preferredHorizonStatus": "18–30 MONTH EXPIRATION NOT VERIFIED",
-      "fundamentalTargets": {
-        "bear": 164.1204,
-        "base": 240.1265,
-        "bull": 298.3081
-      },
-      "expirationMoneyness": {
-        "bear": "N/A",
-        "base": "N/A",
-        "bull": "N/A",
-        "coverage": "No qualifying long-dated contract to test"
-      },
-      "selectionRule": "Do not force a short-dated option just because the stock qualifies. Wait for a broker-verified 18–30 month expiration with acceptable delta, OI, spread and IV.",
-      "selectionReason": "The public chain currently shows expirations only through roughly April 2027, far shorter than the preferred 18–30 month window. The stock qualifies, but the option does not."
     },
     {
       "ticker": "RDDT",
@@ -640,6 +565,73 @@
       "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
       "selectionReason": "Strike stays ITM in all three modeled fundamental scenarios, but bear-case cushion is thin; treat as conditional rather than high-conviction.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
+    },
+    {
+      "ticker": "RMD",
+      "preferred": "18–30 mo., ~0.70–0.85 delta ITM, OI ≥100 preferred",
+      "reference": "No approved 18–30 month contract",
+      "ask": null,
+      "breakeven": null,
+      "openInterest": null,
+      "expiration": null,
+      "strike": null,
+      "modeledDelta": null,
+      "modeledIV": null,
+      "readiness": "WAIT — LONG-DATED CHAIN NOT VERIFIED",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
+      "sourceAsOf": "Delayed Public chain currently surfaced only shorter expirations",
+      "source": "https://public.com/stocks/rmd/options-chain",
+      "note": "RMD passes the stock-quality screen, but the delayed source did not verify a liquid 18–30 month expiration. Do not shorten duration just to force a trade.",
+      "preferredHorizonStatus": "NO VERIFIED 18–30 MONTH CONTRACT",
+      "fundamentalTargets": {
+        "bear": 182.75327498940572,
+        "base": 263.76479430449865,
+        "bull": 341.45148262894685
+      },
+      "expirationMoneyness": {
+        "bear": "N/A",
+        "base": "N/A",
+        "bull": "N/A",
+        "coverage": "Contract not selected"
+      },
+      "selectionReason": "The stock qualifies, but contract quality is part of the trade thesis. Without a verified long-dated liquid contract, the correct action is to wait."
+    },
+    {
+      "ticker": "NOW",
+      "preferred": "Dec 2028 preferred horizon; primary delta target ~0.70–0.85",
+      "reference": "Dec 15 2028 $100C",
+      "ask": 66.6,
+      "breakeven": 166.6,
+      "openInterest": 148,
+      "expiration": "2028-12-15",
+      "strike": 100,
+      "modeledDelta": 0.81,
+      "modeledIV": 0.61,
+      "deltaSource": "Modeled from delayed Oct. 3 chain price with Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 37.97,
+      "currentExtrinsic": 28.63,
+      "stockAboveStrike": 37.97,
+      "costPerContract": 6660,
+      "durationMonths": 26.3,
+      "preferredHorizonStatus": "WITHIN 18–30 MONTH TARGET",
+      "readiness": "WATCH — FUNDAMENTAL COVERAGE TOO THIN",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
+      "sourceAsOf": "Public.com delayed feed Oct. 3, 2026",
+      "source": "https://public.com/stocks/now/options-chain?expiration=2028-12-15",
+      "note": "Liquidity is usable, but the delayed breakeven is above the current Base fundamental value estimate. Wait for a better entry, cheaper premium or improved fundamentals.",
+      "fundamentalTargets": {
+        "bear": 98.54776866197146,
+        "base": 148.7107019952187,
+        "bull": 208.00805378260344
+      },
+      "expirationMoneyness": {
+        "bear": "OTM",
+        "base": "ITM",
+        "bull": "ITM",
+        "coverage": "2/3 scenarios ITM or better"
+      },
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. A 0.60–0.70 fallback is allowed only if the preferred contract is materially too expensive AND stock is at least $70 above strike; all contracts must pass valuation coverage.",
+      "selectionReason": "The $100 strike has acceptable delayed OI and modeled delta near 0.81, but the Bear valuation is around the strike and the Base value is below the delayed $166.60 breakeven. It is not an approved buy at current pricing."
     }
   ],
   "contractRules": {
@@ -655,7 +647,7 @@
     "fallbackDelta": "A 0.60–0.70 delta fallback is allowed only when the preferred 0.70–0.85 delta contract is materially too expensive AND current stock price is at least $70 above the strike; it must still pass the Bear/Base valuation coverage test.",
     "probabilityLanguage": "Do not claim a guaranteed probability of profit. Use scenario coverage, delta, liquidity, spread, IV, breakeven and fundamental valuation together."
   },
-  "generatedResearchAsOf": "2026-10-07",
+  "generatedResearchAsOf": "2026-10-07 manual generate",
   "qualifiedUniverse": [
     "ISRG",
     "NOW",
