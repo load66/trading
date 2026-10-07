@@ -15,7 +15,7 @@ in the LEAPS ChatGPT project chat, perform a full research refresh and publish t
 1. Load `MASTER_PROMPT.md` and the latest approved research snapshot.
 2. Research with Massive + AlphaStocks + current web sources as needed.
 3. Re-screen the profitable-company universe using both qualification lanes.
-4. Verify GAAP profitability, revenue, earnings, FCF, margins, balance sheet, catalysts, valuation, moat, technical state and event risk.
+4. Verify GAAP profitability, revenue, earnings, FCF, margins, balance sheet, catalysts, valuation, moat, technical state and event risk. Require both positive TTM FCF and positive latest-quarter FCF; negative or unverified FCF cannot qualify.
 5. Refresh rankings and exact Entry 1 / Add 2 / Final Add zones.
 6. Re-check available ITM LEAP calls, preferring 18–30 months. Require 0.60–0.75 delta inclusive, with no premium/contract-cost cap or preferred delta sub-band. Among liquid eligible calls with comparable current quotes, rank highest open interest first and tightest bid/ask width as a percentage of midpoint second. Reject poor spreads before ranking; missing OI/spread makes the reference provisional. Keep valuation coverage, expiration, IV and event-risk checks; never invent live data.
 7. Write a new immutable Supabase research snapshot and a new market scan row.
