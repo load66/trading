@@ -4,7 +4,7 @@ const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maxim
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-let research=null,market=null,history=[],filter="all";
+let research=null,market=null,history=[],filter="all",researchStamp=null;
 
 async function sb(table,query){
   const r=await fetch(SB_URL+"/rest/v1/"+table+"?"+query,{headers:{apikey:SB_KEY},cache:"no-store"});
@@ -82,6 +82,7 @@ function contractCard(c){
 }
 function renderContracts(){const list=(market&&market.contractProfiles)||[];document.getElementById("contract-list").innerHTML=list.length?list.map(contractCard).join(""):'<div class="loading">No contract references loaded.</div>';}
 function renderResearch(){
+  const rt=document.getElementById("research-refresh-time");if(rt)rt.textContent=researchStamp?dateFmt.format(new Date(researchStamp)):(research&&research.asOf?research.asOf:"Dated snapshot");
   const r=(research&&research.rankings)||{};
   const map=[["BEST OVERALL",r.bestOverall],["HIGHEST BOUNCE",r.highestBounce],["SAFEST QUALITY",r.safestQuality]];
   document.getElementById("rankings").innerHTML=map.map(row=>'<div class="rank-card"><span>'+row[0]+'</span><b>'+((row[1]||[]).slice(0,8).map((t,i)=>(i+1)+". "+safe(t)).join(" · ")||"—")+'</b></div>').join("");
@@ -99,10 +100,10 @@ async function load(){
     ]);
     const scans=results[0],res=results[1];
     if(scans&&scans[0]&&scans[0].payload)market=scans[0].payload;
-    if(res&&res[0]&&res[0].payload)research=res[0].payload;
+    if(res&&res[0]&&res[0].payload){research=res[0].payload;researchStamp=res[0].snapshot_time||null;}
     history=scans||[];stamp=scans&&scans[0]?scans[0].scan_time:(res&&res[0]?res[0].snapshot_time:null);live=!!(market&&research);
   }catch(e){console.info("Supabase fallback",e.message);}
-  if(!research)research=await json("data/research-latest.json");
+  if(!research){research=await json("data/research-latest.json");researchStamp=null;}
   if(!market)market=await json("data/market-latest.json");
   sourceMode(live?"LIVE DATA":"DATED FALLBACK",stamp);
   renderAll();

@@ -261,3 +261,22 @@ Be strict on business quality, but flexible on drawdown for elite profitable com
 
 If no A+ entry exists, say:
 NO A+ LEAP ENTRY TODAY — WAIT.
+
+## Manual Generation Control
+
+The core fundamental research is controlled from the owner's ChatGPT project chat, not by the scheduled jobs.
+
+When the owner sends the standalone command **generate** in the LEAPS project chat, treat it as authorization to run a complete manual refresh using all available research sources. The manual generation workflow must:
+
+1. Read the current MASTER_PROMPT.md and latest approved research snapshot.
+2. Use Massive, AlphaStocks and current web research as needed to re-screen and re-verify the profitable-company universe.
+3. Re-evaluate both qualification lanes, including quality compounders such as ISRG when they meet the business-quality rules.
+4. Recalculate scores, rankings, catalysts, valuation, technical state, support zones, event risk and LEAP contract readiness.
+5. Update `dist/data/research-latest.json` and `dist/data/market-latest.json`.
+6. Insert a NEW immutable research row into Supabase `public.leap_research_snapshots` and a NEW market row into `public.leap_scans`.
+7. Commit the refreshed fallback data to GitHub.
+8. Allow Railway to deploy from `main` and verify the deployment before reporting completion.
+9. Never silently weaken the GAAP-profitability/business-quality gates merely to add more stocks.
+10. Never invent live option Greeks, IV, spreads or open interest.
+
+Scheduled 2 PM and intraday jobs are **market/entry-timing refreshes only**. They must use the latest manually approved research universe and must not add/remove candidates or overwrite fundamental research unless the owner explicitly uses **generate** in the project chat.
