@@ -96,7 +96,13 @@ function renderDesk(){
   document.getElementById("market-message").textContent=market&&market.message?market.message:"No current market message.";
   document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
 
-  const cards=((research&&research.candidates)||[]).filter(c=>c.qualified).sort((a,b)=>actionRank(planFor(a.ticker)&&planFor(a.ticker).action)-actionRank(planFor(b.ticker)&&planFor(b.ticker).action)||b.score-a.score);
+  const cards=((research&&research.candidates)||[])
+    .filter(c=>c.qualified)
+    .sort((a,b)=>{
+      const ar=Number.isFinite(a.rank)?a.rank:Infinity;
+      const br=Number.isFinite(b.rank)?b.rank:Infinity;
+      return ar-br||b.score-a.score||String(a.ticker).localeCompare(String(b.ticker));
+    });
   document.getElementById("top-setups").innerHTML=cards.length?cards.map(c=>setupCard(c,false)).join(""):'<div class="loading">No qualified setups are loaded.</div>';
 
   const f=(research&&research.researchFunnel)||{};
