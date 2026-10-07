@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07090d">
 <title>LEAPS Desk</title>
 <meta name="description" content="Public mobile-first LEAPS research, entry planning, valuation and contract-quality dashboard.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="styles.css?v=20261007-desk-v11">
-<script src="app.js?v=20261007-desk-v11" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261007-desk-v11-freshness">
+<script src="app.js?v=20261007-desk-v11-freshness" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -25,6 +25,12 @@
     </div>
     <p id="market-message">Loading the latest automated LEAPS scan.</p>
     <div class="market-grid" id="market-grid"></div>
+    <div class="data-freshness" aria-label="Saved scan and price timestamps">
+      <div><span>MARKET SCAN SAVED</span><strong id="market-saved-time">—</strong></div>
+      <div><span>RESEARCH SNAPSHOT SAVED</span><strong id="research-saved-time">—</strong></div>
+      <div><span>PRICE CUTOFF</span><strong id="price-cutoff">—</strong></div>
+    </div>
+    <p id="feed-note" class="feed-note" role="status"></p>
   </section>
 
   <section class="quick-guide" aria-label="How to use the LEAPS Desk">
