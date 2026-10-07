@@ -7,7 +7,7 @@ const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maxim
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"});
-let research=null,market=null,marketSavedAt=null,researchSavedAt=null,marketFromDatabase=false,researchFromDatabase=false;
+let research=null,previousResearch=null,market=null,marketSavedAt=null,researchSavedAt=null,marketFromDatabase=false,researchFromDatabase=false,activeFilter="all";
 
 async function sb(table,query){
   const r=await fetch(SB_URL+"/rest/v1/"+table+"?"+query,{headers:{apikey:SB_KEY},cache:"no-store"});
@@ -42,81 +42,164 @@ function contractSpread(c){
   return (c.ask-c.bid)/((c.ask+c.bid)/2);
 }
 function contractFor(t){
-  if(!(market&&market.contractProfiles)||!(companyFor(t)&&companyFor(t).qualified))return null;
+  const company=companyFor(t);
+  if(!(market&&market.contractProfiles)||!company||!company.qualified)return null;
   return market.contractProfiles.filter(x=>{
-    if(x.ticker!==t||!Number.isFinite(x.strike)||x.strike>=companyFor(t).price)return false;
-    const delta=contractDelta(x);
+    if(x.ticker!==t||!Number.isFinite(x.strike)||x.strike>=company.price)return false;
+    const delta=Number.isFinite(x.delta)?x.delta:null;
     const spread=contractSpread(x);
-    return Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA&&(spread===null||spread<=0.05);
-  }).sort((a,b)=>{
-    // Complete comparable liquidity data comes before provisional references.
-    const valid=c=>Number.isFinite(c.openInterest)&&c.openInterest>=0&&contractSpread(c)!==null;
-    const completeness=Number(valid(b))-Number(valid(a));
-    if(completeness)return completeness;
-    const oi=c=>Number.isFinite(c.openInterest)&&c.openInterest>=0?c.openInterest:-1;
-    return oi(b)-oi(a)||(contractSpread(a)??Infinity)-(contractSpread(b)??Infinity)||String(a.expiration||"").localeCompare(String(b.expiration||""))||(a.strike||0)-(b.strike||0);
+    const iv=Number.isFinite(x.iv)?x.iv:Number.isFinite(x.impliedVolatility)?x.impliedVolatility:null;
+    const freshness=String(x.sourceAsOf||"")+" "+String(x.deltaSource||"")+" "+String(x.classification||"");
+    const currentVerified=!/historic|delayed|modeled|unverified|reference/i.test(freshness);
+    return Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA&&
+      Number.isFinite(x.openInterest)&&Number.isFinite(x.bid)&&Number.isFinite(x.ask)&&
+      spread!==null&&spread<=0.05&&Number.isFinite(iv)&&currentVerified;
+  }).sort((a,b)=>b.openInterest-a.openInterest||contractSpread(a)-contractSpread(b)||String(a.expiration||"").localeCompare(String(b.expiration||"")))[0]||null;
+}
+function historicalContractFor(t){
+  if(!(market&&market.contractProfiles))return null;
+  return market.contractProfiles.filter(x=>x.ticker===t).sort((a,b)=>{
+    const da=contractDelta(a),db=contractDelta(b);
+    const aBand=Number.isFinite(da)&&da>=MIN_CONTRACT_DELTA&&da<=MAX_CONTRACT_DELTA?1:0;
+    const bBand=Number.isFinite(db)&&db>=MIN_CONTRACT_DELTA&&db<=MAX_CONTRACT_DELTA?1:0;
+    return bBand-aBand||(Number(b.openInterest)||0)-(Number(a.openInterest)||0);
   })[0]||null;
 }
 function companyFor(t){return research&&research.candidates?research.candidates.find(x=>x.ticker===t):null}
 function fundamentalDetails(c){
-  const q=c.quarter||{},num=n=>Number.isFinite(n)?money.format(n)+"M":"—";
-  const trend=n=>Number.isFinite(n)?(n>=0?"+":"")+n.toFixed(1)+"% YoY":"Prior loss / unavailable";
-  const rows=(q.periods||[]).slice(0,4).map((period,i)=>'<tr><th scope="row">'+safe(period)+'</th><td>'+num(q.revenues&&q.revenues[i])+'<small>'+trend(q.revg&&q.revg[i])+'</small></td><td>'+num(q.net&&q.net[i])+'<small>'+trend(q.nyoy&&q.nyoy[i])+'</small></td><td>'+(Number.isFinite((q.eps||c.eps||[])[i])?money.format((q.eps||c.eps)[i]):"—")+'</td></tr>').join("");
   const sources=(c.sources||[]).filter(s=>/^https:\/\//.test(s.url||"")).map(s=>'<a class="source-link" href="'+safe(s.url)+'" target="_blank" rel="noopener">'+safe(s.label||"Source")+' ↗</a>').join("");
-  return '<div class="fundamental-history"><h4>Latest four fiscal quarters · GAAP</h4><table class="fundamental-table"><thead><tr><th>Quarter</th><th>Revenue</th><th>Net income</th><th>EPS</th></tr></thead><tbody>'+rows+'</tbody></table><p class="history-note">Revenue and net income in USD millions. YoY compares the same fiscal quarter. '+safe(q.verification||"Verify against the linked filings.")+'</p></div><p><b>Cash flow:</b> '+safe(c.cash)+'</p><p><b>Margins:</b> '+safe(c.margins)+'</p><p><b>Balance sheet:</b> '+safe(c.balance)+'</p><p><b>Catalysts:</b> '+safe((c.catalysts||[]).join(" "))+'</p><p><b>Biggest risk:</b> '+safe(c.risk)+'</p><p><b>Prior-high reference:</b> '+safe(c.recovery)+'</p><div class="research-sources">'+sources+'</div>';
+  return '<p><b>Margins:</b> '+safe(c.margins||"Not recorded")+'</p><p><b>Balance sheet:</b> '+safe(c.balance||"Not recorded")+'</p><p><b>Catalysts:</b> '+safe((c.catalysts||[]).join(" "))+'</p><p><b>Biggest risk:</b> '+safe(c.risk||"Not recorded")+'</p><div class="research-sources">'+sources+'</div>';
 }
-
+function latestFcf(c){return Array.isArray(c.fcf)&&Number.isFinite(c.fcf[0])?c.fcf[0]:null;}
+function qualificationGates(c){
+  const q=c.quarter||{},latestRev=Array.isArray(q.revg)&&Number.isFinite(q.revg[0])?q.revg[0]:null;
+  const latestNet=Array.isArray(q.net)&&Number.isFinite(q.net[0])?q.net[0]:null;
+  const lf=latestFcf(c),ttm=Number.isFinite(c.fcfTTM)?c.fcfTTM:null;
+  const warn=/down|declin|cut|negative|-\d/i.test(String(c.fcfSummary||"")+" "+String(c.cash||""));
+  const gate=(label,pass,unknown=false)=>'<span class="gate '+(unknown?"unknown":pass?"pass":"fail")+'">'+safe(label)+' '+(unknown?"?":pass?"✓":"✕")+'</span>';
+  return '<div class="qualification-gates" aria-label="Qualification gates">'+
+    gate("GAAP PROFIT",latestNet!==null?latestNet>0:Number(c.gaapEPSTTM)>0,latestNet===null&&!Number.isFinite(c.gaapEPSTTM))+
+    gate("REV GROWTH",latestRev!==null&&latestRev>0,latestRev===null)+
+    gate("LATEST FCF",lf!==null&&lf>0,lf===null)+
+    gate("TTM FCF",ttm!==null&&ttm>0,ttm===null)+
+    gate("THESIS",Boolean(c.qualified))+
+    (warn?'<span class="gate warn">FCF TREND ⚠</span>':"")+
+  '</div>';
+}
+function cashFlowPanel(c){
+  const q=c.quarter||{},latest=latestFcf(c),ttm=Number.isFinite(c.fcfTTM)?c.fcfTTM:null;
+  const prior=Array.isArray(c.fcf)&&Number.isFinite(c.fcf[4])?c.fcf[4]:null;
+  const yoy=latest!==null&&prior!==null&&prior!==0?(latest/prior-1):null;
+  const revenue=Array.isArray(q.revenues)&&Number.isFinite(q.revenues[0])?q.revenues[0]:null;
+  const margin=latest!==null&&revenue?latest/revenue:null;
+  const trend=yoy===null?"UNVERIFIED":yoy>0.05?"IMPROVING":yoy<-.05?"WEAKENING":"STABLE";
+  return '<div class="fcf-panel"><div class="mini-section-head"><h4>Cash-flow quality</h4><span class="'+(trend==="WEAKENING"?"bad-text":trend==="IMPROVING"?"good-text":"")+'">'+trend+'</span></div>'+
+    '<div class="fcf-grid"><div><span>LATEST FCF</span><b>'+(latest===null?"—":money.format(latest)+"M")+'</b></div><div><span>YOY CHANGE</span><b>'+(yoy===null?"—":fmtMove(yoy*100))+'</b></div><div><span>TTM FCF</span><b>'+(ttm===null?"—":money.format(ttm)+"M")+'</b></div><div><span>FCF MARGIN</span><b>'+(margin===null?"—":pct(margin))+'</b></div></div>'+
+    '<p>'+safe(c.cash||c.fcfSummary||"Cash-flow commentary unavailable.")+'</p></div>';
+}
+function earningsQuality(c){
+  const q=c.quarter||{},periods=(q.periods||[]).slice(0,4),eps=(q.eps||c.eps||[]),nyoy=q.nyoy||[];
+  const surprises=Array.isArray(c.earningsSurprises)?c.earningsSurprises:[];
+  const rows=periods.map((period,i)=>{
+    const x=surprises[i]||{},cons=Number.isFinite(x.consensus)?money.format(x.consensus):"—";
+    const actual=Number.isFinite(eps[i])?money.format(eps[i]):"—";
+    const result=x.result?'<span class="surprise '+safe(String(x.result).toLowerCase())+'">'+safe(x.result)+'</span>':'<span class="surprise neutral">NOT STORED</span>';
+    return '<tr><th scope="row">'+safe(period)+'</th><td>'+actual+'</td><td>'+(Number.isFinite(nyoy[i])?fmtMove(nyoy[i]):"—")+'</td><td>'+cons+'</td><td>'+result+'</td></tr>';
+  }).join("");
+  return '<div class="earnings-quality"><div class="mini-section-head"><h4>Earnings quality & surprise</h4><span>GAAP FIRST</span></div><div class="table-scroll"><table class="fundamental-table"><thead><tr><th>Quarter</th><th>GAAP EPS</th><th>Net income YoY</th><th>Consensus*</th><th>Result*</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="history-note">*Consensus surprise is shown only when the research snapshot explicitly stores the estimate basis. GAAP EPS is never compared against an adjusted-EPS consensus.</p></div>';
+}
+function rankMovement(c){
+  if(!previousResearch||!Array.isArray(previousResearch.candidates))return '<span class="rank-move flat">FIRST</span>';
+  const p=previousResearch.candidates.find(x=>x.ticker===c.ticker&&x.qualified);
+  if(!p||!Number.isFinite(p.rank))return '<span class="rank-move new">NEW</span>';
+  const d=p.rank-c.rank;
+  if(d>0)return '<span class="rank-move up">↑'+d+'</span>';
+  if(d<0)return '<span class="rank-move down">↓'+Math.abs(d)+'</span>';
+  return '<span class="rank-move flat">—</span>';
+}
+function matchesFilter(c){
+  const p=planFor(c.ticker)||{},a=normalizedStatus(p.action);
+  if(activeFilter==="tier1")return Number(c.tier)===1;
+  if(activeFilter==="tier2")return Number(c.tier)===2;
+  if(activeFilter==="tier3")return Number(c.tier)===3;
+  if(activeFilter==="support")return a.includes("NEAR SUPPORT")||actionTone(a)==="buy";
+  if(activeFilter==="wait")return a.includes("WAIT")||a.includes("DO NOT");
+  if(activeFilter==="contract")return Boolean(contractFor(c.ticker));
+  return true;
+}
+function todayPriority(c){
+  const a=normalizedStatus((planFor(c.ticker)||{}).action);
+  if(actionTone(a)==="buy")return 0;
+  if(a.includes("NEAR SUPPORT"))return 1;
+  if(a.includes("WAIT FOR REVERSAL"))return 2;
+  if(a==="WATCH")return 3;
+  if(a.includes("DO NOT"))return 5;
+  return 4;
+}
 function setupCard(c,compact){
-  const p=planFor(c.ticker)||{};
-  const contract=contractFor(c.ticker);
-  const action=p.action||"RESEARCH ONLY";
-  const optionBlock='<details class="contract-panel" data-detail-key="contract-panel:'+safe(c.ticker)+'"><summary><span class="contract-panel-title">LEAP contract<small>'+safe(contract?contract.reference||"View reference":"Awaiting eligible reference")+'</small></span><span class="contract-panel-toggle" aria-hidden="true">⌄</span></summary><div class="contract-panel-body">'+(contract?contractCard(contract,true):'<section class="contract-pending" aria-label="'+safe(c.ticker)+' LEAP contract pending"><p>No eligible reference in this snapshot · 0.60–0.75 delta · no price cap. Verify open interest and bid/ask spread before selection.</p></section>')+'</div></details>';
+  const p=planFor(c.ticker)||{},contract=contractFor(c.ticker),historical=historicalContractFor(c.ticker),action=p.action||"RESEARCH ONLY";
   const event=p.eventRisk?'<div class="event-note">⚠ '+safe(p.eventRisk)+'</div>':"";
   const ladder=(p.entry1||p.add2||p.finalAdd)?'<div class="entry-ladder"><div><span>'+safe(p.entry1Label||"1ST MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.entry1||"—")+'</b></div><div><span>'+safe(p.add2Label||"2ND MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.add2||"—")+'</b></div><div><span>'+safe(p.finalAddLabel||"FINAL DEEP SUPPORT")+' · 40%</span><b>'+safe(p.finalAdd||"—")+'</b></div></div>':"";
   const reasons=(p.entry1Reason||p.add2Reason||p.finalAddReason)?'<div class="support-reasons"><div><b>Why this is the 1st buy area</b><p>'+safe(p.entry1Reason||"—")+'</p></div><div><b>Why this is the 2nd buy area</b><p>'+safe(p.add2Reason||"—")+'</p></div><div><b>Why this is the final deep-buy area</b><p>'+safe(p.finalAddReason||"—")+'</p></div></div>':"";
   const vm=c.valuationModel&&c.valuationModel.targets?c.valuationModel.targets:null;
-  const targetBlock=vm?'<div class="target-strip"><div><span>BEAR VALUE</span><b>'+money.format(vm.bear.blended)+'</b><small>Conservative case</small></div><div><span>BASE VALUE</span><b>'+money.format(vm.base.blended)+'</b><small>Most reasonable case</small></div><div><span>BULL VALUE</span><b>'+money.format(vm.bull.blended)+'</b><small>Strong execution case</small></div></div>':"";
+  const targetBlock=vm?'<div class="target-strip"><div><span>BEAR VALUE</span><b>'+money.format(vm.bear.blended)+'</b><small>Conservative case</small></div><div><span>BASE VALUE</span><b>'+money.format(vm.base.blended)+'</b><small>Central case</small></div><div><span>BULL VALUE</span><b>'+money.format(vm.bull.blended)+'</b><small>Strong execution</small></div></div>':"";
   const sector='<div class="sector-line"><span>'+safe(c.sector||"Sector N/A")+'</span><b>'+safe(c.industry||"")+'</b></div>';
   const sectorDetail=(c.sectorLongTermGood||c.sectorLongTermRisk)?'<div class="sector-box"><div><b>Sector tailwinds</b><p>'+safe((c.sectorLongTermGood||[]).join(" · "))+'</p></div><div><b>Sector risks</b><p>'+safe((c.sectorLongTermRisk||[]).join(" · "))+'</p></div></div>':"";
-  const more=compact?sectorDetail:'<details class="card-more" data-detail-key="research:'+safe(c.ticker)+'"><summary>Research details + thesis ⌄</summary><div class="deep-detail">'+sectorDetail+fundamentalDetails(c)+'<p><b>Why down:</b> '+safe(c.down)+'</p><p><b>Valuation:</b> '+safe(c.valuation)+'</p><p><b>Moat:</b> '+safe(c.moat)+'</p><p><b>Invalidation:</b> '+safe(c.invalidation)+'</p><p><b>Target method:</b> '+safe(c.valuationModel&&c.valuationModel.method?c.valuationModel.method:"Recompute after earnings.")+'</p></div></details>';
   const price=(p.price!=null?p.price:c.price);
-  const rev=c.quarter&&c.quarter.revg&&c.quarter.revg[0]!=null?"+"+Number(c.quarter.revg[0]).toFixed(1)+"%":"—";
-  return'<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'">'+
-    '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span></div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">Tier '+safe(c.tier||"—")+' · '+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
-    '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b><small>52-week high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest fiscal quarter</small></div></div><p class="business-summary"><b>'+safe(c.netSummary)+'</b> · FCF '+safe(c.fcfSummary)+'<br>Technical: '+safe(p.technicalState||c.state||"Unverified")+'</p>'+
-    targetBlock+ladder+reasons+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+more+optionBlock+
+  const rev=c.quarter&&c.quarter.revg&&c.quarter.revg[0]!=null?(Number(c.quarter.revg[0])>=0?"+":"")+Number(c.quarter.revg[0]).toFixed(1)+"%":"—";
+  const contractSummary=contract?'<span class="contract-ready">VERIFIED ELIGIBLE</span>':historical?'<span class="contract-reference-only">HISTORICAL / VERIFY</span>':'<span class="contract-none">NO VERIFIED CONTRACT</span>';
+  const optionBody=contract?contractCard(contract,true):'<section class="contract-pending"><p>No current contract has complete verified delta, IV, bid/ask and OI that passes the 0.60–0.75 delta / ≤5% spread rules.</p>'+(historical?'<div class="historical-reference"><b>Saved reference only</b><span>'+safe(historical.reference||"Historical chain reference")+'</span><small>'+safe(historical.sourceAsOf||"Timestamp unavailable")+'</small></div>':"")+'</section>';
+  return '<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'" data-ticker="'+safe(c.ticker)+'">'+
+    '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span>'+rankMovement(c)+'</div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">Tier '+safe(c.tier||"—")+' · '+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
+    '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b><small>52W high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest quarter</small></div></div>'+
+    qualificationGates(c)+
+    '<p class="business-summary"><b>'+safe(c.netSummary)+'</b> · FCF '+safe(c.fcfSummary)+'<br>Technical: '+safe(p.technicalState||c.state||"Unverified")+' · '+contractSummary+'</p>'+
+    '<div class="card-section-stack">'+
+      '<details class="card-more" data-detail-key="entry:'+safe(c.ticker)+'"><summary>Entry plan & support <span>⌄</span></summary><div class="deep-detail">'+ladder+reasons+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+'</div></details>'+
+      '<details class="card-more" data-detail-key="fundamentals:'+safe(c.ticker)+'"><summary>Fundamentals & cash flow <span>⌄</span></summary><div class="deep-detail">'+cashFlowPanel(c)+earningsQuality(c)+sectorDetail+fundamentalDetails(c)+'</div></details>'+
+      '<details class="card-more" data-detail-key="valuation:'+safe(c.ticker)+'"><summary>Valuation & thesis <span>⌄</span></summary><div class="deep-detail">'+targetBlock+'<p><b>Why down:</b> '+safe(c.down||"—")+'</p><p><b>Valuation:</b> '+safe(c.valuation||"—")+'</p><p><b>Moat:</b> '+safe(c.moat||"—")+'</p><p><b>Prior-high reference:</b> '+safe(c.recovery||"—")+'</p><p><b>Invalidation:</b> '+safe(c.invalidation||"—")+'</p></div></details>'+
+      '<details class="contract-panel" data-detail-key="contract-panel:'+safe(c.ticker)+'"><summary><span class="contract-panel-title">LEAP contract<small>'+safe(contract?contract.reference||"Verified candidate":historical?"Historical reference only":"Awaiting verified chain")+'</small></span><span class="contract-panel-toggle">⌄</span></summary><div class="contract-panel-body">'+optionBody+'</div></details>'+
+    '</div>'+
   '</article>';
 }
 function renderDesk(){
-  const s=market&&market.marketState?market.marketState:"UNAVAILABLE";
-  document.getElementById("market-state").textContent=s;
+  const state=market&&market.marketState?market.marketState:"UNAVAILABLE";
+  document.getElementById("market-state").textContent=state;
   const trig=document.getElementById("trigger-pill");
   trig.textContent=market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";
   trig.className="state-pill "+(market&&market.triggered?"hot":"good");
   document.getElementById("market-message").textContent=market&&market.message?market.message:"No current market message.";
   document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
 
-  const cards=((research&&research.candidates)||[])
-    .filter(c=>c.qualified)
-    .sort((a,b)=>{
-      const ar=Number.isFinite(a.rank)?a.rank:Infinity;
-      const br=Number.isFinite(b.rank)?b.rank:Infinity;
-      return ar-br||b.score-a.score||String(a.ticker).localeCompare(String(b.ticker));
-    });
-  document.getElementById("top-setups").innerHTML=cards.length?cards.map(c=>setupCard(c,false)).join(""):'<div class="loading">No qualified setups are loaded.</div>';
+  const allCards=((research&&research.candidates)||[]).filter(c=>c.qualified).sort((a,b)=>{
+    const ar=Number.isFinite(a.rank)?a.rank:Infinity,br=Number.isFinite(b.rank)?b.rank:Infinity;
+    return ar-br||b.score-a.score||String(a.ticker).localeCompare(String(b.ticker));
+  });
+  const visible=allCards.filter(matchesFilter);
+  document.getElementById("top-setups").innerHTML=visible.length?visible.map(c=>setupCard(c,false)).join(""):'<div class="loading">No qualified setups match this filter.</div>';
+  const count=document.getElementById("filter-count");if(count)count.textContent=visible.length+" of "+allCards.length;
+  document.querySelectorAll("[data-filter]").forEach(b=>b.classList.toggle("active",b.dataset.filter===activeFilter));
+
+  const actions=allCards.map(c=>normalizedStatus((planFor(c.ticker)||{}).action));
+  const buyCount=actions.filter(a=>actionTone(a)==="buy").length;
+  const supportCount=actions.filter(a=>a.includes("NEAR SUPPORT")).length;
+  const waitCount=actions.filter(a=>a.includes("WAIT")).length;
+  const stopCount=actions.filter(a=>a.includes("DO NOT")).length;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set("decision-buy",buyCount);set("decision-support",supportCount);set("decision-wait",waitCount);set("decision-stop",stopCount);
+  const today=allCards.slice().sort((a,b)=>todayPriority(a)-todayPriority(b)||a.rank-b.rank).slice(0,3);
+  const topToday=document.getElementById("decision-top3");
+  if(topToday)topToday.innerHTML=today.map(c=>'<span><b>#'+safe(c.rank)+' '+safe(c.ticker)+'</b><small>'+safe((planFor(c.ticker)||{}).action||"RESEARCH ONLY")+'</small></span>').join("");
 
   const f=(research&&research.researchFunnel)||{};
-  const actionable=cards.filter(c=>actionTone(planFor(c.ticker)&&planFor(c.ticker).action)==="buy").length;
-  const universe=document.getElementById("coverage-universe");
-  const qualified=document.getElementById("coverage-qualified");
-  const actionEl=document.getElementById("coverage-actionable");
-  if(universe)universe.textContent=f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString();
-  if(qualified)qualified.textContent=f.qualifiedCount==null?cards.length:Number(f.qualifiedCount).toLocaleString();
-  if(actionEl)actionEl.textContent=actionable.toLocaleString();
-  document.getElementById("coverage-reviewed").textContent=f.deepReviewCount==null?"—":Number(f.deepReviewCount).toLocaleString();
-  document.getElementById("coverage-note").textContent=f.universeDefinition||"Coverage details unavailable.";
+  set("coverage-universe",f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString());
+  set("coverage-qualified",f.qualifiedCount==null?allCards.length:Number(f.qualifiedCount).toLocaleString());
+  set("coverage-actionable",buyCount.toLocaleString());
+  set("coverage-reviewed",f.deepReviewCount==null?"—":Number(f.deepReviewCount).toLocaleString());
+  const note=document.getElementById("coverage-note");if(note)note.textContent=f.universeDefinition||"Coverage details unavailable.";
   const rejected=(research&&research.rejected)||[];
-  document.getElementById("coverage-rejections").innerHTML=rejected.length?'<details class="card-more" data-detail-key="rejected"><summary>Reviewed · '+rejected.length+' not qualified ⌄</summary><div class="deep-detail">'+rejected.map(x=>'<p><b>'+safe(x.ticker)+':</b> '+safe(x.reason)+'</p>').join("")+'</div></details>':"";
+  const re=document.getElementById("coverage-rejections");
+  if(re)re.innerHTML=rejected.length?'<details class="card-more" data-detail-key="rejected"><summary>Reviewed · '+rejected.length+' not qualified ⌄</summary><div class="deep-detail">'+rejected.map(x=>'<p><b>'+safe(x.ticker)+':</b> '+safe(x.reason)+'</p>').join("")+'</div></details>':"";
 }
 function contractCard(c,embedded=false){
   const readiness=c.approval||c.readiness||"VERIFY LIVE";
@@ -153,11 +236,11 @@ async function load(){
   try{
     const results=await Promise.all([
       sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=1"),
-      sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=1")
+      sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")
     ]);
     const scans=results[0],res=results[1];
     if(scans&&scans[0]&&scans[0].payload){market=scans[0].payload;marketSavedAt=scans[0].scan_time;marketFromDatabase=true;}
-    if(res&&res[0]&&res[0].payload){research=res[0].payload;researchSavedAt=res[0].snapshot_time;researchFromDatabase=true;}
+    if(res&&res[0]&&res[0].payload){research=res[0].payload;researchSavedAt=res[0].snapshot_time;previousResearch=res[1]&&res[1].payload?res[1].payload:null;researchFromDatabase=true;}
   }catch(e){console.info("Supabase fallback",e.message);}
   if(!research)research=await json("data/research-latest.json");
   if(!market)market=await json("data/market-latest.json");
@@ -167,12 +250,14 @@ async function load(){
 load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
 async function pollLatest(){
   try{
-    const [scans,snapshots]=await Promise.all([sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=1"),sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=1")]);
+    const [scans,snapshots]=await Promise.all([sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=1"),sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")]);
     let changed=false;
     if(scans&&scans[0]&&scans[0].payload){if(!marketFromDatabase||scans[0].scan_time!==marketSavedAt){market=scans[0].payload;marketSavedAt=scans[0].scan_time;changed=true;}marketFromDatabase=true;}
-    if(snapshots&&snapshots[0]&&snapshots[0].payload){if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;changed=true;}researchFromDatabase=true;}
+    if(snapshots&&snapshots[0]&&snapshots[0].payload){if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]&&snapshots[1].payload?snapshots[1].payload:null;changed=true;}researchFromDatabase=true;}
     sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
     if(changed)renderAll();else renderFreshness();
   }catch(e){sourceMode("REFRESH UNAVAILABLE",marketSavedAt);document.getElementById("feed-note").textContent="Latest refresh unavailable. Showing the last saved snapshot; verify its price cutoff before acting.";}
 }
 setInterval(pollLatest,60000);
+
+document.addEventListener("click",e=>{const b=e.target.closest("[data-filter]");if(!b)return;activeFilter=b.dataset.filter||"all";renderAll();});
