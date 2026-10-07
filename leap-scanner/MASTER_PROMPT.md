@@ -165,7 +165,7 @@ Never average because the option premium alone is down.
 
 Prefer:
 - 18–30 months to expiration when available
-- Roughly 0.70–0.85 delta
+- Roughly 0.70–0.75 delta
 - ITM or moderately ITM calls
 - Strong open interest
 - Tight bid/ask spread
@@ -572,7 +572,7 @@ Never describe a contract as high probability solely from delta. Require both op
 
 Primary contract profile:
 - 18–30 months preferred
-- 0.70–0.85 delta preferred
+- 0.70–0.75 delta preferred
 - ITM
 - OI >= 100 preferred, >= 500 strong
 - Bid/ask width <= 5% of midpoint preferred, <= 3% better
@@ -581,7 +581,7 @@ Primary contract profile:
 - Material cushion below Base target
 
 COST FALLBACK:
-A 0.60–0.70 delta contract may be considered only when the preferred 0.70–0.85 delta contract is materially too expensive AND the current stock price is at least $70 above the strike.
+A 0.60–0.69 delta contract may be considered only when the preferred 0.70–0.75 delta contract is materially too expensive AND the current stock price is at least $70 above the strike.
 
 The fallback contract must still:
 - Be ITM now
@@ -621,10 +621,10 @@ Hard maximum LEAP premium:
 
 Do NOT publish or recommend a contract above this cost ceiling.
 
-If the preferred 0.70–0.85 delta ITM contract costs more than $6,500:
+If the preferred 0.70–0.75 delta ITM contract costs more than $6,500:
 1. Do not show it as the selected contract.
 2. Search for a cheaper contract that still fits the strategy.
-3. A 0.60–0.70 delta fallback is allowed only when all of these remain true:
+3. A 0.60–0.69 delta fallback is allowed only when all of these remain true:
    - total cost <= $6,500,
    - contract is still ITM,
    - current stock price remains at least $70 above the strike under the user's current fallback rule,
@@ -635,3 +635,19 @@ If the preferred 0.70–0.85 delta ITM contract costs more than $6,500:
 4. If no contract satisfies all requirements, publish **NO CONTRACT UNDER $6,500 VERIFIED — WAIT**.
 
 The stock may remain in the qualified stock universe even when no acceptable contract fits the budget. Do not lower company-quality standards or force a poor option just to create a trade.
+
+
+## Delta Band — Hard Rule
+
+All published/recommended LEAP contracts must have delta between **0.60 and 0.75 inclusive**.
+
+- **Preferred delta:** 0.70–0.75
+- **Lower-cost acceptable delta:** 0.60–0.69
+- **Hard minimum:** 0.60
+- **Hard maximum:** 0.75
+
+Do not publish or recommend contracts with delta below 0.60 or above 0.75.
+
+A 0.60–0.69 contract is acceptable only when it also satisfies the $6,500 maximum cost, ITM requirement, liquidity/spread/IV rules, sufficient time to expiration, and Bear/Base fundamental valuation coverage. The lower delta must not be used to justify a speculative OTM trade.
+
+A contract above 0.75 should be rejected for this strategy even if it has excellent liquidity, because it generally requires too much capital and behaves too much like stock ownership relative to the user's preferred LEAPS risk/reward.
