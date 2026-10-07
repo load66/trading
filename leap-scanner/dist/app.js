@@ -1,79 +1,116 @@
-const money=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
-const pct=n=>`${(n*100).toFixed(1)}%`;
-const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let scan,marketPlan,group='shortlist',selected='ADSK';
-const centralDate=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit',timeZoneName:'short'});
-function renderTimestamps(meta){for(const [key,id] of [['resultsUploadedAt','results-upload-time'],['appUpdatedAt','app-update-time']]){const el=document.getElementById(id),date=new Date(meta[key]??'');if(!el)continue;if(Number.isNaN(date.getTime())){el.textContent='Timestamp unavailable';continue;}el.dateTime=date.toISOString();el.textContent=centralDate.format(date);}if(meta.scanCompletedAt){const date=new Date(meta.scanCompletedAt);if(!Number.isNaN(date.getTime())){document.getElementById('scan-date').textContent=centralDate.format(date);document.getElementById('scan-time-note').textContent='Exact completion time · Central Time';}}}
-function actionClass(action){const a=String(action||'').toLowerCase();if(a.includes('high-conviction')||a.includes('buy zone')||a.includes('add zone'))return 'action-buy';if(a.includes('avoid')||a.includes('broken'))return 'action-avoid';if(a.includes('do not add'))return 'action-stop';return 'action-watch';}
-function renderMarketPlan(plan){
- marketPlan=plan;
- const note=document.getElementById('market-status-note'),badge=document.getElementById('market-state-badge'),strip=document.getElementById('market-strip'),msg=document.getElementById('daily-plan-message'),rows=document.getElementById('entry-plan-rows'),contracts=document.getElementById('contract-profile-rows');
- if(!note||!badge||!strip||!msg||!rows)return;
- note.textContent=`Market snapshot: ${plan.marketAsOf}. Trigger thresholds: SPY ≤ -1.75%, QQQ ≤ -2.25%, or VIX > 20 / major macro shock.`;
- badge.textContent=plan.marketState||'UNAVAILABLE';badge.className='market-state '+(plan.triggered?'triggered':'normal');
- const items=[['SPY',plan.market?.spy],['QQQ',plan.market?.qqq],['VIX',plan.market?.vix]];
- strip.innerHTML=items.map(([label,x])=>{if(!x)return `<div><span>${label}</span><strong>Unavailable</strong><small>No verified data</small></div>`;const value=label==='VIX'?Number(x.value).toFixed(2):money.format(x.close);const change=Number.isFinite(x.dayChangePct)?`${x.dayChangePct>=0?'+':''}${x.dayChangePct.toFixed(2)}%`:'—';return `<div><span>${label}</span><strong>${value}</strong><small class="${x.dayChangePct<0?'negative':'positive'}">${change}</small></div>`;}).join('');
- msg.textContent=plan.message||'No market message available.';
- rows.innerHTML=(plan.candidatePlans||[]).map(p=>`<tr><td><strong>${safe(p.ticker)}</strong><small>${money.format(p.price)}</small></td><td><span class="action-pill ${actionClass(p.action)}">${safe(p.action)}</span></td><td>${safe(p.entry1)}</td><td>${safe(p.add2)}</td><td>${safe(p.finalAdd)}</td><td>${safe(p.confirmation)}</td></tr>`).join('')||'<tr><td colspan="6">No entry plan available.</td></tr>';
- if(contracts)contracts.innerHTML=(plan.contractProfiles||[]).map(p=>`<tr><td><strong>${safe(p.ticker)}</strong></td><td>${safe(p.preferred)}</td><td><a href="${safe(p.source)}" target="_blank" rel="noopener">${safe(p.reference)}</a><small>Ask ref. ${money.format(p.ask)}</small></td><td>${money.format(p.breakeven)}</td><td>${Number(p.openInterest).toLocaleString()}</td><td><span class="contract-status ${String(p.readiness).includes('NOT APPROVED')?'bad':String(p.readiness).includes('STRONG')||String(p.readiness).includes('GOOD')||String(p.readiness).includes('READY')?'good':'watch'}">${safe(p.readiness)}</span><small>${safe(p.sourceAsOf)}</small></td></tr>`).join('')||'<tr><td colspan="6">No contract reference data available.</td></tr>';
- if(scan)render();
+const SB_URL="https://ppsljqaaanpkksxbpalk.supabase.co";
+const SB_KEY="sb_publishable_2JLPa7GMpdacVfxBnfCv_w_wl36jn2n";
+const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2});
+const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
+const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
+let research=null,market=null,history=[],filter="all";
+
+async function sb(table,query){
+  const r=await fetch(SB_URL+"/rest/v1/"+table+"?"+query,{headers:{apikey:SB_KEY},cache:"no-store"});
+  if(!r.ok)throw new Error("Supabase "+table+" "+r.status);
+  return r.json();
 }
-async function loadMarketPlan(){
- try{const res=await fetch('data/market-latest.json',{cache:'no-store'});if(!res.ok)throw new Error('Market plan unavailable');renderMarketPlan(await res.json());}
- catch(e){const note=document.getElementById('market-status-note'),rows=document.getElementById('entry-plan-rows'),msg=document.getElementById('daily-plan-message'),badge=document.getElementById('market-state-badge');if(note)note.textContent='Latest market-entry snapshot could not load.';if(rows)rows.innerHTML='<tr><td colspan="6">Reload to retry the daily entry map.</td></tr>';if(msg)msg.textContent='NO AUTOMATIC ENTRY — verify current market data first.';if(badge){badge.textContent='UNAVAILABLE';badge.className='market-state';}}
+async function json(path){
+  const r=await fetch(path,{cache:"no-store"});
+  if(!r.ok)throw new Error(path);
+  return r.json();
 }
-const members=()=>scan.candidates.filter(r=>group==='shortlist'?scan.shortlist.includes(r.ticker):!scan.shortlist.includes(r.ticker));
-const cardCache=new Map();
-let sharingImage=false;
-const cardPath=ticker=>ticker==='top15'?'cards/strict-watchlist-2026-10-07.png':`cards/strict-${ticker}-2026-10-07.png`;
-const cardTitle=ticker=>ticker==='top15'?'Full strict LEAPS watchlist':`${ticker} research image`;
-function shareStatus(ticker,message){if(ticker==='top15'||selected===ticker){const status=document.getElementById(ticker==='top15'?'top15-share-status':'share-status');if(status)status.textContent=message;}}
-function updateShareButton(ticker){if(ticker!=='top15'&&selected!==ticker)return;const button=document.querySelector(ticker==='top15'?'[data-share-top15]':'[data-share-image]');if(!button)return;const loading=cardCache.get(ticker)?.loading;button.disabled=Boolean(loading||sharingImage);button.textContent=loading?'Preparing image…':sharingImage?'Sharing image…':ticker==='top15'?'Share full list image':'Share this stock';}
-function prepareCard(ticker){
- if(cardCache.has(ticker)){updateShareButton(ticker);return;}
- if(typeof navigator.share!=='function'||typeof navigator.canShare!=='function'||typeof File==='undefined'){cardCache.set(ticker,{file:null,loading:false});updateShareButton(ticker);return;}
- const entry={file:null,loading:true};cardCache.set(ticker,entry);updateShareButton(ticker);
- fetch(cardPath(ticker)).then(res=>{if(!res.ok)throw new Error('Image unavailable');return res.blob();}).then(blob=>{if(!blob.size||!blob.type.startsWith('image/'))throw new Error('Invalid image');entry.file=new File([blob],`${ticker}-Leap-Scanner-2026-10-07.png`,{type:'image/png'});}).catch(()=>{shareStatus(ticker,'Open the image preview to save it, or use Download PNG.');}).finally(()=>{entry.loading=false;updateShareButton(ticker);});
+function toast(msg){const e=document.getElementById("toast");e.textContent=msg;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200);}
+function actionTone(a){a=String(a||"").toUpperCase();if(a.includes("BUY")||a.includes("ADD")||a.includes("HIGH-CONVICTION"))return"buy";if(a.includes("BROKEN")||a.includes("AVOID")||a.includes("DO NOT"))return"stop";return"watch";}
+function actionRank(a){a=String(a||"").toUpperCase();if(a.includes("HIGH-CONVICTION"))return 0;if(a.includes("BUY ZONE"))return 1;if(a.includes("ADD ZONE"))return 2;if(a.includes("NEAR SUPPORT"))return 3;if(a.includes("WAIT FOR REVERSAL"))return 4;if(a.includes("WATCH"))return 5;return 6;}
+function readinessTone(r){r=String(r||"").toUpperCase();if(r.includes("NOT APPROVED")||r.includes("POOR"))return"bad";if(r.includes("GOOD")||r.includes("STRONG")||r.includes("READY"))return"good";return"watch";}
+function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
+function sourceMode(mode,time){const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="LIVE DATA"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=time?dateFmt.format(new Date(time)):"Dated snapshot";}
+function nav(name){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.toggle("on",x.id==="screen-"+name));
+  document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("on",x.dataset.screen===name));
+  window.scrollTo({top:0,behavior:"smooth"});
 }
-function showSavePreview(ticker){
- document.getElementById('image-preview')?.close();
- const dialog=document.createElement('dialog');dialog.id='image-preview';dialog.className='image-preview';dialog.setAttribute('aria-labelledby','image-preview-title');
- dialog.innerHTML=`<div class="preview-top"><h2 id="image-preview-title">${safe(cardTitle(ticker))}</h2><button type="button" class="preview-close">Close</button></div><p>On iPhone, touch and hold the image, then choose Save Image or Add to Photos. If those options are unavailable, open the image in Safari. Pinch to zoom after saving.</p><img src="${cardPath(ticker)}" alt="${safe(cardTitle(ticker))} with dated financial metrics, catalysts and research notes"><div class="preview-actions"><a href="${cardPath(ticker)}" download>Download PNG</a><a href="${cardPath(ticker)}" target="_blank" rel="noopener">Open image</a></div>`;
- dialog.querySelector('.preview-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.addEventListener('click',event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});dialog.querySelector('img').addEventListener('error',()=>{dialog.querySelector('p').textContent='The image could not load. Close this preview and reload the page to try again.';});document.body.append(dialog);dialog.showModal();
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.screen)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.go)));
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("on",x===b));renderSetups();}));
+
+function marketStat(label,x){
+  if(!x)return'<div class="market-stat"><span>'+label+'</span><b>—</b><small class="flat">Unavailable</small></div>';
+  const val=label==="VIX"?Number(x.value).toFixed(2):money.format(x.close);
+  const move=Number(x.dayChangePct);
+  return'<div class="market-stat"><span>'+label+'</span><b>'+val+'</b><small class="'+(move>0?"up":move<0?"down":"flat")+'">'+fmtMove(move)+'</small></div>';
 }
-async function shareCandidateImage(ticker){
- if(sharingImage||!scan||(ticker!=='top15'&&!scan.candidates.some(r=>r.ticker===ticker)))return;
- const entry=cardCache.get(ticker);if(entry?.loading)return;
- try{
-  if(!entry?.file||typeof navigator.share!=='function'||typeof navigator.canShare!=='function'||!navigator.canShare({files:[entry.file]})){showSavePreview(ticker);return;}
-  sharingImage=true;updateShareButton(selected);updateShareButton('top15');
-  // The PNG is prepared before the tap, preserving phone user activation.
-  await navigator.share({files:[entry.file],title:`${cardTitle(ticker)} · Leap Scanner`});
-  shareStatus(ticker,'Choose Save Image in the share menu to keep the card in Photos.');
- }catch(error){if(error.name==='AbortError')shareStatus(ticker,'Sharing cancelled. Tap the share button to try again.');else showSavePreview(ticker);}
- finally{sharingImage=false;updateShareButton(selected);updateShareButton('top15');}
+function planFor(t){return market&&market.candidatePlans?market.candidatePlans.find(x=>x.ticker===t):null}
+function contractFor(t){return market&&market.contractProfiles?market.contractProfiles.find(x=>x.ticker===t):null}
+function companyFor(t){return research&&research.candidates?research.candidates.find(x=>x.ticker===t):null}
+
+function setupCard(c,compact){
+  const p=planFor(c.ticker)||{};
+  const contract=contractFor(c.ticker);
+  const action=p.action||"RESEARCH ONLY";
+  const event=p.eventRisk?'<div class="event-note">⚠ '+safe(p.eventRisk)+'</div>':"";
+  const ladder=(p.entry1||p.add2||p.finalAdd)?'<div class="entry-ladder"><div><span>ENTRY 1 · 30%</span><b>'+safe(p.entry1||"—")+'</b></div><div><span>ADD 2 · 30%</span><b>'+safe(p.add2||"—")+'</b></div><div><span>FINAL · 40%</span><b>'+safe(p.finalAdd||"—")+'</b></div></div>':"";
+  const more=compact?"":'<details class="card-more"><summary>Research details + thesis ⌄</summary><div class="deep-detail"><p><b>Why down:</b> '+safe(c.down)+'</p><p><b>Valuation:</b> '+safe(c.valuation)+'</p><p><b>Moat:</b> '+safe(c.moat)+'</p><p><b>Invalidation:</b> '+safe(c.invalidation)+'</p><p><b>Contract:</b> '+safe(contract&&contract.reference?contract.reference:c.leapQuality||"Verify live chain")+' · '+safe(contract&&contract.readiness?contract.readiness:c.optionNote||"")+'</p></div></details>';
+  const price=(p.price!=null?p.price:c.price);
+  const rev=c.quarter&&c.quarter.revg&&c.quarter.revg[0]!=null?"+"+Number(c.quarter.revg[0]).toFixed(1)+"%":"—";
+  return'<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'">'+
+    '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span></div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">'+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+
+    '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b></div><div><span>REV. YOY</span><b class="up">'+rev+'</b></div></div>'+
+    ladder+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+more+
+  '</article>';
 }
-function render(){
- document.querySelectorAll('[data-group]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.group===group)));
- document.getElementById('candidates-panel').setAttribute('aria-labelledby',group+'-tab');
- document.getElementById('group-note').textContent=group==='shortlist'?'7 audited company candidates. Tier 1 = research first; Tier 2 = stated exceptions. Live option quality is unverified.':'Early watch: IOT has improving results but fails our valuation/stock-compensation quality filter. It is not in the qualified list.';
- document.getElementById('rows').innerHTML=members().map(r=>`<tr data-ticker="${safe(r.ticker)}" class="${r.ticker===selected?'selected-row':''}"><td><button class="company-button" data-ticker="${safe(r.ticker)}" aria-label="View ${safe(r.company)}" aria-pressed="${r.ticker===selected}"><strong><i>${String(r.rank).padStart(2,'0')}</i>${safe(r.ticker)}</strong><small>Tier ${r.tier} · ${r.score}/100</small></button></td><td class="positive">+${r.quarter.revg[0].toFixed(1)}%</td><td class="drawdown">−${pct(r.drawdown)}</td><td>${money.format(r.price)}</td></tr>`).join('');
- const r=scan.candidates.find(r=>r.ticker===selected),q=r.quarter,m=r.technical;
- const plan=marketPlan?.candidatePlans?.find(p=>p.ticker===r.ticker),contract=marketPlan?.contractProfiles?.find(p=>p.ticker===r.ticker);
- const execution=plan?`<div class="execution-card"><div class="execution-card-head"><div><span>Current execution</span><strong>${safe(plan.action)}</strong></div><div><span>Underlying</span><strong>${money.format(plan.price)}</strong></div></div><div class="execution-levels"><div><span>ENTRY 1 · 30%</span><strong>${safe(plan.entry1)}</strong></div><div><span>ADD 2 · 30%</span><strong>${safe(plan.add2)}</strong></div><div><span>FINAL ADD · 40%</span><strong>${safe(plan.finalAdd)}</strong></div></div><p><b>Confirmation:</b> ${safe(plan.confirmation)}</p>${contract?`<div class="contract-pick"><span>Highest-probability profile</span><strong>${safe(contract.reference)}</strong><small>${safe(contract.preferred)} · OI ${Number(contract.openInterest).toLocaleString()} · reference BE ${money.format(contract.breakeven)}</small><em>${safe(contract.readiness)}</em><p>${safe(contract.note)}</p></div>`:''}</div>`:''; 
- const actions=`<div class="image-actions"><button type="button" class="share-image" data-share-image="${safe(r.ticker)}" aria-describedby="share-status">Share this stock</button><a href="${cardPath(r.ticker)}" download>Download PNG</a></div><p id="share-status" class="share-help" role="status">On iPhone, choose Save Image in the share menu.</p>`;
- const quarters=`<h3>Last 4 quarters · same-quarter YoY</h3><p class="small">Revenue and net income compare the same fiscal quarter a year earlier. Swipe the table for GAAP EPS.</p><div class="quarter-scroll"><table class="quarter-table"><thead><tr><th>Fiscal quarter</th><th>Rev. YoY</th><th>GAAP NI / prior ($M)</th><th>NI YoY</th><th>GAAP EPS</th></tr></thead><tbody>${[3,2,1,0].map(i=>`<tr><td>${safe(q.periods[i])}</td><td>+${q.revg[i].toFixed(1)}%</td><td>${q.net[i].toFixed(1)} / ${q.net[i+4].toFixed(1)}</td><td>${q.nyoy[i]===null?'Loss → profit':q.nyoy[i].toFixed(1)+'%'}</td><td>$${q.eps[i].toFixed(2)}</td></tr>`).join('')}</tbody></table></div>`;
- const sections=[['Why the stock is down',r.down],['Free cash flow',r.cash],['Margin trend',r.margins],['Balance sheet / dilution',r.balance],['Competitive moat',r.moat],['Valuation assessment',r.valuation],['Technical condition',`${r.state}: 50-day SMA $${m.sma50.toFixed(2)}; 200-day SMA $${m.sma200.toFixed(2)}. Observed 20-session low $${m.low20.toFixed(2)} / 60-session low $${m.low60.toFixed(2)}. Support is not guaranteed. 20-session return ${(m.return20*100).toFixed(1)}% versus SPY +1.7%.`],['Prior-high recovery',`Mechanical stock upside +${(r.upsideToHigh*100).toFixed(1)}% to $${r.high.toFixed(2)} ${r.basis} reference. ${r.recovery}`],['Biggest risk',r.risk],['What invalidates the thesis',r.invalidation],['LEAP suitability',`${r.leapQuality}. ${r.optionNote}`]];
- document.getElementById('detail').innerHTML=`<div class="detail-head"><div><h2>${safe(r.ticker)} <small>${money.format(r.price)}</small></h2><p>${safe(r.company)}</p></div><span class="badge ${r.qualified?'':'exception'}">TIER ${r.tier} · ${r.qualified?'QUALIFIED COMPANY':'EARLY WATCH'}</span></div><div class="metrics"><div><span>Research score</span><strong>${r.score}/100</strong></div><div><span>Off ${safe(r.basis)} high</span><strong class="drawdown">−${pct(r.drawdown)}</strong></div><div><span>GAAP NI growth</span><strong class="positive">${q.improvingQuarters}/4 quarters</strong></div></div><div class="detail-copy">${actions}${execution}<div class="quality">${safe(r.qualified?'Passes the company screen; staged entry levels and delayed-chain contract references are shown above. No live contract is pre-approved.':'Not qualified: excessive valuation and stock compensation outweigh otherwise improving results.')}</div>${quarters}<h3>Specific catalysts / AI monetization</h3><ul class="catalysts">${r.catalysts.map(x=>`<li>${safe(x)}</li>`).join('')}</ul>${sections.map(([title,value])=>`<h3>${safe(title)}</h3><p>${safe(value)}</p>`).join('')}<h3>Score breakdown</h3><p class="small">${Object.entries(r.scoreBreakdown).map(([k,v])=>`${safe(k)} ${v}/${r.scoreMaximums[k]}`).join(' · ')}</p><p class="small">Scores, technical labels, risk grades, catalysts and recovery assessments are research judgments. Prices and GAAP figures are reported data.</p><div class="sources">${r.sources.map(x=>`<a href="${safe(x.url)}" target="_blank" rel="noopener">${safe(x.label)}</a>`).join('')}<a href="reports/strict-leaps-2026-10-07.html#${r.ticker}">Full report</a></div></div>`;
- prepareCard(r.ticker);
- document.getElementById('rejected-list').innerHTML=scan.rejected.map(x=>`<li><strong>${safe(x.ticker)}</strong> — ${safe(x.reason)} <a href="${safe(x.url)}" target="_blank" rel="noopener">Source</a></li>`).join('');
- document.getElementById('rankings').innerHTML=Object.entries(scan.rankings).map(([k,v])=>`<p><strong>${safe({bestOverall:'Best overall LEAP research',highestBounce:'Highest conditional bounce potential',safestQuality:'Safest high-quality businesses'}[k])}</strong><br>${v.map((t,i)=>`${i+1}. ${t}`).join(' · ')}</p>`).join('');
+function renderDesk(){
+  const s=market&&market.marketState?market.marketState:"UNAVAILABLE";
+  document.getElementById("market-state").textContent=s;
+  const trig=document.getElementById("trigger-pill");trig.textContent=market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";trig.className="state-pill "+(market&&market.triggered?"hot":"good");
+  document.getElementById("market-message").textContent=market&&market.message?market.message:"No current market message.";
+  document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
+  const plans=[...((market&&market.candidatePlans)||[])].sort((a,b)=>actionRank(a.action)-actionRank(b.action));
+  const cards=plans.slice(0,3).map(p=>companyFor(p.ticker)).filter(Boolean);
+  document.getElementById("top-setups").innerHTML=cards.length?cards.map(c=>setupCard(c,true)).join(""):'<div class="loading">No qualified setups are loaded.</div>';
 }
-function choose(ticker){const r=scan?.candidates.find(r=>r.ticker===ticker);if(!r)throw new Error('Unknown candidate');selected=ticker;group=scan.shortlist.includes(ticker)?'shortlist':'broader';render();return {ticker,group,price:r.price,asOf:scan.asOf,drawdown:1-r.price/r.high,catalyst:r.catalyst};}
-document.addEventListener('click',e=>{const button=e.target.closest('[data-ticker],[data-group],[data-share-image],[data-share-top15]');if(!button||!scan)return;if(button.hasAttribute('data-share-top15')){void shareCandidateImage('top15');return;}if(button.dataset.shareImage){void shareCandidateImage(button.dataset.shareImage);return;}if(button.dataset.group){group=button.dataset.group;selected=members()[0].ticker;render();}else{choose(button.dataset.ticker);if(matchMedia('(max-width:760px)').matches)document.querySelector('.detail').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});}});
-document.querySelector('.tabs').addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const target=e.key==='Home'?'shortlist':e.key==='End'?'broader':group==='shortlist'?'broader':'shortlist';document.getElementById(target+'-tab').click();document.getElementById(target+'-tab').focus();});
-async function start(){try{const res=await fetch('data/strict-scan-2026-10-07.json',{cache:'no-store'});if(!res.ok)throw new Error('Research file unavailable');scan=await res.json();render();const context=document.modelContext;if(context?.registerTool){const lifecycle=new AbortController();window.addEventListener('pagehide',()=>lifecycle.abort(),{once:true});try{await context.registerTool({name:'view_leap_candidate',title:'View LEAPS candidate',description:'Select a researched ticker and display its dated metrics, catalyst and risks. Does not place trades or refresh quotes.',inputSchema:{type:'object',properties:{ticker:{type:'string'}},required:['ticker'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:true},execute(input){if(!input||typeof input.ticker!=='string'||Object.keys(input).some(k=>k!=='ticker'))throw new Error('Supply one ticker string');return choose(input.ticker.toUpperCase());}},{signal:lifecycle.signal});}catch(e){console.info('Candidate tool unavailable',e.message);}}}catch(e){document.getElementById('rows').innerHTML='<tr><td colspan="4">Research could not load. Reload to try again.</td></tr>';document.getElementById('detail').innerHTML='<p class="error">Research is temporarily unavailable. The workbook and image downloads remain accessible.</p>';}}
-fetch('data/scan-metadata.json',{cache:'no-store'}).then(res=>{if(!res.ok)throw new Error('Timestamp unavailable');return res.json();}).then(renderTimestamps).catch(()=>{document.getElementById('app-update-time').textContent='Timestamp unavailable';});
-start();
-loadMarketPlan();
-prepareCard('top15');
+function renderSetups(){
+  let list=((research&&research.candidates)||[]).filter(c=>c.qualified);
+  if(filter==="actionable")list=list.filter(c=>actionTone(planFor(c.ticker)&&planFor(c.ticker).action)==="buy");
+  if(filter==="deep")list=list.filter(c=>String(c.strategyLane||"").toLowerCase().includes("deep"));
+  if(filter==="compounder")list=list.filter(c=>String(c.strategyLane||"").toLowerCase().includes("compounder"));
+  list.sort((a,b)=>actionRank(planFor(a.ticker)&&planFor(a.ticker).action)-actionRank(planFor(b.ticker)&&planFor(b.ticker).action)||b.score-a.score);
+  document.getElementById("setup-list").innerHTML=list.length?list.map(c=>setupCard(c,false)).join(""):'<div class="loading">No setups match this filter.</div>';
+}
+function contractCard(c){
+  const readiness=c.readiness||"VERIFY LIVE";
+  return'<article class="contract-card"><div class="contract-card-head"><div><h3>'+safe(c.ticker)+'</h3><div class="ref">'+safe(c.reference)+'</div></div><span class="readiness '+readinessTone(readiness)+'">'+safe(readiness)+'</span></div>'+
+  '<div class="contract-metrics"><div><span>ASK REF.</span><b>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</b></div><div><span>BREAKEVEN</span><b>'+(Number.isFinite(c.breakeven)?money.format(c.breakeven):"—")+'</b></div><div><span>OPEN INT.</span><b>'+(Number.isFinite(c.openInterest)?Number(c.openInterest).toLocaleString():"—")+'</b></div></div>'+
+  '<p><b>Target profile:</b> '+safe(c.preferred)+'</p><p style="margin-top:7px">'+safe(c.note)+'</p><a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">Delayed chain source ↗</a></article>';
+}
+function renderContracts(){const list=(market&&market.contractProfiles)||[];document.getElementById("contract-list").innerHTML=list.length?list.map(contractCard).join(""):'<div class="loading">No contract references loaded.</div>';}
+function renderResearch(){
+  const r=(research&&research.rankings)||{};
+  const map=[["BEST OVERALL",r.bestOverall],["HIGHEST BOUNCE",r.highestBounce],["SAFEST QUALITY",r.safestQuality]];
+  document.getElementById("rankings").innerHTML=map.map(row=>'<div class="rank-card"><span>'+row[0]+'</span><b>'+((row[1]||[]).slice(0,8).map((t,i)=>(i+1)+". "+safe(t)).join(" · ")||"—")+'</b></div>').join("");
+  document.getElementById("scan-history").innerHTML=history.length?history.slice(0,8).map(h=>'<div class="history-item"><div><b>'+safe(h.payload&&h.payload.marketState?h.payload.marketState:"SCAN")+'</b><p>'+safe(h.payload&&h.payload.message?h.payload.message:"Automated LEAPS update")+'</p></div><time>'+(h.scan_time?dateFmt.format(new Date(h.scan_time)):"—")+'</time></div>').join(""):'<div class="loading">No scan history yet.</div>';
+  document.getElementById("rejected-list").innerHTML=((research&&research.rejected)||[]).map(x=>'<div class="reject"><b>'+safe(x.ticker)+'</b><p>'+safe(x.reason)+'</p></div>').join("")||"<p>No rejections loaded.</p>";
+}
+function renderAll(){renderDesk();renderSetups();renderContracts();renderResearch();}
+
+async function load(){
+  let live=false,stamp=null;
+  try{
+    const results=await Promise.all([
+      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=12"),
+      sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=1")
+    ]);
+    const scans=results[0],res=results[1];
+    if(scans&&scans[0]&&scans[0].payload)market=scans[0].payload;
+    if(res&&res[0]&&res[0].payload)research=res[0].payload;
+    history=scans||[];stamp=scans&&scans[0]?scans[0].scan_time:(res&&res[0]?res[0].snapshot_time:null);live=!!(market&&research);
+  }catch(e){console.info("Supabase fallback",e.message);}
+  if(!research)research=await json("data/research-latest.json");
+  if(!market)market=await json("data/market-latest.json");
+  sourceMode(live?"LIVE DATA":"DATED FALLBACK",stamp);
+  renderAll();
+}
+load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
+setInterval(async()=>{
+  try{
+    const rows=await sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=12");
+    if(rows&&rows[0]&&rows[0].payload){market=rows[0].payload;history=rows;sourceMode("LIVE DATA",rows[0].scan_time);renderAll();}
+  }catch(e){}
+},60000);
