@@ -262,6 +262,125 @@ Be strict on business quality, but flexible on drawdown for elite profitable com
 If no A+ entry exists, say:
 NO A+ LEAP ENTRY TODAY — WAIT.
 
+
+
+## Broad-Universe Discovery Funnel
+
+Every manual **generate** must begin from a broad U.S.-listed equity universe. Do NOT start from the previous shortlist or a hand-picked watchlist.
+
+### Stage 0 — Discovery universe
+
+Use Massive market-wide data to construct the initial universe from active U.S.-listed common stocks and, when appropriate, liquid ADRs that can support U.S.-listed options.
+
+Prefer:
+- NYSE / Nasdaq active listings
+- Market cap generally >= $5B so the universe remains institutional-quality and LEAP-liquidity is more plausible
+- 30-day average volume generally >= 300,000 shares
+- Exclude ETFs, funds, warrants, preferreds, rights, units, shells and obvious non-operating securities
+
+Aim to examine **at least 150 and preferably 200–300 companies** before the quality filters. If fewer than 150 meet the basic market-cap/liquidity universe, report the actual number rather than filling it with lower-quality securities.
+
+Do not cap the final qualified list at 8, 10, 15, 20 or any arbitrary number.
+
+### Stage 1 — Profitability / cash-flow screen
+
+Use Massive Ratios and financial statements to remove companies that fail the hard quality gates.
+
+Require, subject to data availability:
+- Positive trailing GAAP EPS / positive GAAP net income
+- Positive TTM free cash flow OR clearly strong positive operating cash flow when FCF presentation needs company-specific adjustment
+- Positive YoY revenue growth
+- No obvious balance-sheet or going-concern crisis
+
+Record:
+- Universe scanned
+- Passed GAAP profitability
+- Passed cash-flow quality
+- Passed positive revenue growth
+
+### Stage 2 — Growth / quality ranking
+
+Rank the survivors using:
+- Latest four comparable quarters of YoY revenue growth
+- Latest four comparable quarters of GAAP net-income / EPS trend
+- FCF growth and conversion
+- Margin quality
+- Balance-sheet quality
+- Share dilution / SBC
+- Moat and recurring revenue
+- Secular growth exposure
+- Sector quality and structural risks
+
+Select a **deep-review pool of roughly 20–60 names** based on the quality ranking. Use more when genuinely warranted.
+
+### Stage 3 — Opportunity screen
+
+For the deep-review pool apply both qualification lanes:
+
+A. Deep Discount / Recovery
+- Usually 30%–70% below a meaningful high
+- Fundamentals intact or improving
+
+B. Quality Compounder Pullback
+- May have a smaller drawdown
+- Must have exceptional profitability, moat, balance sheet and durable growth
+- Valuation compression, major support or broad-market weakness must create attractive long-term risk/reward
+
+Do not reject a company only because its drawdown is smaller than 30%.
+
+### Stage 4 — LEAP suitability
+
+For every fundamentally qualified stock assess:
+- Long-dated option availability
+- Preferred 18–30 month expiration
+- Contract liquidity
+- OI / spread / IV when verifiable
+- Fundamental Bear/Base/Bull expiration valuation
+- ITM/deep-ITM survivability of the preferred strike
+- Technical support and staged entry plan
+
+A company may remain a qualified stock even when no option contract is currently approved.
+
+### Stage 5 — Publication tiers
+
+Publish EVERY stock that genuinely passes. Divide the result into:
+
+- **Tier 1 — Best LEAP Candidates:** highest quality + valuation + setup + contract readiness
+- **Tier 2 — Strong Watchlist:** business quality passes but entry/valuation/contract timing is less ideal
+- **Tier 3 — Developing / Wait:** business quality passes but technical setup or valuation needs more work
+- **Rejected / Not Qualified:** fails a hard business-quality gate, with exact reason
+
+Do not create artificial quotas. If 8 pass, publish 8. If 24 pass, publish 24. If 40 genuinely pass, publish 40.
+
+### Required Research Funnel Metadata
+
+Every manual generate must publish this object with exact counts:
+
+```json
+{
+  "researchFunnel": {
+    "universeScanned": 0,
+    "passedProfitability": 0,
+    "passedCashFlow": 0,
+    "passedRevenueGrowth": 0,
+    "deepReviewCount": 0,
+    "qualifiedCount": 0,
+    "tier1Count": 0,
+    "tier2Count": 0,
+    "tier3Count": 0,
+    "actionableToday": 0,
+    "rejectedCount": 0,
+    "scanMode": "broad-universe",
+    "universeDefinition": "..."
+  }
+}
+```
+
+All counts must come from the actual scan. Never invent funnel numbers.
+
+The public app must display the funnel so users can distinguish:
+**how many companies were examined** from **how many ultimately qualified**.
+
 ## Manual Generation Control
 
 The core fundamental research is controlled from the owner's ChatGPT project chat, not by the scheduled jobs.
