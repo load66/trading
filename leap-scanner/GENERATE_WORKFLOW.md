@@ -29,7 +29,7 @@ Structural-downtrend and quality-trap automatic exclusion filters are disabled. 
 
 ## Scheduled-job boundary
 
-The 2 PM daily job and intraday dip watcher may update market regime, support/action labels, event risk and contract readiness only. They must not change the core qualified universe or fundamental scores.
+The 2 PM weekday job runs the complete detailed MASTER_PROMPT research workflow and may add, remove, or rescore candidates when evidence warrants. The intraday dip watcher remains market/entry-timing only and must not change the core qualified universe or fundamental scores.
 
 ## Publication safety
 
