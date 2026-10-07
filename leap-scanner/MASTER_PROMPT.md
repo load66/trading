@@ -617,3 +617,18 @@ Support-state calculation must be geometric, not inferred from the action-label 
 - The dashboard's AT / NEAR SUPPORT count must use these price-versus-zone calculations, not action-label strings.
 - Being at support is not automatically an A+ entry. The separate entry-timing layer still requires the roughly -2% to -5% red-day condition, intact thesis, no damaging earnings/guidance/FCF change, and stabilization/reversal confirmation.
 - Every intraday scheduled run during the regular market session must publish a fresh market snapshot with refreshed qualified-stock prices/day changes and recomputed support status, even when no user notification is warranted. User notifications remain conditional; dashboard freshness does not.
+
+
+### Owner live-price automation
+
+LEAPS Desk owner live-price mode must be zero-touch after the owner has authenticated once on the LEAPS Desk domain.
+
+- Persist the owner's Supabase refresh session locally and refresh it automatically before expiry.
+- On page load, if a valid owner session exists, start the Alpaca quote overlay automatically without requiring an Enable or Refresh button.
+- Poll the private Alpaca quote service about every 15 seconds while the page is visible.
+- Refresh immediately when the page regains focus or visibility.
+- Recompute current price, day-change percentage, AT / NEAR / ABOVE support status, red-day entry status, and Robinhood alert progression from the Alpaca overlay in the browser.
+- Keep a visible source/status badge such as ALPACA IEX LIVE.
+- Never expose Alpaca API credentials in browser code.
+- Do not make the private Alpaca quote endpoint anonymous merely to remove the owner sign-in requirement.
+- Public visitors remain on the published scheduled snapshot; owner live data is private and supplemental.
