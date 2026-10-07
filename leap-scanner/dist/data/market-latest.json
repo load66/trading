@@ -227,7 +227,7 @@
   "contractProfiles": [
     {
       "ticker": "ADSK",
-      "preferred": "18–30 mo., ~0.75–0.85 delta, ITM",
+      "preferred": "18–30 mo., ~0.70–0.75 delta, ITM",
       "reference": "Jan 21 2028 $200C",
       "ask": 64.5,
       "breakeven": 264.5,
@@ -259,13 +259,13 @@
         "coverage": "3/3 scenarios ITM or better"
       },
       "bearCaseCushion": 0.03497525718878876,
-      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionRule": "Primary: verified 0.70–0.75 delta ITM. Cost fallback: 0.60–0.69 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
       "selectionReason": "Strike stays ITM in all three modeled fundamental scenarios, but bear-case cushion is thin; treat as conditional rather than high-conviction.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
       "ticker": "ACN",
-      "preferred": "18–30 mo., ~0.70–0.85 delta, ITM",
+      "preferred": "18–30 mo., ~0.70–0.75 delta, ITM",
       "reference": "Jan 21 2028 $175C",
       "ask": 53,
       "breakeven": 228,
@@ -297,14 +297,14 @@
         "coverage": "3/3 scenarios ITM or better"
       },
       "bearCaseCushion": 0.12667888643057593,
-      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionRule": "Primary: verified 0.70–0.75 delta ITM. Cost fallback: 0.60–0.69 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
       "selectionReason": "Strike passes all three fundamental scenarios with at least 10% bear-case strike cushion. Still requires live OI/spread/IV verification.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     }
   ],
   "contractRules": {
     "dte": "Prefer 18–30 months; minimum 12–24+ months when liquidity dictates.",
-    "delta": "Target ~0.70–0.85; higher delta for conservative stock-like exposure.",
+    "delta": "Target ~0.70–0.75; higher delta for conservative stock-like exposure.",
     "openInterest": "Prefer ≥100, strong ≥500; avoid thin contracts unless spread/market depth is demonstrably good.",
     "spread": "Prefer bid/ask width ≤5% of midpoint; ≤3% is better.",
     "breakeven": "Prefer expiration breakeven roughly ≤20% above the underlying for high-probability profiles, adjusted for time and growth.",
@@ -312,11 +312,15 @@
     "earnings": "Avoid opening/adding immediately before earnings unless the event risk is deliberately part of the plan.",
     "management": "Manage the thesis on the underlying first; do not let an option quote alone dictate averaging.",
     "fundamentalTarget": "Before selecting a LEAP, project Bear/Base/Bull expiration values using GAAP EPS × terminal P/E and FCF/share × terminal P/FCF. Prefer strikes below the Bear target and materially below the Base target.",
-    "fallbackDelta": "A 0.60–0.70 delta fallback is allowed only when the preferred 0.70–0.85 delta contract is materially too expensive AND current stock price is at least $70 above the strike; it must still pass the Bear/Base valuation coverage test.",
+    "fallbackDelta": "A 0.60–0.69 delta fallback is allowed only when the preferred 0.70–0.75 delta contract is materially too expensive AND current stock price is at least $70 above the strike; it must still pass the Bear/Base valuation coverage test.",
     "probabilityLanguage": "Do not claim a guaranteed probability of profit. Use scenario coverage, delta, liquidity, spread, IV, breakeven and fundamental valuation together.",
     "maxContractCost": 6500,
     "maxPremiumPerShare": 65,
-    "overBudgetAction": "Do not publish the contract. Search for an eligible cheaper fallback; otherwise show NO CONTRACT UNDER $6,500 VERIFIED — WAIT."
+    "overBudgetAction": "Do not publish the contract. Search for an eligible cheaper fallback; otherwise show NO CONTRACT UNDER $6,500 VERIFIED — WAIT.",
+    "deltaMin": 0.6,
+    "deltaPreferred": "0.70–0.75",
+    "deltaMax": 0.75,
+    "deltaRule": "Only publish contracts with delta from 0.60 through 0.75 inclusive. Prefer 0.70–0.75; use 0.60–0.69 only as a lower-cost alternative that still passes all other safety and valuation rules."
   },
   "generatedResearchAsOf": "2026-10-07 manual generate",
   "qualifiedUniverse": [
