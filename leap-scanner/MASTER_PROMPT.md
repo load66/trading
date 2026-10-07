@@ -264,6 +264,107 @@ NO A+ LEAP ENTRY TODAY — WAIT.
 
 
 
+
+
+## Persistent Downtrend / Quality-Trap Filter
+
+Profitability alone does NOT make a stock suitable for LEAPS. Before a company can enter Tier 1/2/3, run a separate trend-integrity gate designed to filter chronic decliners, value traps and "cheap for a reason" stocks.
+
+### A. Hard Reject — Structural Downtrend
+
+Classify as **STRUCTURAL DOWNTREND — REJECT** when at least 4 of these conditions are simultaneously true:
+
+- Current price is below the 50DMA and 200DMA.
+- 50DMA < 100DMA < 200DMA.
+- 50DMA slope is materially negative.
+- 200DMA slope is materially negative.
+- 6-month return <= -25%.
+- 12-month return <= -40%.
+- Drawdown from the 52-week high >= 60%.
+- At least 8 of the last 11 month-to-month closes are lower.
+- Relative performance versus SPY over 6–12 months is worse by >= 20 percentage points.
+- There is no confirmed higher-high / higher-low sequence on the weekly chart.
+
+A stock meeting this gate must NOT be published as a qualified LEAP merely because valuation appears cheap or GAAP earnings are positive.
+
+Example pattern: TTD-style persistent deterioration.
+
+### B. Quality Trap Quarantine — Trend Repair Required
+
+A profitable company can still be a poor LEAP candidate when the business is mature/slowing and the stock has destroyed capital for years.
+
+Classify as **QUALITY TRAP — TREND REPAIR REQUIRED** when BOTH are true:
+
+1. Long-term price/relative-strength damage:
+   - 3-year total return <= -25%, OR
+   - 3-year underperformance versus SPY >= 40 percentage points, OR
+   - stock remains >= 40% below its 3-year high after repeated failed rallies.
+
+AND
+
+2. At least TWO business-quality deterioration flags:
+   - Latest YoY revenue growth < 8%.
+   - Latest GAAP net income YoY <= 0%.
+   - Operating income YoY <= 0%.
+   - Operating margin contracts materially YoY.
+   - TTM FCF growth <= 0%.
+   - Share count/dilution deteriorates materially.
+   - Core customer/user/volume metric is flat or declining.
+   - Management guidance shows weak or deteriorating organic growth.
+
+These stocks are NOT "rejected forever." They move to a quarantine list and may re-enter only after trend repair and business repair.
+
+Example pattern: PYPL-style profitable value trap / chronic underperformer.
+
+### C. Trend-Repair Re-entry Requirements
+
+A quarantined stock can re-enter the qualified universe only when the business-quality gate is still satisfied AND at least 3 of these technical repair signals are present:
+
+- Price above the 200DMA.
+- 50DMA above the 200DMA.
+- 50DMA slope positive for at least several weeks.
+- 200DMA flat-to-rising.
+- Weekly higher high AND higher low confirmed.
+- 3-month relative strength versus SPY is positive.
+- A prior major breakdown level is reclaimed and held.
+- Earnings gap / high-volume support is reclaimed with follow-through.
+
+For a prior structural-downtrend reject, require a stronger repair: at least 4 of the above plus no new 52-week low for roughly 3 months.
+
+### D. Do Not Accidentally Reject Legitimate Bottoms
+
+Do NOT reject a high-quality company merely for being below the 200DMA.
+
+A stock such as ADSK or ISRG can remain eligible while bottoming if:
+- revenue / GAAP earnings / FCF remain strong,
+- margins are stable or improving,
+- the decline is valuation/sentiment driven rather than business deterioration,
+- the stock is building a base, reclaiming support, or showing higher lows,
+- and it does NOT meet the Structural Downtrend gate.
+
+The purpose of this filter is to distinguish a **bottoming quality company** from a **persistent capital-destruction trend**.
+
+### Required Trend Integrity Output
+
+For every deep-review candidate publish:
+
+- Trend integrity status:
+  - HEALTHY TREND
+  - BUILDING / REPAIRING
+  - QUALITY TRAP — QUARANTINE
+  - STRUCTURAL DOWNTREND — REJECT
+- Price vs 50DMA / 100DMA / 200DMA
+- 50DMA and 200DMA direction
+- 3-month / 6-month / 12-month returns
+- 3-year return when available
+- Relative return versus SPY
+- 52-week drawdown
+- Count of lower monthly closes over the last 11 transitions
+- Weekly higher-high / higher-low status
+- Exact reason for pass, quarantine or rejection
+
+Trend integrity is a separate gate from fundamental quality and valuation.
+
 ## Broad-Universe Discovery Funnel
 
 Every manual **generate** must begin from a broad U.S.-listed equity universe. Do NOT start from the previous shortlist or a hand-picked watchlist.
