@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "marketAsOf": "2026-10-06 close",
+  "preparedFor": "2026-10-07 session",
+  "marketState": "NORMAL DAY",
+  "triggered": false,
+  "triggerReasons": [],
+  "message": "NO A+ MARKET-WIDE DIP — WAIT. The qualified watchlist is mapped, but Oct. 6 did not meet the SPY/QQQ/VIX dip triggers.",
+  "thresholds": {
+    "spyDayPct": -1.75,
+    "qqqDayPct": -2.25,
+    "vixAbove": 20,
+    "strongSpyDayPct": -2.5,
+    "strongQqqDayPct": -3
+  },
+  "market": {
+    "spy": {
+      "close": 779.09,
+      "dayChangePct": 0.55,
+      "source": "Massive adjusted daily bars"
+    },
+    "qqq": {
+      "close": 759.66,
+      "dayChangePct": 0.46,
+      "source": "Massive adjusted daily bars"
+    },
+    "vix": {
+      "value": 16.21,
+      "dayChangePct": 5.81,
+      "source": "Cboe delayed VIX market data; below 20 trigger"
+    }
+  },
+  "candidatePlans": [
+    {
+      "ticker": "ADSK",
+      "price": 231.28,
+      "action": "NEAR SUPPORT — WATCH",
+      "entry1": "$220–224",
+      "add2": "$198–203",
+      "finalAdd": "$184–189",
+      "confirmation": "Reclaim/hold support; avoid adding through a fresh fundamental break.",
+      "basis": "Prior-session support, recent swing low cluster, 252-session low."
+    },
+    {
+      "ticker": "RDDT",
+      "price": 148.95,
+      "action": "NEAR SUPPORT — WATCH",
+      "entry1": "$141–145",
+      "add2": "$133–137",
+      "finalAdd": "$118–122",
+      "confirmation": "Look for failed breakdown, higher low or strong reclaim while thesis remains intact.",
+      "basis": "Sept. 28–30 low cluster, 60-session low, 252-session low."
+    },
+    {
+      "ticker": "ADBE",
+      "price": 238.12,
+      "action": "NEAR SUPPORT — WATCH",
+      "entry1": "$234–238",
+      "add2": "$223–228",
+      "finalAdd": "$209–213",
+      "confirmation": "Prefer a hold/reclaim and improving relative strength; do not average on new thesis damage.",
+      "basis": "Current multi-session shelf, Sept. 28 low, 60-session low."
+    },
+    {
+      "ticker": "ACN",
+      "price": 193.4,
+      "action": "WATCH",
+      "entry1": "$180–184",
+      "add2": "$171–174",
+      "finalAdd": "$128–132",
+      "confirmation": "Wait for support contact plus stabilization; macro weakness alone is not enough.",
+      "basis": "50-day area, Sept. 28–29 swing lows, deeper 60-session demand."
+    },
+    {
+      "ticker": "INTU",
+      "price": 289.81,
+      "action": "NEAR SUPPORT — WATCH",
+      "entry1": "$278–283",
+      "add2": "$262–268",
+      "finalAdd": "$251–255",
+      "confirmation": "Require stabilization or reclaim; avoid buying a fast breakdown through support.",
+      "basis": "Recent October lows, Sept. 28–30 low cluster, 252-session low."
+    },
+    {
+      "ticker": "CRM",
+      "price": 224.99,
+      "action": "WAIT FOR REVERSAL",
+      "entry1": "$221–225",
+      "add2": "$198–203",
+      "finalAdd": "$154–160",
+      "confirmation": "Already at nearby support; require a hold/reclaim because the broad market is not in a dip regime.",
+      "basis": "20-session low + 50-day area, 200-day area, 60-session demand."
+    },
+    {
+      "ticker": "HUBS",
+      "price": 217.09,
+      "action": "WATCH",
+      "entry1": "$188–193",
+      "add2": "$183–187",
+      "finalAdd": "$168–172",
+      "confirmation": "Wait for price to reach support and confirm; profitability is young and SBC remains a key check.",
+      "basis": "20-session low, 60-session low, 252-session low."
+    }
+  ],
+  "rules": {
+    "entrySizing": "30% / 30% / 40% maximum three planned entries",
+    "entryGate": "Major support + intact fundamentals + attractive valuation + price confirmation",
+    "never": "Never average solely because the LEAP premium is down.",
+    "options": "Underlying entry first; verify live LEAP expiration, delta, IV, spread and open interest separately."
+  }
+}
