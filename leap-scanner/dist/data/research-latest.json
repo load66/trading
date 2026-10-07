@@ -200,7 +200,19 @@
           "url": "https://investors.autodesk.com/financials/sec-filings"
         }
       ],
-      "strategyLane": "Deep Discount / Recovery"
+      "strategyLane": "Deep Discount / Recovery",
+      "sector": "Technology",
+      "industry": "Design & Engineering Software",
+      "sectorLongTermGood": [
+        "Recurring subscription revenue and high switching costs",
+        "Construction/manufacturing digitization creates a long runway",
+        "AI can raise workflow productivity and product value"
+      ],
+      "sectorLongTermRisk": [
+        "Construction and manufacturing budgets are cyclical",
+        "AI-native design tools could pressure pricing or seat growth",
+        "Premium software multiples remain rate-sensitive"
+      ]
     },
     {
       "rank": 2,
@@ -379,6 +391,18 @@
           "label": "Delayed Jan 2028 option chain",
           "url": "https://public.com/stocks/isrg/options-chain?expiration=2028-01-21"
         }
+      ],
+      "sector": "Health Care",
+      "industry": "Surgical Robotics & Medical Devices",
+      "sectorLongTermGood": [
+        "Aging populations and minimally invasive surgery support procedure growth",
+        "Installed systems drive recurring instruments, accessories and service revenue",
+        "Training and workflow integration create high switching costs"
+      ],
+      "sectorLongTermRisk": [
+        "Hospital capital budgets can delay system placements",
+        "Medical-device regulation and product-cycle execution matter",
+        "Competition could pressure system pricing or procedure share"
       ]
     },
     {
@@ -563,7 +587,19 @@
           "url": "https://stockanalysis.com/stocks/rddt/"
         }
       ],
-      "strategyLane": "Deep Discount / Recovery"
+      "strategyLane": "Deep Discount / Recovery",
+      "sector": "Media",
+      "industry": "Social Platforms & Digital Advertising",
+      "sectorLongTermGood": [
+        "Digital advertising continues taking share from traditional media",
+        "Unique user-generated content can support search, AI licensing and ad targeting",
+        "International monetization remains underpenetrated"
+      ],
+      "sectorLongTermRisk": [
+        "Advertising is economically cyclical",
+        "Traffic dependence on search/discovery platforms can change quickly",
+        "Privacy, moderation and platform regulation are persistent risks"
+      ]
     },
     {
       "rank": 4,
@@ -744,7 +780,19 @@
           "url": "https://stockanalysis.com/stocks/adbe/"
         }
       ],
-      "strategyLane": "Deep Discount / Recovery"
+      "strategyLane": "Deep Discount / Recovery",
+      "sector": "Technology",
+      "industry": "Creative & Document Software",
+      "sectorLongTermGood": [
+        "Large recurring subscription base and high gross margins",
+        "Digital content creation keeps expanding",
+        "AI can create new paid features across Creative Cloud and Acrobat"
+      ],
+      "sectorLongTermRisk": [
+        "AI-native tools may commoditize some creative workflows",
+        "AI monetization must offset cannibalization and compute costs",
+        "Mature seat growth can limit multiple expansion"
+      ]
     },
     {
       "rank": 5,
@@ -928,7 +976,19 @@
           "url": "https://stockanalysis.com/stocks/acn/"
         }
       ],
-      "strategyLane": "Deep Discount / Recovery"
+      "strategyLane": "Deep Discount / Recovery",
+      "sector": "Technology",
+      "industry": "IT Services & Consulting",
+      "sectorLongTermGood": [
+        "Enterprise AI/cloud modernization creates sustained transformation demand",
+        "Managed services provide recurring multi-year revenue",
+        "Scale and industry expertise make Accenture a preferred integrator"
+      ],
+      "sectorLongTermRisk": [
+        "Discretionary consulting budgets weaken in slow economies",
+        "AI productivity may pressure labor-based billing rates",
+        "Large-client deal timing can make bookings volatile"
+      ]
     },
     {
       "rank": 6,
@@ -1103,7 +1163,19 @@
           "url": "https://stockanalysis.com/stocks/intu/"
         }
       ],
-      "strategyLane": "Deep Discount / Recovery"
+      "strategyLane": "Deep Discount / Recovery",
+      "sector": "Technology",
+      "industry": "Financial Software & Fintech",
+      "sectorLongTermGood": [
+        "Tax/accounting digitization and SMB automation are durable trends",
+        "QuickBooks ecosystem creates high switching costs and recurring revenue",
+        "AI agents can automate bookkeeping, collections and tax workflows"
+      ],
+      "sectorLongTermRisk": [
+        "SMB health and consumer credit affect parts of the portfolio",
+        "Tax-policy or filing-system changes could alter product economics",
+        "Competition in accounting, tax and fintech remains intense"
+      ]
     },
     {
       "rank": 7,
@@ -1287,7 +1359,19 @@
           "url": "https://stockscan.io/stocks/CRM/price-history"
         }
       ],
-      "strategyLane": "Deep Discount / Recovery"
+      "strategyLane": "Deep Discount / Recovery",
+      "sector": "Technology",
+      "industry": "Enterprise CRM & Cloud Software",
+      "sectorLongTermGood": [
+        "Mission-critical CRM/data workflows create recurring revenue and switching costs",
+        "AI agents can expand usage-based monetization",
+        "Large installed base enables cross-sell across Data, Slack and automation"
+      ],
+      "sectorLongTermRisk": [
+        "AI agents could cannibalize traditional seat pricing",
+        "Slower organic growth can keep valuation compressed",
+        "Large acquisitions and leverage increase execution complexity"
+      ]
     },
     {
       "rank": 8,
@@ -1469,7 +1553,19 @@
           "url": "https://ir.hubspot.com/news-releases/news-release-details/hubspot-reports-q3-2025-results"
         }
       ],
-      "strategyLane": "Deep Discount / Recovery"
+      "strategyLane": "Deep Discount / Recovery",
+      "sector": "Technology",
+      "industry": "SMB CRM & Marketing Software",
+      "sectorLongTermGood": [
+        "SMB digitization and integrated CRM adoption remain long-term tailwinds",
+        "Multi-Hub penetration can increase revenue per customer",
+        "AI agents can improve marketing, sales and service automation"
+      ],
+      "sectorLongTermRisk": [
+        "SMB customers are more macro-sensitive and churn-prone",
+        "Stock-based compensation remains economically significant",
+        "AI hosting costs and larger competitors can pressure margins"
+      ]
     },
     {
       "rank": 9,
@@ -1751,7 +1847,7 @@
       "HUBS"
     ]
   },
-  "method": "Two-lane profitable-company LEAPS universe. Lane A seeks deep 30–70% drawdowns; Lane B admits high-quality profitable compounders on smaller pullbacks or major support/valuation resets. GAAP profitability, revenue quality, cash generation, valuation, moat and thesis integrity remain strict. Tariff exposure is not a qualification filter or score penalty. Tariff headlines may explain a temporary dip but do not automatically exclude hardware or med-tech businesses. Option quality remains provisional until live delta, IV and spreads are verified.",
+  "method": "Two-lane profitable-company LEAPS universe. Lane A seeks deep 30–70% drawdowns; Lane B admits high-quality profitable compounders on smaller pullbacks or major support/valuation resets. GAAP profitability, revenue quality, cash generation, valuation, moat and thesis integrity remain strict. Tariff exposure is not a qualification filter or score penalty. Tariff headlines may explain a temporary dip but do not automatically exclude hardware or med-tech businesses. Option quality remains provisional until live delta, IV and spreads are verified. Sector and industry context is included for every qualified company with explicit long-term tailwinds and structural risks.",
   "qualificationModel": {
     "hardGates": [
       "GAAP profitable now",
