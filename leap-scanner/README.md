@@ -4,7 +4,7 @@ A dated LEAPS research dashboard with eight shortlisted candidate image cards an
 
 ## View
 
-Private app: https://leap-scanner.sappy-leaf-7872.chatgpt.site
+Private app: https://leap-scanner.philipbenedicto.chatgpt.site
 
 The `dist/` folder is a static website. Serve it with any static web server; opening the HTML with `file://` will not allow the JSON fetch. Example: `python3 -m http.server 8000 --directory dist`.
 
