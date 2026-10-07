@@ -21,6 +21,8 @@ const html=vm.runInContext('earningsQuality('+JSON.stringify(company)+')',ctx);
 assert.ok(html.includes('Net income')&&html.includes('UNVERIFIED'));
 assert.ok(!html.includes('>BEAT<'),'Unverifiable basis cannot display an EPS beat');
 assert.equal(vm.runInContext('supportAlertTarget("$390–396")',ctx),396,'Support alert uses the upper edge of the zone');
+assert.equal(vm.runInContext('supportTiming({price:224.5,entry1:"$221–225",add2:"$198–203",finalAdd:"$154–160"}).state',ctx),'in','CRM at first support must be recognized from price geometry');
+assert.equal(vm.runInContext('entryTimingStatus({price:224.5,todayPct:-0.2,entry1:"$221–225",add2:"$198–203",finalAdd:"$154–160",action:"WAIT FOR REVERSAL"}).label',ctx),'AT SUPPORT — WAIT FOR CONFIRMATION','At-support is not automatically an A+ entry when red-day condition is absent');
 assert.equal(vm.runInContext('nextRobinhoodAlert({price:414.46,entry1:"$390–396",add2:"$378–384",finalAdd:"$345–355"}).target',ctx),396,'Next alert should be first uncrossed support');
 assert.equal(vm.runInContext('nextRobinhoodAlert({price:227.6,entry1:"$234–238",add2:"$223–228",finalAdd:"$209–213"}).target',ctx),213,'Already-crossed/in-zone supports must advance to the next lower alert');
 assert.equal(vm.runInContext('research.candidates.filter(c=>c.qualified).filter(c=>planFor(c.ticker)).length',ctx),research.candidates.filter(c=>c.qualified).length,'Every qualified ticker must have a market plan');

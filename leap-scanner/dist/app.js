@@ -201,6 +201,11 @@ function todayPriority(c){
   if(a.includes("DO NOT"))return 5;
   return 4;
 }
+function supportTimingBadge(p){
+  const s=supportTiming(p),e=entryTimingStatus(p);
+  const pctText=Number.isFinite(s.distancePct)&&s.distancePct>0?" · "+(s.distancePct*100).toFixed(1)+"% above zone":"";
+  return '<div class="support-timing '+safe(e.tone)+'"><div><span>SUPPORT STATUS</span><b>'+safe(s.label)+'</b><small>'+safe(e.detail)+safe(pctText)+'</small></div><strong>'+safe(e.label)+'</strong></div>';
+}
 function setupCard(c,compact){
   const p=planFor(c.ticker)||{},contract=contractFor(c.ticker),historical=historicalContractFor(c.ticker),action=p.action||"RESEARCH ONLY";
   const event=p.eventRisk?'<div class="event-note">⚠ '+safe(p.eventRisk)+'</div>':"";
@@ -217,7 +222,7 @@ function setupCard(c,compact){
   return '<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'" data-ticker="'+safe(c.ticker)+'">'+
     '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span>'+rankMovement(c)+'</div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">Tier '+safe(c.tier||"—")+' · '+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
     '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b><small>52W high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest quarter</small></div></div>'+
-    qualificationGates(c)+rankMovementDetail(c)+
+    qualificationGates(c)+rankMovementDetail(c)+supportTimingBadge(p)+
     '<p class="business-summary"><b>'+safe(c.netSummary)+'</b> · FCF '+safe(c.fcfSummary)+'<br>Technical: '+safe(p.technicalState||c.state||"Unverified")+' · '+contractSummary+'</p>'+
     '<div class="card-section-stack">'+
       '<details class="card-more" data-detail-key="entry:'+safe(c.ticker)+'"><summary>Entry plan & support <span>⌄</span></summary><div class="deep-detail">'+ladder+reasons+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+'</div></details>'+
@@ -249,6 +254,32 @@ function nextRobinhoodAlert(p){
   if(!Number.isFinite(price))return null;
   return robinhoodLevels(p).filter(x=>Number.isFinite(x.target)&&price>x.target).sort((a,b)=>b.target-a.target)[0]||null;
 }
+function supportTiming(p){
+  const price=Number(p&&p.price),levels=robinhoodLevels(p);
+  if(!Number.isFinite(price))return {state:"unverified",label:"SUPPORT UNVERIFIED",level:null,distancePct:null};
+  for(const level of levels){
+    if(level.zone&&price>=level.zone.low&&price<=level.zone.high){
+      return {state:"in",label:"AT "+String(level.label).toUpperCase(),level,distancePct:0};
+    }
+  }
+  const below=levels.filter(x=>x.zone&&price>x.zone.high).sort((a,b)=>b.zone.high-a.zone.high);
+  if(below.length){
+    const level=below[0],distance=(price-level.zone.high)/level.zone.high;
+    if(distance<=0.01)return {state:"near",label:"NEAR "+String(level.label).toUpperCase(),level,distancePct:distance};
+    return {state:"above",label:"ABOVE SUPPORT",level,distancePct:distance};
+  }
+  return {state:"below",label:"BELOW PLANNED SUPPORTS",level:null,distancePct:null};
+}
+function entryTimingStatus(p){
+  const s=supportTiming(p),day=Number(p&&p.todayPct),action=normalizedStatus(p&&p.action);
+  if(action.includes("DO NOT ADD")||action.includes("BROKEN")||action.includes("AVOID"))return {label:"NO ENTRY",tone:"stop",detail:"Action blocked by the current market plan."};
+  if(s.state==="in"||s.state==="near"){
+    if(Number.isFinite(day)&&day>=-5&&day<=-2)return {label:"RED-DAY ENTRY WATCH",tone:"buy",detail:fmtMove(day)+" today · "+s.label};
+    if(Number.isFinite(day)&&day<-5)return {label:"EXTENDED SELLOFF — WAIT",tone:"stop",detail:fmtMove(day)+" today · require reversal confirmation"};
+    return {label:s.state==="in"?"AT SUPPORT — WAIT FOR CONFIRMATION":"NEAR SUPPORT — WATCH",tone:"watch",detail:(Number.isFinite(day)?fmtMove(day)+" today · ":"")+s.label};
+  }
+  return {label:"WAIT",tone:"watch",detail:s.label};
+}
 function robinhoodLevelState(price,level){
   if(!Number.isFinite(price)||!level||!level.zone||!Number.isFinite(level.target))return {label:"PENDING",tone:"pending"};
   if(price>level.target)return {label:"READY TO SET",tone:"future"};
@@ -266,11 +297,13 @@ function robinhoodAlertCard(c){
     const copy=state.tone==="future"?'<button type="button" class="rh-copy" data-copy-price="'+level.target.toFixed(2)+'">COPY '+target+'</button>':"";
     return '<div class="rh-level '+state.tone+'"><div><span>'+safe(level.label)+'</span><small>'+safe(level.raw)+' · '+safe(level.size)+'</small></div><div class="rh-level-price"><b>'+target+'</b><small>'+state.label+'</small></div>'+copy+'</div>';
   }).join("");
+  const timing=supportTiming(p),timingEntry=entryTimingStatus(p);
+  const currentSupport='<div class="rh-current-support '+safe(timing.state)+'"><span>CURRENT SUPPORT STATUS</span><b>'+safe(timing.label)+'</b><small>'+safe(timingEntry.detail)+'</small></div>';
   const nextBlock=next?'<div class="rh-next"><div><span>NEXT ROBINHOOD ALERT</span><b>'+money.format(next.target)+'</b><small>'+safe(next.label)+' · set trigger to “Falls below”</small></div><button type="button" data-copy-price="'+next.target.toFixed(2)+'">COPY TARGET</button></div>':'<div class="rh-next exhausted"><div><span>NEXT ROBINHOOD ALERT</span><b>NO LOWER PLANNED LEVEL</b><small>Price has already reached or crossed every published support alert. Wait for a refreshed plan.</small></div></div>';
   const action=p.action||"RESEARCH ONLY";
   return '<article class="rh-card"><div class="rh-card-head"><div class="rh-symbol"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><div><b>'+safe(c.ticker)+'</b><small>'+safe(c.company||"Qualified company")+'</small></div></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+
     '<div class="rh-current"><div><span>CURRENT PRICE</span><b>'+money.format(price)+'</b></div><div><span>TODAY</span><b class="'+(Number(p.todayPct)<0?"down":Number(p.todayPct)>0?"up":"")+'">'+fmtMove(Number(p.todayPct))+'</b></div><div><span>ROBINHOOD TRIGGER</span><b>Falls below</b></div></div>'+
-    nextBlock+'<div class="rh-levels">'+levelsHtml+'</div>'+
+    currentSupport+nextBlock+'<div class="rh-levels">'+levelsHtml+'</div>'+
     '<p class="rh-card-note">Price alert only. A LEAPS entry still requires the −2% to −5% red-day condition, valid support, intact thesis and confirmation from the intraday watch.</p></article>';
 }
 function renderRobinhoodAlerts(allCards){
@@ -301,9 +334,10 @@ function renderDesk(){
 
   const actions=allCards.map(c=>normalizedStatus((planFor(c.ticker)||{}).action));
   const buyCount=actions.filter(a=>actionTone(a)==="buy").length;
-  const supportCount=actions.filter(a=>a.includes("NEAR SUPPORT")).length;
-  const waitCount=actions.filter(a=>a.includes("WAIT")).length;
-  const stopCount=actions.filter(a=>a.includes("DO NOT")).length;
+  const geometricSupportCount=allCards.filter(c=>{const s=supportTiming(planFor(c.ticker)||{});return s.state==="in"||s.state==="near";}).length;
+  const supportCount=geometricSupportCount;
+  const waitCount=allCards.filter(c=>entryTimingStatus(planFor(c.ticker)||{}).label.includes("WAIT")).length;
+  const stopCount=allCards.filter(c=>entryTimingStatus(planFor(c.ticker)||{}).tone==="stop").length;
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   set("decision-buy",buyCount);set("decision-support",supportCount);set("decision-wait",waitCount);set("decision-stop",stopCount);
   const today=allCards.slice().sort((a,b)=>todayPriority(a)-todayPriority(b)||a.rank-b.rank).slice(0,3);

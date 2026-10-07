@@ -605,3 +605,15 @@ For each qualified ticker:
 - Publication validation must reject a qualified market plan whose current/reference price or three support zones are missing/unparseable, because the automated alert panel depends on those fields.
 
 This alert panel is a user setup aid for external brokerage alerts; it does not place trades or create brokerage alerts automatically.
+
+
+### Support-state display rule
+
+Support-state calculation must be geometric, not inferred from the action-label text. On every market refresh, compare the latest underlying price directly with each published support-zone range.
+
+- If price is inside a support range, display **AT 1ST/2ND/FINAL MAJOR SUPPORT** immediately.
+- If price is above but within approximately 1% of the next support zone, display **NEAR SUPPORT**.
+- If price has already passed a support zone, mark that level crossed and evaluate the next lower planned support.
+- The dashboard's AT / NEAR SUPPORT count must use these price-versus-zone calculations, not action-label strings.
+- Being at support is not automatically an A+ entry. The separate entry-timing layer still requires the roughly -2% to -5% red-day condition, intact thesis, no damaging earnings/guidance/FCF change, and stabilization/reversal confirmation.
+- Every intraday scheduled run during the regular market session must publish a fresh market snapshot with refreshed qualified-stock prices/day changes and recomputed support status, even when no user notification is warranted. User notifications remain conditional; dashboard freshness does not.
