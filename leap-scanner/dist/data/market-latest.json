@@ -42,6 +42,18 @@
       "basis": "Prior-session support, recent swing low cluster, 252-session low."
     },
     {
+      "ticker": "ISRG",
+      "price": 404.76,
+      "action": "NEAR SUPPORT — WATCH",
+      "entry1": "$390–396",
+      "add2": "$378–384",
+      "finalAdd": "$345–355",
+      "invalidation": "Sustained break below the deep support zone plus fundamental deterioration",
+      "confirmation": "Prefer a hold/reclaim of the 20/100-day area or a higher low. Earnings are Oct. 20, so avoid paying elevated pre-earnings IV unless intentionally trading the event.",
+      "basis": "20-day/100-day support cluster, 50-day area, and recent deep swing-low zone.",
+      "eventRisk": "Confirmed earnings Oct. 20, 2026 after close"
+    },
+    {
       "ticker": "RDDT",
       "price": 148.95,
       "action": "NEAR SUPPORT — WATCH",
@@ -106,7 +118,9 @@
     "entrySizing": "30% / 30% / 40% maximum three planned entries",
     "entryGate": "Major support + intact fundamentals + attractive valuation + price confirmation",
     "never": "Never average solely because the LEAP premium is down.",
-    "options": "Underlying entry first; verify live LEAP expiration, delta, IV, spread and open interest separately."
+    "options": "Underlying entry first; verify live LEAP expiration, delta, IV, spread and open interest separately.",
+    "qualification": "Tariff exposure is not a filter or score penalty. Temporary tariff headlines may be noted only as event context.",
+    "universe": "Two lanes: Deep Discount / Recovery and Quality Compounder Pullback."
   },
   "contractProfiles": [
     {
@@ -120,6 +134,18 @@
       "sourceAsOf": "Delayed chain snapshot; feed Oct 5, 2026",
       "source": "https://public.com/stocks/adsk/options-chain?expiration=2028-01-21",
       "note": "Strike profile is attractive, but preferred-strike OI is below the ≥100 guideline. Verify live spread and consider nearby deeper-ITM strikes only if liquidity is better."
+    },
+    {
+      "ticker": "ISRG",
+      "preferred": "18–30 mo. preferred; use longest liquid ITM expiration available, ~0.70–0.85 delta",
+      "reference": "Jan 21 2028 $350C",
+      "ask": 83,
+      "breakeven": 433,
+      "openInterest": 173,
+      "readiness": "GOOD DELAYED PROFILE — VERIFY LIVE",
+      "sourceAsOf": "Delayed public chain snapshot; recheck before order",
+      "source": "https://public.com/stocks/isrg/options-chain?expiration=2028-01-21",
+      "note": "The $350C is materially ITM with usable displayed OI. Jan 2028 is shorter than the ideal 18–30 month window from Oct. 2026, so also compare Dec. 2028/Jan. 2029 expirations live. Do not approve without live delta, bid/ask and IV."
     },
     {
       "ticker": "RDDT",
