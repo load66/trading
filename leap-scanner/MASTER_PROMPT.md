@@ -2,6 +2,19 @@
 
 Use @Massive and @AlphaStocks, plus current web research when needed, to find, rank, monitor, and identify entry opportunities in high-quality long-term LEAP call candidates.
 
+## Current Owner Overrides
+
+These rules override older wording elsewhere:
+- Tariffs are context only, not a qualification filter or score penalty.
+- Primary drawdown reference is the 52-week / most relevant recent major high; ATH drawdown may be shown separately. Quality Compounder Pullback candidates may qualify with less than a 30% drawdown.
+- Technical downtrend / quality-trap analysis is diagnostic for timing and scoring, not an automatic exclusion by itself.
+- LEAP delta must be 0.60 through 0.75 inclusive.
+- Maximum selected LEAP contract cost is $6,500.
+- Only show a contract for a stock that is in the current qualified universe.
+- Prefer 18–30 months when available; require ITM/moderately ITM structure, acceptable spread, OI, IV, breakeven and expiration-specific Bear/Base/Bull valuation coverage.
+- Among otherwise eligible contracts, highest open interest wins; tightest relative bid/ask spread breaks ties after the spread-quality gate.
+- Never invent live Greeks, IV, OI or bid/ask data.
+
 ## Objective
 
 Find GAAP-profitable companies where the stock price is weak or temporarily discounted while the business remains healthy or improving.
@@ -179,7 +192,7 @@ Preferred liquidity guidelines:
 - Bid/ask width <= 5% of midpoint preferred
 - <= 3% is better
 
-There is no premium or contract-cost cap. Among eligible ITM calls with comparable current quotes and acceptable liquidity, rank by highest open interest, then lowest bid/ask width as a percentage of midpoint. Apply the tight-spread quality gate before ranking; a high OI contract with a poor spread must not win. Missing OI or bid/ask makes a reference provisional, not the verified winner. Do not invent missing quotes. Preserve expiration, valuation-coverage and event-risk requirements.
+Hard maximum contract cost is $6,500 per standard 100-share contract (maximum option premium $65.00). Do not publish a selected contract above this cost. Among eligible ITM calls within the 0.60–0.75 delta band, under the $6,500 cap, with comparable current quotes and acceptable liquidity, rank by highest open interest, then lowest bid/ask width as a percentage of midpoint. Apply the tight-spread quality gate before ranking; a high-OI contract with a poor spread must not win. Missing OI or bid/ask makes a reference provisional, not the verified winner. Do not invent missing quotes. Preserve expiration, valuation-coverage and event-risk requirements. If no eligible contract meets the cap and quality rules, publish NO ELIGIBLE CONTRACT UNDER $6,500 VERIFIED — WAIT.
 
 If live delta, IV, spread or OI cannot be verified, do not invent them. Label the contract as a delayed reference only.
 
@@ -268,112 +281,35 @@ NO A+ LEAP ENTRY TODAY — WAIT.
 
 
 
-## Persistent Downtrend / Quality-Trap Filter
+## Trend Integrity — Diagnostic, Not Automatic Exclusion
 
-Profitability alone does NOT make a stock suitable for LEAPS. Before a company can enter Tier 1/2/3, run a separate trend-integrity gate designed to filter chronic decliners, value traps and "cheap for a reason" stocks.
+Technical weakness must be researched and reported, but it must NOT automatically remove an otherwise fundamentally qualified company solely because of past price weakness, moving-average damage, long-term underperformance, or a deep drawdown.
 
-### A. Hard Reject — Structural Downtrend
-
-Classify as **STRUCTURAL DOWNTREND — REJECT** only when BOTH are true:
-
-1. At least 4 of these conditions are simultaneously true:
-- Current price is below the 50DMA and 200DMA.
-- 50DMA < 100DMA < 200DMA.
-- 50DMA slope is materially negative.
-- 200DMA slope is materially negative.
-- 6-month return <= -25%.
-- 12-month return <= -40%.
-- Drawdown from the 52-week high >= 60%.
-- At least 8 of the last 11 month-to-month closes are lower.
-- Relative performance versus SPY over 6–12 months is worse by >= 20 percentage points.
-- There is no confirmed higher-high / higher-low sequence on the weekly chart.
-
-2. At least ONE severe absolute price-damage condition is present:
-- 6-month return <= -25%, OR
-- 12-month return <= -40%, OR
-- Drawdown from the 52-week high >= 60%.
-
-This severe-damage requirement prevents a normal correction or early bottom from being mislabeled as a structural downtrend merely because several moving averages are still falling.
-
-A stock meeting this gate must NOT be published as a qualified LEAP merely because valuation appears cheap or GAAP earnings are positive.
-
-Example pattern: TTD-style persistent deterioration.
-
-### B. Quality Trap Quarantine — Trend Repair Required
-
-A profitable company can still be a poor LEAP candidate when the business is mature/slowing and the stock has destroyed capital for years.
-
-Classify as **QUALITY TRAP — TREND REPAIR REQUIRED** when BOTH are true:
-
-1. Long-term price/relative-strength damage:
-   - 3-year total return <= -25%, OR
-   - 3-year underperformance versus SPY >= 40 percentage points, OR
-   - stock remains >= 40% below its 3-year high after repeated failed rallies.
-
-AND
-
-2. At least TWO business-quality deterioration flags:
-   - Latest YoY revenue growth < 8%.
-   - Latest GAAP net income YoY <= 0%.
-   - Operating income YoY <= 0%.
-   - Operating margin contracts materially YoY.
-   - TTM FCF growth <= 0%.
-   - Share count/dilution deteriorates materially.
-   - Core customer/user/volume metric is flat or declining.
-   - Management guidance shows weak or deteriorating organic growth.
-
-These stocks are NOT "rejected forever." They move to a quarantine list and may re-enter only after trend repair and business repair.
-
-Example pattern: PYPL-style profitable value trap / chronic underperformer.
-
-### C. Trend-Repair Re-entry Requirements
-
-A quarantined stock can re-enter the qualified universe only when the business-quality gate is still satisfied AND at least 3 of these technical repair signals are present:
-
-- Price above the 200DMA.
-- 50DMA above the 200DMA.
-- 50DMA slope positive for at least several weeks.
-- 200DMA flat-to-rising.
-- Weekly higher high AND higher low confirmed.
-- 3-month relative strength versus SPY is positive.
-- A prior major breakdown level is reclaimed and held.
-- Earnings gap / high-volume support is reclaimed with follow-through.
-
-For a prior structural-downtrend reject, require a stronger repair: at least 4 of the above plus no new 52-week low for roughly 3 months.
-
-### D. Do Not Accidentally Reject Legitimate Bottoms
-
-Do NOT reject a high-quality company merely for being below the 200DMA.
-
-A stock such as ADSK or ISRG can remain eligible while bottoming if:
-- revenue / GAAP earnings / FCF remain strong,
-- margins are stable or improving,
-- the decline is valuation/sentiment driven rather than business deterioration,
-- the stock is building a base, reclaiming support, or showing higher lows,
-- and it does NOT meet the Structural Downtrend gate.
-
-The purpose of this filter is to distinguish a **bottoming quality company** from a **persistent capital-destruction trend**.
-
-### Required Trend Integrity Output
-
-For every deep-review candidate publish:
-
-- Trend integrity status:
-  - HEALTHY TREND
-  - BUILDING / REPAIRING
-  - QUALITY TRAP — QUARANTINE
-  - STRUCTURAL DOWNTREND — REJECT
-- Price vs 50DMA / 100DMA / 200DMA
-- 50DMA and 200DMA direction
+For every deep-review candidate evaluate:
+- Price versus 20DMA / 50DMA / 100DMA / 200DMA
+- Direction/slope of the 50DMA and 200DMA
 - 3-month / 6-month / 12-month returns
 - 3-year return when available
-- Relative return versus SPY
+- Relative performance versus SPY
 - 52-week drawdown
-- Count of lower monthly closes over the last 11 transitions
-- Weekly higher-high / higher-low status
-- Exact reason for pass, quarantine or rejection
+- Weekly higher-high / higher-low structure
+- Base formation, failed breakdowns, U&R, support reclaims and volume behavior
 
-Trend integrity is a separate gate from fundamental quality and valuation.
+Classify:
+- HEALTHY TREND
+- BUILDING / REPAIRING
+- EARLY BOTTOM
+- STILL FALLING
+- TECHNICALLY BROKEN
+
+Use weak technical structure to reduce Technical Quality points and to control ACTIONABILITY:
+- WAIT FOR REVERSAL
+- DO NOT ADD YET
+- THESIS BROKEN — AVOID only when the business thesis itself is broken or technical failure is confirmed alongside material fundamental deterioration.
+
+A profitable company such as HUBS, INTU, ADSK or ISRG may remain in the qualified research universe while technically weak if GAAP profitability, revenue, cash flow, balance sheet, valuation and the long-term thesis remain acceptable. Inclusion is not a buy signal.
+
+The purpose is to distinguish **fundamental qualification** from **entry timing**. Do not confuse a bad chart today with permanent business failure.
 
 ## Broad-Universe Discovery Funnel
 
@@ -582,8 +518,8 @@ Primary contract profile:
 - Strike below Bear target
 - Material cushion below Base target
 
-LIQUIDITY-FIRST SELECTION:
-Remove all premium/contract-cost caps and cost-based delta fallbacks. There is no fixed $70 stock-above-strike requirement. Among eligible contracts with comparable current data, highest open interest wins; tightest relative bid/ask spread breaks ties. Require acceptable spreads (<=5% of midpoint preferred, <=3% better) before ranking. Never treat missing spread/OI as zero or claim a verified winner without current comparable quotes.
+LIQUIDITY-FIRST SELECTION WITH COST CAP:
+Require total contract cost <= $6,500 and delta from 0.60 through 0.75 inclusive. There is no fixed $70 stock-above-strike requirement. Among otherwise eligible contracts with comparable current data, highest open interest wins; tightest relative bid/ask spread breaks ties. Require acceptable spreads (<=5% of midpoint preferred, <=3% better) before ranking. Never treat missing spread/OI as zero or claim a verified winner without current comparable quotes.
 
 Every selected contract must still:
 - Be ITM now
