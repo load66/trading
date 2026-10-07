@@ -4,7 +4,7 @@
   const LIVE_API="https://leaps-alpaca-live-production.up.railway.app";
   const STORAGE_KEY="leaps-owner-auth";
   const POLL_MS=15000;
-  let session=null, timer=null, liveQuotes={}, feed="iex", lastAsOf=null;
+  let session=null, timer=null, liveQuotes={}, feed="iex", lastAsOf=null, liveState="off", liveError="";
   const originalPlanFor=window.planFor;
 
   function readSession(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");}catch{return null;}}
@@ -17,9 +17,23 @@
   function clearSession(){
     session=null;
     localStorage.removeItem(STORAGE_KEY);
-    liveQuotes={};
+    clearQuotes();
+    liveState="off";
+    liveError="";
     stopPolling();
-    if(typeof window.renderAll==="function")window.renderAll();
+    updateUi();
+  }
+  function clearQuotes(){
+    if(Object.keys(liveQuotes).length){
+      liveQuotes={};
+      if(typeof window.renderAll==="function")window.renderAll();
+    }
+    lastAsOf=null;
+  }
+  function liveUnavailable(message){
+    clearQuotes();
+    liveState="error";
+    liveError=message;
     updateUi();
   }
   async function authRequest(path,body){
@@ -68,9 +82,13 @@
     });
   }
   function applyQuotes(payload){
-    liveQuotes=payload?.quotes||{};
+    const quotes=payload?.quotes||{};
+    if(!Object.values(quotes).some(q=>Number.isFinite(q?.price)))throw new Error("No current quotes returned");
+    liveQuotes=quotes;
     feed=payload?.feed||feed;
     lastAsOf=payload?.asOf||new Date().toISOString();
+    liveState="live";
+    liveError="";
     if(typeof window.renderAll==="function")window.renderAll();
     decorate();
     updateUi();
@@ -81,15 +99,14 @@
       session=await restoreSession();
       if(!session)return;
       const symbols=await qualifiedSymbols();
-      if(!symbols.length)return;
+      if(!symbols.length){clearQuotes();liveState="ready";updateUi();return;}
       const r=await fetch(LIVE_API+"/quotes?symbols="+encodeURIComponent(symbols.join(",")),{headers:{Authorization:"Bearer "+session.access_token},cache:"no-store"});
       const payload=await r.json().catch(()=>({}));
       if(r.status===401){clearSession();return;}
       if(!r.ok)throw new Error(payload.error||"Live quote request failed");
       applyQuotes(payload);
-      setStatus("live");
     }catch(e){
-      setStatus("error",e?.message||"Live price unavailable");
+      liveUnavailable(e?.message||"Live price unavailable");
     }
   }
   function stopPolling(){if(timer)clearTimeout(timer);timer=null;}
@@ -127,7 +144,11 @@
         ?"Owner Live Mode is active. Qualified-stock prices refresh automatically about every 15 seconds and support/entry status recalculates with no manual action."
         :"Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward.";
     }
-    setStatus(signed?(Object.keys(liveQuotes).length?"live":"ready"):"off");
+    if(signed&&liveState==="live"&&lastAsOf&&Date.now()-Date.parse(lastAsOf)>45000){
+      liveUnavailable("Quotes are stale; showing scheduled snapshot");
+      return;
+    }
+    setStatus(signed?liveState:"off",liveError);
   }
   function injectUi(){
     if(document.getElementById("alpaca-owner-live"))return;
@@ -146,6 +167,7 @@
         await signIn(section.querySelector("#alpaca-email").value.trim(),section.querySelector("#alpaca-password").value);
         section.querySelector("#alpaca-password").value="";
         note.textContent="";
+        liveState="ready";
         updateUi();
         await poll();
         schedule();
@@ -157,10 +179,18 @@
   async function boot(){
     injectUi();
     session=await restoreSession();
+    if(session)liveState="ready";
     updateUi();
     if(session){await poll();schedule();}
     window.addEventListener("focus",()=>{if(session){poll();schedule();}});
-    document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&session){poll();schedule();}});
+    document.addEventListener("visibilitychange",()=>{
+      if(!session)return;
+      if(document.visibilityState==="hidden"){
+        clearQuotes();
+        liveState="ready";
+        updateUi();
+      }else{poll();schedule();}
+    });
     setInterval(()=>{if(session&&lastAsOf)updateUi();},1000);
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
