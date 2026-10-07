@@ -1,8 +1,8 @@
 const SB_URL="https://ppsljqaaanpkksxbpalk.supabase.co";
 const SB_KEY="sb_publishable_2JLPa7GMpdacVfxBnfCv_w_wl36jn2n";
-const MAX_CONTRACT_COST=6500;
 const MIN_CONTRACT_DELTA=0.60;
 const MAX_CONTRACT_DELTA=0.75;
+const CONTRACT_SELECTION_RULE="0.60–0.75 delta, with no premium or contract-cost cap. Rank eligible liquid ITM calls by highest open interest, then tightest bid/ask spread as a percentage of midpoint. Live liquidity verification required.";
 const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2});
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -36,14 +36,26 @@ function marketStat(label,x){
   return'<div class="market-stat"><span>'+label+'</span><b>'+val+'</b><small class="'+(move>0?"up":move<0?"down":"flat")+'">'+fmtMove(move)+'</small></div>';
 }
 function planFor(t){return market&&market.candidatePlans?market.candidatePlans.find(x=>x.ticker===t):null}
+function contractDelta(c){return Number.isFinite(c.delta)?c.delta:Number.isFinite(c.modeledDelta)?c.modeledDelta:null;}
+function contractSpread(c){
+  if(!Number.isFinite(c.bid)||!Number.isFinite(c.ask)||c.bid<=0||c.ask<c.bid)return null;
+  return (c.ask-c.bid)/((c.ask+c.bid)/2);
+}
 function contractFor(t){
   if(!(market&&market.contractProfiles)||!(companyFor(t)&&companyFor(t).qualified))return null;
-  return market.contractProfiles.find(x=>{
+  return market.contractProfiles.filter(x=>{
     if(x.ticker!==t)return false;
-    const cost=Number.isFinite(x.costPerContract)?x.costPerContract:(Number.isFinite(x.ask)?x.ask*100:null);
-    const delta=Number(x.modeledDelta);
-    return Number.isFinite(cost)&&cost<=MAX_CONTRACT_COST&&Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA;
-  })||null;
+    const delta=contractDelta(x);
+    const spread=contractSpread(x);
+    return Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA&&(spread===null||spread<=0.05);
+  }).sort((a,b)=>{
+    // Complete comparable liquidity data comes before provisional references.
+    const valid=c=>Number.isFinite(c.openInterest)&&c.openInterest>=0&&contractSpread(c)!==null;
+    const completeness=Number(valid(b))-Number(valid(a));
+    if(completeness)return completeness;
+    const oi=c=>Number.isFinite(c.openInterest)&&c.openInterest>=0?c.openInterest:-1;
+    return oi(b)-oi(a)||(contractSpread(a)??Infinity)-(contractSpread(b)??Infinity)||String(a.expiration||"").localeCompare(String(b.expiration||""))||(a.strike||0)-(b.strike||0);
+  })[0]||null;
 }
 function companyFor(t){return research&&research.candidates?research.candidates.find(x=>x.ticker===t):null}
 
@@ -51,7 +63,7 @@ function setupCard(c,compact){
   const p=planFor(c.ticker)||{};
   const contract=contractFor(c.ticker);
   const action=p.action||"RESEARCH ONLY";
-  const optionBlock=contract?contractCard(contract,true):'<section class="contract-pending" aria-label="'+safe(c.ticker)+' LEAP contract pending"><h4>LEAP contract</h4><p>No eligible reference in this snapshot · $6,500 max · 0.60–0.75 delta. Live verification required.</p></section>';
+  const optionBlock='<details class="contract-panel" data-detail-key="contract-panel:'+safe(c.ticker)+'"><summary><span class="contract-panel-title">LEAP contract<small>'+safe(contract?contract.reference||"View reference":"Awaiting eligible reference")+'</small></span><span class="contract-panel-toggle" aria-hidden="true">⌄</span></summary><div class="contract-panel-body">'+(contract?contractCard(contract,true):'<section class="contract-pending" aria-label="'+safe(c.ticker)+' LEAP contract pending"><p>No eligible reference in this snapshot · 0.60–0.75 delta · no price cap. Verify open interest and bid/ask spread before selection.</p></section>')+'</div></details>';
   const event=p.eventRisk?'<div class="event-note">⚠ '+safe(p.eventRisk)+'</div>':"";
   const ladder=(p.entry1||p.add2||p.finalAdd)?'<div class="entry-ladder"><div><span>'+safe(p.entry1Label||"1ST MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.entry1||"—")+'</b></div><div><span>'+safe(p.add2Label||"2ND MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.add2||"—")+'</b></div><div><span>'+safe(p.finalAddLabel||"FINAL DEEP SUPPORT")+' · 40%</span><b>'+safe(p.finalAdd||"—")+'</b></div></div>':"";
   const reasons=(p.entry1Reason||p.add2Reason||p.finalAddReason)?'<div class="support-reasons"><div><b>Why this is the 1st buy area</b><p>'+safe(p.entry1Reason||"—")+'</p></div><div><b>Why this is the 2nd buy area</b><p>'+safe(p.add2Reason||"—")+'</p></div><div><b>Why this is the final deep-buy area</b><p>'+safe(p.finalAddReason||"—")+'</p></div></div>':"";
@@ -96,7 +108,9 @@ function contractCard(c,embedded=false){
   const company=companyFor(c.ticker);
   const ft=c.fundamentalTargets||{},em=c.expirationMoneyness||{};
   const cost=Number.isFinite(c.costPerContract)?c.costPerContract:(Number.isFinite(c.ask)?c.ask*100:null);
-  const delta=Number.isFinite(c.modeledDelta)?"~"+c.modeledDelta.toFixed(2):"—";
+  const deltaValue=contractDelta(c);
+  const delta=Number.isFinite(deltaValue)?(Number.isFinite(c.delta)?"":"~")+deltaValue.toFixed(2):"—";
+  const spread=contractSpread(c);
   const iv=Number.isFinite(c.modeledIV)?(c.modeledIV*100).toFixed(1)+"%":"—";
   const expiry=new Date(String(c.expiration||"")+"T12:00:00Z");
   const expiryText=Number.isNaN(expiry.getTime())?"Expiration unverified":new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"}).format(expiry);
@@ -111,10 +125,10 @@ function contractCard(c,embedded=false){
     '<header class="contract-card-head"><div class="contract-identity"><span class="contract-eyebrow">OPTION REFERENCE</span><div class="contract-title">'+(embedded?'<h4>LEAP call</h4>':'<h3>'+safe(c.ticker)+'</h3><span>'+safe(company&&company.company||"")+'</span>')+'</div></div><span class="readiness '+tone+'"><i aria-hidden="true"></i>'+status+'</span></header>'+
     '<div class="contract-reference">'+safe(reference)+'</div>'+(horizonText?'<p class="contract-horizon">'+safe(horizonText)+'</p>':"")+
     '<div class="contract-price-panel"><div><span>Cost per contract</span><strong>'+(Number.isFinite(cost)?money.format(cost):"—")+'</strong><small>Reference ask × 100 shares</small></div><div><span>Expiration breakeven</span><strong>'+(Number.isFinite(c.breakeven)?money.format(c.breakeven):"—")+'</strong><small>Underlying price to cover premium</small></div></div>'+
-    '<dl class="contract-facts"><div><dt>Delta <span>modeled</span></dt><dd>'+delta+'</dd><small>Estimated stock-price sensitivity</small></div><div><dt>Open interest</dt><dd>'+oiText+'</dd><small>'+oiNote+'</small></div><div><dt>Ask per share</dt><dd>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</dd><small>Delayed premium reference</small></div><div><dt>Implied volatility <span>modeled</span></dt><dd>'+iv+'</dd><small>Estimate; verify the live chain</small></div></dl>'+
+    '<dl class="contract-facts"><div><dt>Delta <span>'+(Number.isFinite(c.delta)?"reported":"modeled")+'</span></dt><dd>'+delta+'</dd><small>Stock-price sensitivity · verify live</small></div><div><dt>Open interest</dt><dd>'+oiText+'</dd><small>'+oiNote+'</small></div><div><dt>Bid/ask spread</dt><dd>'+(Number.isFinite(spread)?pct(spread):"—")+'</dd><small>'+(Number.isFinite(spread)?"Percent of midpoint · verify live":"Bid/ask not recorded; ranking provisional")+'</small></div><div><dt>Ask per share</dt><dd>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</dd><small>Delayed premium reference</small></div><div><dt>Implied volatility <span>modeled</span></dt><dd>'+iv+'</dd><small>Estimate; verify the live chain</small></div></dl><p class="contract-screen-note">0.60–0.75 delta · no price cap. Highest open interest first; tightest spread breaks ties. '+(spread===null?"This snapshot cannot confirm the liquidity winner.":"Compare current quotes before entry.")+'</p>'+
     '<section class="contract-scenarios" aria-label="Estimated underlying value at expiration"><div class="contract-section-heading"><h4>Value at expiration</h4><span>Underlying stock · estimates</span></div><table class="scenario-table"><thead><tr><th scope="col">Scenario</th><th scope="col">Stock value</th><th scope="col">Call status</th></tr></thead><tbody>'+rows+'</tbody></table><p class="scenario-footnote">'+safe(em.coverage||"Scenario coverage unverified")+'. ITM does not mean profitable; compare stock value with breakeven.</p></section>'+
     '<section class="contract-rationale"><h4>Selection rationale</h4><p>'+safe(c.selectionReason||c.note||"No selection rationale recorded. Verify the live chain before entry.")+'</p></section>'+
-    '<details class="contract-more" data-detail-key="contract:'+safe(c.ticker)+'"><summary>Contract details & verification <span aria-hidden="true">+</span></summary><div class="contract-more-body"><dl class="contract-detail-facts"><div><dt>Stock above strike</dt><dd>'+(Number.isFinite(c.stockAboveStrike)?money.format(c.stockAboveStrike):"—")+'</dd></div><div><dt>Intrinsic value / share</dt><dd>'+(Number.isFinite(c.currentIntrinsic)?money.format(c.currentIntrinsic):"—")+'</dd></div><div><dt>Extrinsic value / share</dt><dd>'+(Number.isFinite(c.currentExtrinsic)?money.format(c.currentExtrinsic):"—")+'</dd></div></dl><p><b>Verification status:</b> '+safe(readiness)+'</p><p><b>Target profile:</b> '+safe(c.preferred)+'</p><p><b>Selection rule:</b> '+safe(c.selectionRule||"Use verified 0.70–0.75 delta ITM contracts.")+'</p><p><b>Greek source:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><p>Valuation scenarios are estimates, not probabilities or guarantees. Liquidity, bid/ask spread, IV and open interest need live verification.</p>'+(c.source?'<a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">View delayed chain source ↗</a>':"")+'</div></details></'+tag+'>';
+    '<details class="contract-more" data-detail-key="contract:'+safe(c.ticker)+'"><summary>Contract details & verification <span aria-hidden="true">+</span></summary><div class="contract-more-body"><dl class="contract-detail-facts"><div><dt>Stock above strike</dt><dd>'+(Number.isFinite(c.stockAboveStrike)?money.format(c.stockAboveStrike):"—")+'</dd></div><div><dt>Intrinsic value / share</dt><dd>'+(Number.isFinite(c.currentIntrinsic)?money.format(c.currentIntrinsic):"—")+'</dd></div><div><dt>Extrinsic value / share</dt><dd>'+(Number.isFinite(c.currentExtrinsic)?money.format(c.currentExtrinsic):"—")+'</dd></div></dl><p><b>Verification status:</b> '+safe(readiness)+'</p><p><b>Target profile:</b> 18–30 months preferred · 0.60–0.75 delta · ITM</p><p><b>Selection rule:</b> '+safe(CONTRACT_SELECTION_RULE)+'</p><p><b>Greek source:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><p>Valuation scenarios are estimates, not probabilities or guarantees. Liquidity, bid/ask spread, IV and open interest need live verification.</p>'+(c.source?'<a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">View delayed chain source ↗</a>':"")+'</div></details></'+tag+'>';
 }
 function renderAll(){const openKeys=new Set(Array.from(document.querySelectorAll("details[data-detail-key][open]")).map(e=>e.dataset.detailKey));renderDesk();renderFreshness();document.querySelectorAll("details[data-detail-key]").forEach(e=>{e.open=openKeys.has(e.dataset.detailKey);});}
 

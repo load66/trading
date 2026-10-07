@@ -17,7 +17,7 @@ in the LEAPS ChatGPT project chat, perform a full research refresh and publish t
 3. Re-screen the profitable-company universe using both qualification lanes.
 4. Verify GAAP profitability, revenue, earnings, FCF, margins, balance sheet, catalysts, valuation, moat, technical state and event risk.
 5. Refresh rankings and exact Entry 1 / Add 2 / Final Add zones.
-6. Re-check the best available LEAP contract profile. Prefer 18–30 months and roughly 0.70–0.85 delta ITM calls; never invent live data.
+6. Re-check available ITM LEAP calls, preferring 18–30 months. Require 0.60–0.75 delta inclusive, with no premium/contract-cost cap or preferred delta sub-band. Among liquid eligible calls with comparable current quotes, rank highest open interest first and tightest bid/ask width as a percentage of midpoint second. Reject poor spreads before ranking; missing OI/spread makes the reference provisional. Keep valuation coverage, expiration, IV and event-risk checks; never invent live data.
 7. Write a new immutable Supabase research snapshot and a new market scan row.
 8. Update GitHub fallback JSON.
 9. Deploy from `main` to Railway.

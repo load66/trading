@@ -239,4 +239,15 @@ main.desk-page{width:min(100%,1080px);margin:0 auto;padding:14px 14px calc(30px 
 .setup-card .embedded-contract{margin-top:20px;padding:20px 0 0;border:0;border-top:1px solid var(--line2);border-radius:0;background:transparent;overflow:visible}
 .embedded-contract .contract-title{margin-top:4px}.embedded-contract .contract-title h4{font-size:17px;color:#e3edfa;letter-spacing:-.02em}.embedded-contract .contract-reference{margin-top:13px}
 .contract-pending{margin-top:18px;padding-top:16px;border-top:1px solid var(--line2)}.contract-pending h4{font:650 12px/1.5 var(--sans);color:#b9c9df}.contract-pending p{margin-top:6px;font-size:11px!important;line-height:1.6!important;color:#8c9eb7}
+.contract-panel{margin-top:18px;border-top:1px solid var(--line2)}
+.contract-panel>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:14px 0 0;cursor:pointer;list-style:none;color:#c4d4eb}
+.contract-panel>summary::-webkit-details-marker{display:none}
+.contract-panel>summary:focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:4px}
+.contract-panel-title{font:650 13px/1.5 var(--sans);min-width:0}
+.contract-panel-title small{display:block;margin-top:3px;font:400 11px/1.5 var(--sans);color:#869ab6;overflow-wrap:anywhere}
+.contract-panel-toggle{font-size:20px;line-height:1;transition:transform .15s ease;flex-shrink:0}
+.contract-panel[open]>.contract-panel-toggle,.contract-panel[open]>summary .contract-panel-toggle{transform:rotate(180deg)}
+.setup-card .contract-panel .embedded-contract{border-top:0;margin-top:12px;padding-top:8px}
+.contract-panel .contract-pending{margin:12px 0 0;padding:0;border:0}
+.contract-screen-note{font-size:11px!important;line-height:1.6!important;color:#91a3bd;padding:0 0 14px}
 @media(max-width:600px){.setup-card .embedded-contract{padding:18px 0 0}.embedded-contract .contract-card-head{gap:8px}}

@@ -109,13 +109,9 @@ Tariff exposure is **not** a qualification filter or scoring penalty. Tariff hea
 
 The current master instructions live in `MASTER_PROMPT.md`.
 
-### Mobile information architecture
+### Unified Desk layout
 
-Bottom navigation:
-- **Desk** — market regime, SPY/QQQ/VIX, top opportunity queue.
-- **Setups** — qualified company cards with 30/30/40 entry ladders and confirmation.
-- **Contracts** — delayed contract references, liquidity/readiness and live-verification warnings.
-- **Research** — two-lane methodology, rankings, scan history, rejections and scoring.
+Each qualified stock card contains its research, support plan and a LEAP contract disclosure, collapsed by default. Expansion is preserved during feed refreshes. The contract screen uses delta 0.60–0.75 inclusive with no premium/contract-cost cap or preferred sub-band. Among eligible calls with comparable current liquidity data and acceptable spreads, choose the highest open interest; the tightest spread as a percentage of midpoint breaks ties. Missing OI or bid/ask remains provisional. Existing dated references are not freshly verified liquidity winners.
 
 The app reads Supabase first and falls back to GitHub JSON if the database feed is temporarily unavailable.
 
@@ -128,3 +124,4 @@ The fundamental research universe is intentionally owner-controlled from the Cha
 - Scheduled jobs must not add/remove candidates or alter fundamental scores.
 - Supabase research snapshots are append-only history; GitHub `research-latest.json` is the public fallback.
 - The public UI displays the latest manual research refresh time separately from the latest market scan time.
+
