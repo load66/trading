@@ -14,3 +14,4 @@
 .alpaca-live-controls small{color:var(--muted);font-size:10px;line-height:1.4}
 .alpaca-live-badge{padding:3px 5px;border-radius:999px;border:1px solid rgba(70,220,150,.3);background:rgba(70,220,150,.05);font-size:8px!important;color:var(--green);font-weight:900;letter-spacing:.04em}
 @media(max-width:700px){.alpaca-signin{grid-template-columns:1fr}.alpaca-signin small{grid-column:auto}.alpaca-live-head{align-items:flex-start}.alpaca-live-head h2{font-size:16px}}
+.alpaca-signin[hidden],.alpaca-live-controls[hidden]{display:none!important}
