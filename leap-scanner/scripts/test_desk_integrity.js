@@ -1,0 +1,27 @@
+// Exercise publication-dependent decisions without a browser or network.
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const source=fs.readFileSync(path.join(root,'dist/app.js'),'utf8').split('load().catch(')[0];
+const ctx=vm.createContext({Intl,Date,Number,console});vm.runInContext(source,ctx);
+const research=JSON.parse(fs.readFileSync(path.join(root,'dist/data/research-latest.json')));
+const market=JSON.parse(fs.readFileSync(path.join(root,'dist/data/market-latest.json')));
+vm.runInContext('research='+JSON.stringify(research)+';market='+JSON.stringify(market),ctx);
+assert.equal(vm.runInContext('contractFor("ADSK")',ctx),null,'Historical chain cannot be contract-ready');
+const base={ticker:'ADSK',classification:'eligible',verified:true,quoteObservedAt:new Date().toISOString(),strike:200,delta:.65,bid:98,ask:100,openInterest:3000,iv:.3,expiration:`${new Date().getUTCFullYear()+2}-01-21`,fundamentalTargets:{bear:260,base:300}};
+const select=contracts=>{vm.runInContext('market.contractProfiles='+JSON.stringify(contracts),ctx);return vm.runInContext('contractFor("ADSK")',ctx);};
+assert.ok(select([base]),'Contract above $6,500 is allowed when quality passes');
+for(const updates of [{verified:false},{expiration:'2025-01-17'},{quoteObservedAt:'2026-01-01T00:00:00Z'},{delta:.8},{bid:80},{openInterest:-1},{iv:0},{strike:300}])assert.equal(select([{...base,...updates}]),null);
+assert.equal(select([{...base,reference:'lower OI',openInterest:2000,bid:99},{...base,reference:'highest OI'}]).reference,'highest OI');
+assert.equal(select([{...base,reference:'wider'},{...base,reference:'tighter',bid:99}]).reference,'tighter');
+vm.runInContext('activeFilter="tier3"',ctx);
+assert.deepEqual(research.candidates.filter(c=>vm.runInContext('matchesFilter('+JSON.stringify(c)+')',ctx)).map(c=>c.rank),[8,9,10,11]);
+const company=research.candidates[0];
+company.earningsSurprises=[{epsBasis:'unknown',epsConsensus:1,epsResult:'BEAT'}];
+const html=vm.runInContext('earningsQuality('+JSON.stringify(company)+')',ctx);
+assert.ok(html.includes('Net income')&&html.includes('UNVERIFIED'));
+assert.ok(!html.includes('>BEAT<'),'Unverifiable basis cannot display an EPS beat');
+const currentIV=vm.runInContext('contractCard('+JSON.stringify(base)+',true)',ctx);
+assert.ok(currentIV.includes('Implied volatility <span>reported</span>')&&currentIV.includes('30.0%'));
+const modeled=vm.runInContext('contractCard('+JSON.stringify({...base,iv:null,modeledIV:.43})+',true)',ctx);
+assert.ok(modeled.includes('Implied volatility <span>modeled</span>')&&modeled.includes('~43.0%'));
+console.log('Desk integrity passed: permanent ranks, filters, comparable earnings, current/modeled IV, no cost cap, OI/spread ranking, and eligibility boundaries.');

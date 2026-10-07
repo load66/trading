@@ -3409,7 +3409,7 @@
     "hardGates": [
       "GAAP profitable now",
       "Positive YoY revenue growth",
-      "Positive TTM free cash flow or clearly strong operating cash generation",
+      "Verified positive TTM and latest-quarter free cash flow",
       "No going-concern/accounting crisis or structurally broken core business"
     ],
     "laneA": "Deep Discount / Recovery: usually 30–70% below a meaningful high.",
@@ -3419,11 +3419,11 @@
   },
   "publicationMode": "Manual research from ChatGPT project chat",
   "manualRefreshKeyword": "generate",
-  "scheduledResearchMutation": false,
+  "scheduledResearchMutation": true,
   "researchControl": {
     "ownerCommand": "generate",
     "behavior": "Full research refresh, publish to Supabase and GitHub, then verify Railway deployment.",
-    "scheduledJobs": "Market/entry timing only; core candidate universe remains unchanged until manual generate."
+    "scheduledJobs": "The 2 PM weekday job runs the full MASTER_PROMPT research workflow and may add/remove/rescore candidates. Intraday checks update market/entry timing only."
   },
   "researchFunnel": {
     "universeScanned": 317,
@@ -3476,5 +3476,6 @@
       "reason": "Previously rejected on demanding valuation, substantial SBC and thin ordinary GAAP operating profit. Four recent GAAP net profits were reported; do not describe it as persistently net-loss-making. Not freshly re-screened in this focused review.",
       "lastReviewAsOf": "2026-10-07 manual generate with owner-updated filters"
     }
-  ]
+  ],
+  "verificationNote": "Production integrity audit: policy metadata aligned with the current master prompt; financial facts, research rank and quote cutoffs unchanged."
 }

@@ -355,7 +355,7 @@ Use Massive Ratios and financial statements to remove companies that fail the ha
 
 Require, subject to data availability:
 - Positive trailing GAAP EPS / positive GAAP net income
-- Positive TTM free cash flow OR clearly strong positive operating cash flow when FCF presentation needs company-specific adjustment
+- Verified positive TTM and latest-quarter free cash flow; positive operating cash flow cannot substitute for negative or unverified FCF
 - Positive YoY revenue growth
 - No obvious balance-sheet or going-concern crisis
 
@@ -450,7 +450,7 @@ The public app must display the funnel so users can distinguish:
 
 ## Manual Generation Control
 
-The core fundamental research is controlled from the owner's ChatGPT project chat, not by the scheduled jobs.
+The owner can refresh fundamental research with `generate`. The full 2 PM weekday research job can also update qualification and scores; the intraday watcher cannot.
 
 When the owner sends the standalone command **generate** in the LEAPS project chat, treat it as authorization to run a complete manual refresh using all available research sources. The manual generation workflow must:
 
@@ -562,6 +562,8 @@ Publication must be blocked when:
 - Market plans or contract records refer to non-qualified stocks.
 - A contract labeled `eligible` is not ITM, lacks current delta/OI/bid/ask/IV, falls outside 0.60–0.75 delta, or has a bid/ask width above 5% of midpoint.
 - Required research/market timestamps are missing.
+
+Eligible contracts require `verified: true`, a timezone-aware ISO `quoteObservedAt` no more than 15 minutes old, at least 12 months remaining, positive reported IV, and strike below the expiration-specific Bear and Base targets. Unknown contract classifications must block publication. Require all eight score categories, reconciled tier/deep-review counts, and one market plan per qualified ticker. Historical references remain displayable as references without meeting live eligibility requirements.
 
 Historical or incomplete option references must be classified as `historical_reference` or `no_verified_contract`, never as the currently eligible winner.
 

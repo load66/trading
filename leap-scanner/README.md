@@ -54,7 +54,7 @@ The dashboard now separates **audited company qualification** from **dated marke
 
 - `dist/data/strict-scan-YYYY-MM-DD.json` remains the fundamental research record.
 - `dist/data/market-latest.json` is the replaceable market-regime and staged-support layer.
-- The daily layer may change without rewriting the audited company screen.
+- The intraday layer may change without rewriting the audited company screen; the full 2 PM research scan can update qualification and scores.
 - A market trigger starts analysis; it never creates an automatic trade.
 
 Default market-dislocation thresholds:
@@ -123,4 +123,3 @@ The app reads Supabase first and falls back to GitHub JSON if the database feed 
 - Supabase research snapshots are append-only history; GitHub `research-latest.json` is the public fallback.
 - `MASTER_PROMPT.md` is the single canonical policy source; duplicated documentation must not override it.
 - The public UI displays research-snapshot freshness separately from market-scan freshness.
-

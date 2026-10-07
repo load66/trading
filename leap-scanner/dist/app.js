@@ -28,7 +28,7 @@ function readinessLabel(value){const tone=readinessTone(value);return tone==="go
 function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
 function formatTime(value){const time=new Date(value||"");return Number.isNaN(time.getTime())?"Timestamp unrecorded":dateFmt.format(time);}
 function sourceMode(mode,time){const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="DATABASE SNAPSHOT"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=formatTime(time);}
-function renderFreshness(){document.getElementById("market-saved-time").textContent=formatTime(marketSavedAt);document.getElementById("research-saved-time").textContent=formatTime(researchSavedAt);document.getElementById("price-cutoff").textContent=market&&market.marketAsOf?market.marketAsOf:"Price cutoff unverified";document.getElementById("feed-note").textContent="Saved research snapshots; prices and option references may be delayed. Database access does not mean live market quotes.";}
+function renderFreshness(){document.getElementById("market-saved-time").textContent=formatTime(marketSavedAt||market&&market.scanCompletedAt);document.getElementById("research-saved-time").textContent=formatTime(researchSavedAt||research&&research.scanCompletedAt);document.getElementById("price-cutoff").textContent=market&&market.marketAsOf?market.marketAsOf:"Price cutoff unverified";const observed=Date.parse(market&&market.market&&market.market.spy&&market.market.spy.observedAt||"");const age=Number.isFinite(observed)?Math.max(0,Math.floor((Date.now()-observed)/60000)):null;document.getElementById("feed-note").textContent=(age===null?"Price observation time is unverified. ":"Prices were observed "+age+" minutes ago. ")+"Saved research snapshots; prices and option references may be delayed. A new upload does not make the quotes live.";}
 function marketStat(label,x){
   if(!x||!Number.isFinite(label==="VIX"?x.value:x.close)||(label==="VIX"?x.value:x.close)<=0)return'<div class="market-stat"><span>'+label+'</span><b>—</b><small class="flat">Unavailable</small></div>';
   const val=label==="VIX"?Number(x.value).toFixed(2):money.format(x.close);
@@ -42,18 +42,20 @@ function contractSpread(c){
   return (c.ask-c.bid)/((c.ask+c.bid)/2);
 }
 function contractFor(t){
-  const company=companyFor(t);
+  const company=companyFor(t),plan=planFor(t)||{},underlying=Number.isFinite(plan.price)?plan.price:company&&company.price;
   if(!(market&&market.contractProfiles)||!company||!company.qualified)return null;
   return market.contractProfiles.filter(x=>{
-    if(x.ticker!==t||x.classification!=="eligible"||!Number.isFinite(x.strike)||x.strike>=company.price)return false;
+    if(x.ticker!==t||x.classification!=="eligible"||!Number.isFinite(underlying)||!Number.isFinite(x.strike)||x.strike>=underlying)return false;
     const delta=Number.isFinite(x.delta)?x.delta:null;
     const spread=contractSpread(x);
     const iv=Number.isFinite(x.iv)?x.iv:Number.isFinite(x.impliedVolatility)?x.impliedVolatility:null;
-    const freshness=String(x.sourceAsOf||"")+" "+String(x.deltaSource||"")+" "+String(x.classification||"");
-    const currentVerified=!/historic|delayed|modeled|unverified|reference/i.test(freshness);
+    const observed=Date.parse(x.quoteObservedAt||""),age=Date.now()-observed;
+    const expiry=Date.parse(String(x.expiration||"")+"T12:00:00Z");
+    const targets=x.fundamentalTargets||{};
+    const currentVerified=x.verified===true&&Number.isFinite(age)&&age>=0&&age<=900000&&Number.isFinite(expiry)&&expiry-Date.now()>=365*86400000&&Number.isFinite(targets.bear)&&targets.bear>x.strike&&Number.isFinite(targets.base)&&targets.base>x.strike;
     return Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA&&
-      Number.isFinite(x.openInterest)&&Number.isFinite(x.bid)&&Number.isFinite(x.ask)&&
-      spread!==null&&spread<=0.05&&Number.isFinite(iv)&&currentVerified;
+      Number.isFinite(x.openInterest)&&x.openInterest>=0&&Number.isFinite(x.bid)&&Number.isFinite(x.ask)&&
+      spread!==null&&spread<=0.05&&Number.isFinite(iv)&&iv>0&&currentVerified;
   }).sort((a,b)=>b.openInterest-a.openInterest||contractSpread(a)-contractSpread(b)||String(a.expiration||"").localeCompare(String(b.expiration||"")))[0]||null;
 }
 function historicalContractFor(t){
@@ -106,15 +108,21 @@ function earningsQuality(c){
     const gaap=Number.isFinite(eps[i])?money.format(eps[i]):"—";
     const adj=Number.isFinite(x.adjustedEps)?money.format(x.adjustedEps):"—";
     const epsConsensus=Number.isFinite(x.epsConsensus)?money.format(x.epsConsensus):(Number.isFinite(x.consensus)?money.format(x.consensus):"—");
-    const epsResult=x.epsResult||x.result||null;
     const basis=String(x.epsBasis||x.basis||"").toUpperCase();
+    const actual=basis==="GAAP"?eps[i]:["ADJUSTED","NON-GAAP"].includes(basis)?x.adjustedEps:null;
+    const estimate=Number.isFinite(x.epsConsensus)?x.epsConsensus:x.consensus;
+    const epsResult=Number.isFinite(actual)&&Number.isFinite(estimate)?Math.abs(actual-estimate)<.005?"MEET":actual>estimate?"BEAT":"MISS":null;
     const epsCell=(epsConsensus!=="—"?'<b>'+epsConsensus+'</b><small>'+(basis?basis+" CONSENSUS":"BASIS UNVERIFIED")+'</small>':"—")+resultBadge(epsResult||null);
     const revActual=Number.isFinite(x.revenueActual)?money.format(x.revenueActual)+"M":(Array.isArray(q.revenues)&&Number.isFinite(q.revenues[i])?money.format(q.revenues[i])+"M":"—");
     const revConsensus=Number.isFinite(x.revenueConsensus)?money.format(x.revenueConsensus)+"M":"—";
-    const revCell='<b>'+revActual+'</b><small>vs '+revConsensus+'</small>'+resultBadge(x.revenueResult||null);
+    const revNumber=Number.isFinite(x.revenueActual)?x.revenueActual:(q.revenues||[])[i];
+    const revResult=Number.isFinite(revNumber)&&Number.isFinite(x.revenueConsensus)?Math.abs(revNumber-x.revenueConsensus)<.005?"MEET":revNumber>x.revenueConsensus?"BEAT":"MISS":null;
+    const revCell='<b>'+revActual+'</b><small>vs '+revConsensus+'</small>'+resultBadge(revResult);
     return '<tr><th scope="row">'+safe(period)+'</th><td>'+gaap+'</td><td>'+adj+'</td><td>'+epsCell+'</td><td>'+revCell+'</td></tr>';
   }).join("");
-  return '<div class="earnings-quality"><div class="mini-section-head"><h4>Earnings quality & surprise</h4><span>GAAP FIRST</span></div><div class="table-scroll"><table class="fundamental-table earnings-table"><thead><tr><th>Quarter</th><th>GAAP EPS</th><th>Adjusted EPS*</th><th>EPS vs estimate*</th><th>Revenue vs estimate*</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="history-note">*Adjusted EPS and consensus comparisons appear only when the snapshot stores the estimate basis. Never compare GAAP EPS against an adjusted-EPS consensus. Missing estimate data stays UNVERIFIED rather than being inferred.</p></div>';
+  const trend=n=>Number.isFinite(n)?(n>=0?"+":"")+n.toFixed(1)+"% YoY":"Prior loss / unverified";
+  const gaapRows=periods.map((period,i)=>'<tr><th scope="row">'+safe(period)+'</th><td>'+(Number.isFinite((q.revenues||[])[i])?money.format(q.revenues[i])+"M":"—")+'<small>'+trend((q.revg||[])[i])+'</small></td><td>'+(Number.isFinite((q.net||[])[i])?money.format(q.net[i])+"M":"—")+'<small>'+trend((q.nyoy||[])[i])+'</small></td><td>'+(Number.isFinite(eps[i])?money.format(eps[i]):"—")+'</td></tr>').join("");
+  return '<div class="earnings-quality"><div class="mini-section-head"><h4>Four-quarter GAAP results</h4><span>SAME QUARTER YOY</span></div><table class="fundamental-table"><thead><tr><th>Fiscal quarter</th><th>Revenue</th><th>Net income</th><th>EPS</th></tr></thead><tbody>'+gaapRows+'</tbody></table><p class="history-note">USD millions except per-share EPS. '+safe(q.verification||"Verify historical figures in the linked filings.")+'</p><div class="mini-section-head"><h4>Earnings quality & surprise</h4><span>GAAP FIRST</span></div><div class="table-scroll"><table class="fundamental-table earnings-table"><thead><tr><th>Quarter</th><th>GAAP EPS</th><th>Adjusted EPS*</th><th>EPS vs estimate*</th><th>Revenue vs estimate*</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="history-note">*Adjusted EPS and consensus comparisons appear only when the snapshot stores the estimate basis. Never compare GAAP EPS against an adjusted-EPS consensus. Missing estimate data stays UNVERIFIED rather than being inferred.</p></div>';
 }
 function previousCandidate(c){
   return previousResearch&&Array.isArray(previousResearch.candidates)?previousResearch.candidates.find(x=>x.ticker===c.ticker&&x.qualified):null;
@@ -230,7 +238,7 @@ function renderDesk(){
 function contractCard(c,embedded=false){
   const readiness=c.approval||c.readiness||"VERIFY LIVE";
   const tone=normalizedStatus(readiness).includes("REFERENCE ONLY")?"reference":readinessTone(readiness);
-  const status=tone==="good"?"Verified contract":tone==="bad"?"Not approved":"Live check required";
+  const status=c.classification==="eligible"&&c.verified===true?"Verified eligible":tone==="good"?"Verified contract":tone==="bad"?"Not approved":"Live check required";
   const company=companyFor(c.ticker);
   const ft=c.fundamentalTargets||{},em=c.expirationMoneyness||{};
   const cost=Number.isFinite(c.costPerContract)?c.costPerContract:(Number.isFinite(c.ask)?c.ask*100:null);
@@ -245,14 +253,14 @@ function contractCard(c,embedded=false){
   const horizon=String(c.preferredHorizonStatus||"");
   const horizonText=horizon.includes("SHORTER")?"Shorter than the preferred 18-month horizon":horizon.replace(/_/g," ").toLowerCase();
   const oiText=Number.isFinite(c.openInterest)?Number(c.openInterest).toLocaleString():"—";
-  const oiNote=Number.isFinite(c.openInterest)?c.openInterest<100?"Below preferred 100 contracts":"Delayed reference · verify live":"Live verification needed";
+  const oiNote=Number.isFinite(c.openInterest)?c.openInterest<100?"Below preferred 100 contracts":c.classification==="eligible"?"Observed OI · verify before entry":"Delayed reference · verify live":"Live verification needed";
   const rows=[['Bear','Conservative',ft.bear,em.bear],['Base','Central estimate',ft.base,em.base],['Bull','Strong execution',ft.bull,em.bull]].map(([label,note,value,moneyness])=>'<tr><th scope="row"><b>'+label+'</b><small>'+note+'</small></th><td>'+(Number.isFinite(value)?money.format(value):"—")+'</td><td><span class="scenario-state">'+safe(moneyness||"Unverified")+'</span></td></tr>').join("");
   const tag=embedded?"section":"article";
   return '<'+tag+' class="contract-card contract-card-v12'+(embedded?" embedded-contract":"")+'" aria-label="'+safe(c.ticker)+' LEAP contract reference">'+
     '<header class="contract-card-head"><div class="contract-identity"><span class="contract-eyebrow">OPTION REFERENCE</span><div class="contract-title">'+(embedded?'<h4>LEAP call</h4>':'<h3>'+safe(c.ticker)+'</h3><span>'+safe(company&&company.company||"")+'</span>')+'</div></div><span class="readiness '+tone+'"><i aria-hidden="true"></i>'+status+'</span></header>'+
     '<div class="contract-reference">'+safe(reference)+'</div>'+(horizonText?'<p class="contract-horizon">'+safe(horizonText)+'</p>':"")+'<p class="reference-cutoff">'+safe(c.sourceAsOf||"Reference feed timestamp unavailable; verify the current chain.")+'</p>'+
     '<div class="contract-price-panel"><div><span>Cost per contract</span><strong>'+(Number.isFinite(cost)?money.format(cost):"—")+'</strong><small>Reference ask × 100 shares</small></div><div><span>Expiration breakeven</span><strong>'+(Number.isFinite(c.breakeven)?money.format(c.breakeven):"—")+'</strong><small>Underlying price to cover premium</small></div></div>'+
-    '<dl class="contract-facts"><div><dt>Delta <span>'+(Number.isFinite(c.delta)?"reported":"modeled")+'</span></dt><dd>'+delta+'</dd><small>Stock-price sensitivity · verify live</small></div><div><dt>Open interest</dt><dd>'+oiText+'</dd><small>'+oiNote+'</small></div><div><dt>Bid/ask spread</dt><dd>'+(Number.isFinite(spread)?pct(spread):"—")+'</dd><small>'+(Number.isFinite(spread)?"Percent of midpoint · verify live":"Bid/ask not recorded; ranking provisional")+'</small></div><div><dt>Ask per share</dt><dd>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</dd><small>Delayed premium reference</small></div><div><dt>Implied volatility <span>modeled</span></dt><dd>'+iv+'</dd><small>Estimate; verify the live chain</small></div></dl><p class="contract-screen-note">0.60–0.75 delta · no price cap. Highest open interest first; tightest spread breaks ties. '+(spread===null?"This snapshot cannot confirm the liquidity winner.":"Compare current quotes before entry.")+'</p>'+
+    '<dl class="contract-facts"><div><dt>Delta <span>'+(Number.isFinite(c.delta)?"reported":"modeled")+'</span></dt><dd>'+delta+'</dd><small>Stock-price sensitivity · verify live</small></div><div><dt>Open interest</dt><dd>'+oiText+'</dd><small>'+oiNote+'</small></div><div><dt>Bid/ask spread</dt><dd>'+(Number.isFinite(spread)?pct(spread):"—")+'</dd><small>'+(Number.isFinite(spread)?"Percent of midpoint · verify live":"Bid/ask not recorded; ranking provisional")+'</small></div><div><dt>Ask per share</dt><dd>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</dd><small>Delayed premium reference</small></div><div><dt>Implied volatility <span>'+(Number.isFinite(c.iv)||Number.isFinite(c.impliedVolatility)?"reported":"modeled")+'</span></dt><dd>'+iv+'</dd><small>'+(Number.isFinite(c.iv)||Number.isFinite(c.impliedVolatility)?"Observed IV; verify before entry":"Approximate model; verify the live chain")+'</small></div></dl><p class="contract-screen-note">0.60–0.75 delta · no price cap. Highest open interest first; tightest spread breaks ties. '+(spread===null?"This snapshot cannot confirm the liquidity winner.":"Compare current quotes before entry.")+'</p>'+
     '<section class="contract-scenarios" aria-label="Estimated underlying value at expiration"><div class="contract-section-heading"><h4>Value at expiration</h4><span>Underlying stock · estimates</span></div><table class="scenario-table"><thead><tr><th scope="col">Scenario</th><th scope="col">Stock value</th><th scope="col">Call status</th></tr></thead><tbody>'+rows+'</tbody></table><p class="scenario-footnote">'+safe(em.coverage||"Scenario coverage unverified")+'. ITM does not mean profitable; compare stock value with breakeven.</p></section>'+
     '<section class="contract-rationale"><h4>Selection rationale</h4><p>'+safe(c.selectionReason||c.note||"No selection rationale recorded. Verify the live chain before entry.")+'</p></section>'+
     '<details class="contract-more" data-detail-key="contract:'+safe(c.ticker)+'"><summary>Contract details & verification <span aria-hidden="true">+</span></summary><div class="contract-more-body"><dl class="contract-detail-facts"><div><dt>Stock above strike</dt><dd>'+(Number.isFinite(c.stockAboveStrike)?money.format(c.stockAboveStrike):"—")+'</dd></div><div><dt>Intrinsic value / share</dt><dd>'+(Number.isFinite(c.currentIntrinsic)?money.format(c.currentIntrinsic):"—")+'</dd></div><div><dt>Extrinsic value / share</dt><dd>'+(Number.isFinite(c.currentExtrinsic)?money.format(c.currentExtrinsic):"—")+'</dd></div></dl><p><b>Verification status:</b> '+safe(readiness)+'</p><p><b>Target profile:</b> 18–30 months preferred · 0.60–0.75 delta · ITM</p><p><b>Selection rule:</b> '+safe(CONTRACT_SELECTION_RULE)+'</p><p><b>Greek source:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><p>Valuation scenarios are estimates, not probabilities or guarantees. Liquidity, bid/ask spread, IV and open interest need live verification.</p>'+(c.source?'<a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">View delayed chain source ↗</a>':"")+'</div></details></'+tag+'>';
