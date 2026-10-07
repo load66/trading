@@ -38,7 +38,7 @@ Do not force candidates just because they are down.
 A company should normally:
 - Be GAAP profitable now
 - Have positive YoY revenue growth
-- Have positive TTM free cash flow or clearly strong operating cash generation
+- Have positive TTM free cash flow
 - Have no going-concern issue, major accounting crisis, or structurally broken core business
 - Have a credible long-term growth runway
 
@@ -73,6 +73,24 @@ Tariff headlines may be discussed only as:
 Do not automatically exclude hardware, med-tech, industrial technology, robotics, or other physical-product businesses because of tariffs.
 
 Only downgrade a company if the underlying economics are structurally impaired, not merely because current tariff policy creates a temporary headwind.
+
+## Free Cash Flow — Hard Qualification Gate
+
+A company must have **positive free cash flow** to qualify for the LEAPS universe.
+
+Hard requirements:
+- TTM free cash flow > 0.
+- Latest reported quarterly free cash flow > 0.
+- Do not substitute positive operating cash flow for negative free cash flow.
+- Do not qualify a company whose free cash flow is negative because of sustained capital intensity, deteriorating economics, or recurring cash burn.
+
+If free cash flow is positive but declining:
+- The company may remain qualified if the rest of the business thesis is strong.
+- Reduce Earnings Momentum / Fundamental Quality points as appropriate.
+- Explicitly flag the decline and any FCF-guidance cut.
+- A material multi-quarter decline in FCF should push the company toward Tier 3 / Watch until cash generation stabilizes.
+
+If reported FCF cannot be reliably verified, do not assume it is positive. Mark the company unverified and keep it out of the qualified list until confirmed.
 
 ## Fundamental Review
 
