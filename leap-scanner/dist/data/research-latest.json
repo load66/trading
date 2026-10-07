@@ -1,13 +1,16 @@
 {
-  "title": "LEAPS Quality + Deep Discount Universe",
-  "asOf": "2026-10-06 close",
+  "title": "LEAPS Broad-Universe Quality & Opportunity Scan",
+  "asOf": "2026-10-07",
   "scanStartedAt": "2026-10-07T06:54:40Z",
   "scanCompletedAt": "2026-10-07T07:11:33Z",
   "shortlist": [
-    "ADSK",
     "ISRG",
+    "NOW",
+    "ADSK",
+    "RMD",
     "RDDT",
     "ADBE",
+    "STE",
     "ACN",
     "INTU",
     "CRM",
@@ -15,7 +18,7 @@
   ],
   "candidates": [
     {
-      "rank": 1,
+      "rank": 3,
       "ticker": "ADSK",
       "company": "Autodesk",
       "price": 231.28,
@@ -264,7 +267,7 @@
       }
     },
     {
-      "rank": 2,
+      "rank": 1,
       "ticker": "ISRG",
       "company": "Intuitive Surgical",
       "price": 404.76,
@@ -504,7 +507,7 @@
       }
     },
     {
-      "rank": 3,
+      "rank": 5,
       "ticker": "RDDT",
       "company": "Reddit",
       "price": 148.95,
@@ -749,7 +752,7 @@
       }
     },
     {
-      "rank": 4,
+      "rank": 6,
       "ticker": "ADBE",
       "company": "Adobe",
       "price": 238.12,
@@ -991,7 +994,7 @@
       }
     },
     {
-      "rank": 5,
+      "rank": 8,
       "ticker": "ACN",
       "company": "Accenture",
       "price": 193.4,
@@ -1236,7 +1239,7 @@
       }
     },
     {
-      "rank": 6,
+      "rank": 9,
       "ticker": "INTU",
       "company": "Intuit",
       "price": 289.81,
@@ -1472,7 +1475,7 @@
       }
     },
     {
-      "rank": 7,
+      "rank": 10,
       "ticker": "CRM",
       "company": "Salesforce",
       "price": 224.99,
@@ -1717,7 +1720,7 @@
       }
     },
     {
-      "rank": 8,
+      "rank": 11,
       "ticker": "HUBS",
       "company": "HubSpot",
       "price": 217.09,
@@ -2142,6 +2145,711 @@
         }
       ],
       "strategyLane": "Deep Discount / Recovery"
+    },
+    {
+      "rank": 2,
+      "ticker": "NOW",
+      "company": "ServiceNow",
+      "price": 137.97,
+      "high": 192.966,
+      "basis": "52-week high",
+      "revenueGrowth": 0.2219,
+      "netIncome": 1670,
+      "netGrowth": 0.0045,
+      "catalyst": "Agentic AI monetization, AI Control Tower adoption, workflow consolidation, $29B RPO, and rising large-enterprise ACV.",
+      "window": "2026–2029 enterprise workflow + agentic AI compounding",
+      "risk": "Premium GAAP valuation, AI-native competition, acquisition/integration risk, and AI-compute pressure on gross margin.",
+      "quality": "Q2 2026 total revenue grew 24%, subscription revenue 24.5%, cRPO 21%, while ServiceNow AI crossed $1B in ACV.",
+      "options": "Long-dated Dec. 2028 contracts exist, but no currently verified strike satisfies both preferred liquidity and Bear-case valuation coverage. Keep contract conditional.",
+      "quarter": {
+        "periods": [
+          "Q2 2026",
+          "Q1 2026",
+          "Q4 2025",
+          "Q3 2025",
+          "Q2 2025",
+          "Q1 2025",
+          "Q4 2024",
+          "Q3 2024"
+        ],
+        "revenues": [
+          3987,
+          3770,
+          3568,
+          3407,
+          3215,
+          3088,
+          2957,
+          2797
+        ],
+        "net": [
+          298,
+          469,
+          401,
+          502,
+          385,
+          460,
+          384,
+          432
+        ],
+        "eps": [
+          0.29,
+          0.45,
+          0.39,
+          0.49
+        ],
+        "revg": [
+          24,
+          22.1,
+          20.7,
+          21.8
+        ],
+        "nyoy": [
+          -22.6,
+          2,
+          4.4,
+          16.2
+        ],
+        "positiveQuarters": 4,
+        "improvingQuarters": 3
+      },
+      "overview": "https://stockanalysis.com/stocks/now/",
+      "primary": "https://newsroom.servicenow.com/press-releases/details/2026/ServiceNow-Reports-Second-Quarter-2026-Financial-Results/default.aspx",
+      "highSource": "https://stockanalysis.com/stocks/now/",
+      "chainSource": "https://whalequant.io/en/stocks/NOW/options/2028-12-15",
+      "tier": 1,
+      "points": [
+        23,
+        15,
+        11,
+        15,
+        10,
+        5,
+        5,
+        1
+      ],
+      "eps": [
+        0.29,
+        0.45,
+        0.39,
+        0.49
+      ],
+      "fcf": 4580,
+      "fcfTTM": 4580,
+      "fcfGrowth": 0.1355,
+      "state": "Confirmed Reversal / Building Base",
+      "macro": "Medium",
+      "pe": 86.2,
+      "pfcf": 31.14,
+      "evfcf": 31.53,
+      "down": "The stock is about 28.5% below its 52-week high after a major software valuation reset and AI-disruption concerns, even as subscription growth, RPO and AI ACV remain strong. The chart has since repaired above all major moving averages.",
+      "cash": "TTM free cash flow is roughly $4.6B. Debt/FCF remains manageable, although leverage increased after acquisitions.",
+      "margins": "Q2 GAAP total gross margin was pressured by AI-compute and mix, but revenue growth remains above 20% and the recurring subscription model remains highly cash generative.",
+      "balance": "Current leverage is manageable relative to FCF, but acquisition financing and a lower current ratio warrant monitoring.",
+      "catalysts": [
+        "ServiceNow AI crossed $1B in annual contract value in Q2 2026, providing direct evidence of AI monetization.",
+        "cRPO and total RPO both grew 21%, supporting multi-year subscription visibility.",
+        "Agentic AI and AI Control Tower can expand usage across IT, customer service, security and enterprise workflows.",
+        "Large-enterprise penetration and partner ecosystem growth can compound ACV per customer."
+      ],
+      "moat": "Mission-critical workflow integrations, high switching costs, a large enterprise installed base, partner ecosystem and expanding platform breadth create durable retention.",
+      "valuation": "Current GAAP P/E remains high at roughly 86x, but forward P/E is around 30x and P/FCF about 31x after substantial multiple compression. This is a quality-compounder reset, not a deep-value setup.",
+      "recovery": "A durable recovery depends on maintaining 20%+ subscription growth and converting AI demand into margins and FCF; do not assume the old premium multiple returns.",
+      "invalidation": "Subscription/cRPO growth falls materially below the high-teens range, AI monetization fails to offset margin pressure, acquisition leverage rises materially, or the stock loses the repaired long-term base with deteriorating fundamentals.",
+      "technical": {
+        "ticker": "NOW",
+        "price": 137.97,
+        "sma20": 136.1635,
+        "sma50": 130.5836,
+        "sma100": 117.5349,
+        "sma200": 115.57015,
+        "high52": 192.966,
+        "low20": 126.75,
+        "low60": 91.5311,
+        "low252": 81.24,
+        "return20": null,
+        "return60": 0.2801,
+        "lastDate": "2026-10-06"
+      },
+      "qualified": true,
+      "score": 85,
+      "scoreBreakdown": {
+        "Fundamental Quality": 23,
+        "Earnings Momentum": 15,
+        "Valuation / Drawdown": 11,
+        "Future Catalysts": 15,
+        "Competitive Advantage": 10,
+        "Business Durability / Macro Resilience": 5,
+        "Technical Quality": 5,
+        "LEAP Option Quality": 1
+      },
+      "scoreMaximums": {
+        "Fundamental Quality": 25,
+        "Earnings Momentum": 20,
+        "Valuation / Drawdown": 15,
+        "Future Catalysts": 15,
+        "Competitive Advantage": 10,
+        "Business Durability / Macro Resilience": 5,
+        "Technical Quality": 5,
+        "LEAP Option Quality": 5
+      },
+      "drawdown": 0.2850035757594602,
+      "upsideToHigh": 0.39860839312894125,
+      "leapQuality": "Good underlying; contract conditional",
+      "optionNote": "Dec. 2028 options exist, but the liquid $100C fails the Bear-case valuation coverage test while deeper strikes have thinner OI. Do not call a contract approved yet.",
+      "fcfSummary": "TTM FCF ≈ $4.6B; strong recurring cash generation",
+      "revenueSummary": "TTM +22.2%; 4/4 comparable quarters up",
+      "netSummary": "4/4 profits; 3/4 higher YoY",
+      "strategyLane": "Quality Compounder Pullback",
+      "sector": "Technology",
+      "industry": "Enterprise Workflow & AI Software",
+      "sectorLongTermGood": [
+        "Recurring enterprise subscriptions and high switching costs",
+        "Agentic AI can expand workflow usage and monetization",
+        "Large RPO provides multi-year revenue visibility"
+      ],
+      "sectorLongTermRisk": [
+        "AI-native competition can pressure pricing and product differentiation",
+        "Premium software valuations remain rate-sensitive",
+        "AI compute and acquisitions can pressure margins or leverage"
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent revenue, GAAP earnings and free-cash-flow trends; Bear/Base cases apply valuation compression.",
+        "trailingInputs": {
+          "price": 137.97,
+          "gaapPE": 86.2,
+          "priceToFCF": 31.14,
+          "impliedTrailingEPS": 1.6005800464037123,
+          "impliedTTMFCFPerShare": 4.430635838150289
+        },
+        "normalizedGrowth": {
+          "bear": 0.073225,
+          "base": 0.14645,
+          "bull": 0.1977075
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 33.75,
+            "pfcf": 21.0195
+          },
+          "base": {
+            "pe": 45,
+            "pfcf": 28.026
+          },
+          "bull": {
+            "pe": 55,
+            "pfcf": 32.697
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 63.3294,
+            "fcfBased": 109.1799,
+            "blended": 86.2547
+          },
+          "base": {
+            "epsBased": 97.9578,
+            "fcfBased": 168.8792,
+            "blended": 133.4185
+          },
+          "bull": {
+            "epsBased": 132.1081,
+            "fcfBased": 217.4018,
+            "blended": 174.7549
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance, or a material margin/FCF change."
+      },
+      "sources": [
+        {
+          "label": "Q2 2026 results",
+          "url": "https://newsroom.servicenow.com/press-releases/details/2026/ServiceNow-Reports-Second-Quarter-2026-Financial-Results/default.aspx"
+        },
+        {
+          "label": "Current financials",
+          "url": "https://stockanalysis.com/stocks/now/financials/"
+        },
+        {
+          "label": "Current valuation",
+          "url": "https://stockanalysis.com/stocks/now/statistics/"
+        },
+        {
+          "label": "Dec 2028 option chain",
+          "url": "https://whalequant.io/en/stocks/NOW/options/2028-12-15"
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "ticker": "RMD",
+      "company": "ResMed",
+      "price": 220.69,
+      "high": 284.87,
+      "basis": "52-week high",
+      "revenueGrowth": 0.0985,
+      "netIncome": 1523,
+      "netGrowth": 0.0875,
+      "catalyst": "Large underdiagnosed sleep-apnea market, connected-device ecosystem, recurring masks/supplies, digital adherence tools and capital returns.",
+      "window": "2026–2029 sleep-health penetration and recurring supplies",
+      "risk": "GLP-1 effects on OSA prevalence/severity, Philips competition, reimbursement pressure and hospital/home-care purchasing cycles.",
+      "quality": "FY2026 revenue rose 10%, GAAP net income 9%, GAAP EPS 10%, gross margin expanded 170bp and FCF remained $1.65B.",
+      "options": "Underlying qualifies, but no 18–30 month public LEAP expiration was verified. Do not force a short-dated contract.",
+      "quarter": {
+        "periods": [
+          "Q4 2026",
+          "Q3 2026",
+          "Q2 2026",
+          "Q1 2026",
+          "Q4 2025",
+          "Q3 2025",
+          "Q2 2025",
+          "Q1 2025"
+        ],
+        "revenues": [
+          1464,
+          1431,
+          1423,
+          1336,
+          1348,
+          1292,
+          1282,
+          1225
+        ],
+        "net": [
+          383,
+          399,
+          393,
+          349,
+          380,
+          365,
+          345,
+          311
+        ],
+        "eps": [
+          2.64,
+          2.75,
+          2.69,
+          2.35
+        ],
+        "revg": [
+          8.6,
+          10.8,
+          11,
+          9.1
+        ],
+        "nyoy": [
+          0.8,
+          9.3,
+          13.9,
+          12.2
+        ],
+        "positiveQuarters": 4,
+        "improvingQuarters": 4
+      },
+      "overview": "https://stockanalysis.com/stocks/rmd/",
+      "primary": "https://investor.resmed.com/news-events/press-releases/detail/427/resmed-inc-announces-results-for-the-fourth-quarter-of-fiscal-year-2026",
+      "highSource": "https://stockanalysis.com/stocks/rmd/",
+      "chainSource": "https://public.com/stocks/rmd/options-chain",
+      "tier": 2,
+      "points": [
+        25,
+        17,
+        13,
+        11,
+        9,
+        5,
+        2,
+        0
+      ],
+      "eps": [
+        2.64,
+        2.75,
+        2.69,
+        2.35
+      ],
+      "fcf": 1650,
+      "fcfTTM": 1650,
+      "fcfGrowth": -0.007,
+      "state": "Building / Repairing",
+      "macro": "Low",
+      "pe": 21.16,
+      "pfcf": 18.82,
+      "evfcf": null,
+      "down": "Shares are roughly 22.5% below the 52-week high as investors debate GLP-1 effects, competitive normalization and near-term margin/volume expectations, despite strong full-year profitability and cash generation.",
+      "cash": "FY2026 operating cash flow was $1.81B and FCF $1.65B. The company remains strongly cash generative and is increasing shareholder returns.",
+      "margins": "FY2026 GAAP gross margin expanded 170bp to 61.1%; operating margin improved, although Q4 GAAP operating margin was temporarily lower YoY.",
+      "balance": "Balance sheet and cash generation remain strong; share count declined YoY and the company is increasing buybacks/dividends.",
+      "catalysts": [
+        "Sleep apnea remains materially underdiagnosed globally, supporting long-run device and mask penetration.",
+        "Installed devices create recurring mask, accessory and service revenue.",
+        "Digital adherence and connected-care tools can deepen patient engagement and provider workflow integration.",
+        "Management plans substantial FY2027 capital returns while continuing product innovation."
+      ],
+      "moat": "Installed device ecosystem, recurring consumables, provider relationships, clinical data and digital adherence infrastructure support durable share and switching costs.",
+      "valuation": "About 21x trailing GAAP earnings, 18x forward earnings and 19x FCF—well below several prior-year valuation levels for a durable healthcare compounder.",
+      "recovery": "Base-case recovery is supported by high-single-digit revenue growth, margin discipline and cash returns, but GLP-1 and competitive narratives can keep the multiple below historical peaks.",
+      "invalidation": "Sustained loss of device/mask share, revenue growth falls below mid-single digits, recurring supplies weaken, margins deteriorate structurally, or GLP-1 adoption materially shrinks the treated OSA market.",
+      "technical": {
+        "ticker": "RMD",
+        "price": 220.69,
+        "sma20": 222.664,
+        "sma50": 224.168,
+        "sma100": 211.4297,
+        "sma200": 225.4571,
+        "high52": 284.87,
+        "low20": 215.8,
+        "low60": 190.21,
+        "low252": 180.265,
+        "return20": null,
+        "return60": 0.0721,
+        "lastDate": "2026-10-06"
+      },
+      "qualified": true,
+      "score": 82,
+      "scoreBreakdown": {
+        "Fundamental Quality": 25,
+        "Earnings Momentum": 17,
+        "Valuation / Drawdown": 13,
+        "Future Catalysts": 11,
+        "Competitive Advantage": 9,
+        "Business Durability / Macro Resilience": 5,
+        "Technical Quality": 2,
+        "LEAP Option Quality": 0
+      },
+      "scoreMaximums": {
+        "Fundamental Quality": 25,
+        "Earnings Momentum": 20,
+        "Valuation / Drawdown": 15,
+        "Future Catalysts": 15,
+        "Competitive Advantage": 10,
+        "Business Durability / Macro Resilience": 5,
+        "Technical Quality": 5,
+        "LEAP Option Quality": 5
+      },
+      "drawdown": 0.2252957489381121,
+      "upsideToHigh": 0.290815170601296,
+      "leapQuality": "Underlying qualifies; no 18–30 month contract verified",
+      "optionNote": "The public chain currently exposes only much shorter expirations. Wait for a broker-verified long-dated chain rather than forcing a sub-12-month call.",
+      "fcfSummary": "FY2026 FCF $1.65B; essentially flat YoY but still very strong",
+      "revenueSummary": "FY2026 +9.9%; 4/4 comparable quarters up",
+      "netSummary": "FY2026 +8.8%; 4/4 comparable quarters up",
+      "strategyLane": "Quality Compounder Pullback",
+      "sector": "Health Care",
+      "industry": "Sleep & Respiratory Medical Devices",
+      "sectorLongTermGood": [
+        "Aging populations and underdiagnosed sleep apnea support long-term treatment growth",
+        "Masks and accessories create recurring revenue after device placement",
+        "Connected-care software can increase adherence and provider value"
+      ],
+      "sectorLongTermRisk": [
+        "GLP-1 weight loss may reduce OSA severity for some patients",
+        "Philips and other device competition can affect share/pricing",
+        "Reimbursement and healthcare purchasing cycles can influence demand"
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent revenue, GAAP earnings and free-cash-flow trends; Bear/Base cases apply valuation compression.",
+        "trailingInputs": {
+          "price": 220.69,
+          "gaapPE": 21.16,
+          "priceToFCF": 18.82,
+          "impliedTrailingEPS": 10.429584120982987,
+          "impliedTTMFCFPerShare": 11.726354941551541
+        },
+        "normalizedGrowth": {
+          "bear": 0.044,
+          "base": 0.088,
+          "bull": 0.1188
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 14.283,
+            "pfcf": 12.7035
+          },
+          "base": {
+            "pe": 19.044,
+            "pfcf": 16.938
+          },
+          "bull": {
+            "pe": 22.218,
+            "pfcf": 19.761
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 164.1204,
+            "fcfBased": 164.1204,
+            "blended": 164.1204
+          },
+          "base": {
+            "epsBased": 240.1265,
+            "fcfBased": 240.1265,
+            "blended": 240.1265
+          },
+          "bull": {
+            "epsBased": 298.3081,
+            "fcfBased": 298.3081,
+            "blended": 298.3081
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance, or a material margin/FCF change."
+      },
+      "sources": [
+        {
+          "label": "FY2026 results",
+          "url": "https://investor.resmed.com/news-events/press-releases/detail/427/resmed-inc-announces-results-for-the-fourth-quarter-of-fiscal-year-2026"
+        },
+        {
+          "label": "Current financials",
+          "url": "https://stockanalysis.com/stocks/rmd/"
+        },
+        {
+          "label": "Current valuation",
+          "url": "https://stockanalysis.com/stocks/rmd/financials/ratios/"
+        },
+        {
+          "label": "Public option chain",
+          "url": "https://public.com/stocks/rmd/options-chain"
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "ticker": "STE",
+      "company": "STERIS",
+      "price": 208.65,
+      "high": 269.44,
+      "basis": "52-week high",
+      "revenueGrowth": 0.0837,
+      "netIncome": 805,
+      "netGrowth": 0.245,
+      "catalyst": "Recurring sterilization consumables/services, surgical procedure growth, life-sciences sterilization demand and operating leverage.",
+      "window": "2026–2029 infection-prevention and sterilization compounding",
+      "risk": "Hospital capital budgets, restructuring execution, AST/life-sciences cyclicality and modest organic growth.",
+      "quality": "TTM revenue is up 8.4%, net income roughly 31% higher versus the prior TTM base, with strong recurring Healthcare services/consumables and positive FCF.",
+      "options": "Underlying qualifies, but no 18–30 month public LEAP expiration was verified and visible option liquidity is thin. No contract approved.",
+      "quarter": {
+        "periods": [
+          "Q1 2027",
+          "Q4 2026",
+          "Q3 2026",
+          "Q2 2026",
+          "Q1 2026",
+          "Q4 2025",
+          "Q3 2025",
+          "Q2 2025"
+        ],
+        "revenues": [
+          1493,
+          1588,
+          1496,
+          1460,
+          1391,
+          1481,
+          1370,
+          1329
+        ],
+        "net": [
+          200.1,
+          220.1,
+          192.9,
+          191.9,
+          177.4,
+          145.7,
+          173.5,
+          150
+        ],
+        "eps": [
+          2.04,
+          2.25,
+          1.96,
+          1.95
+        ],
+        "revg": [
+          7.3,
+          7.2,
+          9.2,
+          9.9
+        ],
+        "nyoy": [
+          12.8,
+          51.1,
+          11.2,
+          27.9
+        ],
+        "positiveQuarters": 4,
+        "improvingQuarters": 4
+      },
+      "overview": "https://stockanalysis.com/stocks/ste/",
+      "primary": "https://sterisplc.gcs-web.com/news-releases/news-release-details/steris-announces-financial-results-fiscal-2027-first-quarter",
+      "highSource": "https://stockanalysis.com/stocks/ste/statistics/",
+      "chainSource": "https://public.com/stocks/ste/options-chain",
+      "tier": 2,
+      "points": [
+        25,
+        18,
+        12,
+        10,
+        9,
+        5,
+        2,
+        0
+      ],
+      "eps": [
+        2.04,
+        2.25,
+        1.96,
+        1.95
+      ],
+      "fcf": 925.6,
+      "fcfTTM": 925.6,
+      "fcfGrowth": 0.0185,
+      "state": "Building / Repairing",
+      "macro": "Low",
+      "pe": 25.51,
+      "pfcf": 21.98,
+      "evfcf": null,
+      "down": "Shares are roughly 22.6% below the 52-week high while the business continues mid-to-high-single-digit growth and double-digit GAAP earnings growth. The stock remains below key moving averages, so timing still needs confirmation.",
+      "cash": "TTM FCF is about $926M; debt has declined materially from prior years, while cash remains adequate for operations and capital returns.",
+      "margins": "Healthcare service and consumable growth support recurring economics; current restructuring is intended to improve manufacturing efficiency but adds execution risk.",
+      "balance": "Debt remains manageable relative to cash generation and has been trending down, but STERIS is not a net-cash business.",
+      "catalysts": [
+        "Healthcare procedure growth supports recurring sterilization service and consumable demand.",
+        "Higher-margin service and consumable share can support margin expansion.",
+        "Applied Sterilization Technologies benefits from regulated outsourced sterilization needs.",
+        "Manufacturing restructuring can improve efficiency if executed without disrupting customers."
+      ],
+      "moat": "Regulatory requirements, validated sterilization processes, installed equipment, service relationships and mission-critical infection-prevention workflows create meaningful switching costs.",
+      "valuation": "Around 25.5x trailing GAAP earnings, 18.2x forward earnings and 22x FCF—reasonable for a durable healthcare compounder, but not distressed.",
+      "recovery": "A Base recovery requires high-single-digit organic growth and steady margins; the old high should not be treated as an automatic target.",
+      "invalidation": "Organic growth falls materially below mid-single digits, restructuring damages service levels/margins, leverage rises, or the stock loses the $195 area while fundamentals weaken.",
+      "technical": {
+        "ticker": "STE",
+        "price": 208.65,
+        "sma20": 209.896,
+        "sma50": 223.7258,
+        "sma100": 217.8463,
+        "sma200": 227.7529,
+        "high52": 269.44,
+        "low20": 203.315,
+        "low60": 203.315,
+        "low252": 195.14,
+        "return20": null,
+        "return60": -0.004,
+        "lastDate": "2026-10-06"
+      },
+      "qualified": true,
+      "score": 81,
+      "scoreBreakdown": {
+        "Fundamental Quality": 25,
+        "Earnings Momentum": 18,
+        "Valuation / Drawdown": 12,
+        "Future Catalysts": 10,
+        "Competitive Advantage": 9,
+        "Business Durability / Macro Resilience": 5,
+        "Technical Quality": 2,
+        "LEAP Option Quality": 0
+      },
+      "scoreMaximums": {
+        "Fundamental Quality": 25,
+        "Earnings Momentum": 20,
+        "Valuation / Drawdown": 15,
+        "Future Catalysts": 15,
+        "Competitive Advantage": 10,
+        "Business Durability / Macro Resilience": 5,
+        "Technical Quality": 5,
+        "LEAP Option Quality": 5
+      },
+      "drawdown": 0.22561609263657956,
+      "upsideToHigh": 0.2913491492930744,
+      "leapQuality": "Underlying qualifies; no long-dated liquid contract verified",
+      "optionNote": "The public chain is short-dated and thin. Do not force a LEAP-like trade until an 18–30 month expiration with acceptable OI/spread exists.",
+      "fcfSummary": "TTM FCF ≈ $926M; positive and stable",
+      "revenueSummary": "TTM +8.4%; 4/4 comparable quarters up",
+      "netSummary": "TTM strong; 4/4 comparable quarters higher",
+      "strategyLane": "Quality Compounder Pullback",
+      "sector": "Health Care",
+      "industry": "Infection Prevention & Sterilization",
+      "sectorLongTermGood": [
+        "Surgical volumes create recurring sterilization demand",
+        "Regulatory validation creates high switching costs",
+        "Consumables and service revenue improve recurrence and visibility"
+      ],
+      "sectorLongTermRisk": [
+        "Hospital capital spending can be cyclical",
+        "Restructuring carries manufacturing execution risk",
+        "Life-sciences/industrial sterilization demand can fluctuate"
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent revenue, GAAP earnings and free-cash-flow trends; Bear/Base cases apply valuation compression.",
+        "trailingInputs": {
+          "price": 208.65,
+          "gaapPE": 25.51,
+          "priceToFCF": 21.98,
+          "impliedTrailingEPS": 8.179145433163464,
+          "impliedTTMFCFPerShare": 9.492720655141037
+        },
+        "normalizedGrowth": {
+          "bear": 0.05415,
+          "base": 0.1083,
+          "bull": 0.146205
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 17.21925,
+            "pfcf": 14.8365
+          },
+          "base": {
+            "pe": 22.959,
+            "pfcf": 19.782
+          },
+          "bull": {
+            "pe": 26.7855,
+            "pfcf": 23.079
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 158.5815,
+            "fcfBased": 158.5815,
+            "blended": 158.5815
+          },
+          "base": {
+            "epsBased": 236.6682,
+            "fcfBased": 236.6682,
+            "blended": 236.6682
+          },
+          "bull": {
+            "epsBased": 297.8159,
+            "fcfBased": 297.8159,
+            "blended": 297.8159
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance, or a material margin/FCF change."
+      },
+      "sources": [
+        {
+          "label": "Q1 FY2027 results",
+          "url": "https://sterisplc.gcs-web.com/news-releases/news-release-details/steris-announces-financial-results-fiscal-2027-first-quarter"
+        },
+        {
+          "label": "Current financials",
+          "url": "https://stockanalysis.com/stocks/ste/financials/"
+        },
+        {
+          "label": "Current valuation",
+          "url": "https://stockanalysis.com/stocks/ste/statistics/"
+        },
+        {
+          "label": "Public option chain",
+          "url": "https://public.com/stocks/ste/options-chain"
+        }
+      ]
     }
   ],
   "rejected": [
@@ -2205,6 +2913,54 @@
       "ticker": "FTNT",
       "reason": "$191.27 versus $192.41 52-week high: only 0.6% below. Strong latest earnings, but not a heavily discounted current-price setup.",
       "url": "https://stockanalysis.com/stocks/ftnt/"
+    },
+    {
+      "ticker": "NFLX",
+      "trendStatus": "STRUCTURAL DOWNTREND — REJECT",
+      "reason": "Excellent business, wrong LEAP timing: about -30.5% over 6 months and -40.4% over 12 months, below the 20/50/100/200-day averages with falling 50/200-day slopes. Wait for durable trend repair despite strong revenue and earnings.",
+      "url": "https://stockanalysis.com/stocks/nflx/financials/"
+    },
+    {
+      "ticker": "ALGN",
+      "trendStatus": "QUALITY TRAP — TREND REPAIR REQUIRED",
+      "reason": "Profitable, but current growth is too slow relative to the chart damage: price remains below all major moving averages with negative 50/200-day slopes. Require business reacceleration plus technical repair before a LEAP.",
+      "url": "https://stockanalysis.com/stocks/algn/"
+    },
+    {
+      "ticker": "DOCN",
+      "trendStatus": "VALUATION / DILUTION REJECT",
+      "reason": "Revenue growth is strong, but current valuation is extreme for the cash flow: P/FCF is over 1,000x in current secondary data and the share base has expanded materially. Risk/reward does not meet the quality-at-a-discount objective.",
+      "url": "https://stockanalysis.com/stocks/docn/financials/ratios/"
+    },
+    {
+      "ticker": "BSX",
+      "trendStatus": "STRUCTURAL DOWNTREND — REJECT",
+      "reason": "The business remains profitable, but the stock has suffered a severe roughly 60% drawdown and is still near the bottom of its annual range. Require clear trend repair before using long-dated calls.",
+      "url": "https://stockanalysis.com/stocks/bsx/"
+    },
+    {
+      "ticker": "PTC",
+      "trendStatus": "GOOD COMPANY — NO CURRENT DISLOCATION",
+      "reason": "TTM revenue and earnings are strong and valuation has compressed, but the stock is not currently offering enough verified technical dislocation/support discount to displace stronger setups. Keep on discovery watchlist.",
+      "url": "https://stockanalysis.com/stocks/ptc/financials/"
+    },
+    {
+      "ticker": "SHOP",
+      "trendStatus": "VALUATION REJECT",
+      "reason": "Revenue growth is excellent, but current valuation remains very high at roughly 111x trailing earnings and about 90x FCF. The current setup does not provide enough valuation cushion for the preferred LEAP profile.",
+      "url": "https://stockanalysis.com/stocks/shop/financials/"
+    },
+    {
+      "ticker": "QCOM",
+      "trendStatus": "QUALITY TRAP — FUNDAMENTAL DECELERATION",
+      "reason": "TTM revenue growth is only about 1.9% while EPS is down roughly 17%. Profitability alone is not enough when growth and earnings momentum are weakening.",
+      "url": "https://stockanalysis.com/stocks/qcom/financials/"
+    },
+    {
+      "ticker": "ANET",
+      "trendStatus": "GOOD COMPANY — NO CURRENT DISLOCATION",
+      "reason": "High-quality profitable growth business, but the stock remains too close to its recent high to qualify as a current discounted LEAP opportunity. Keep on discovery watchlist for a future pullback.",
+      "url": "https://stockanalysis.com/stocks/anet/"
     }
   ],
   "optionDataVerified": false,
@@ -2215,10 +2971,13 @@
   ],
   "rankings": {
     "bestOverall": [
-      "ADSK",
       "ISRG",
+      "NOW",
+      "ADSK",
+      "RMD",
       "RDDT",
       "ADBE",
+      "STE",
       "ACN",
       "INTU",
       "CRM",
@@ -2229,23 +2988,29 @@
       "HUBS",
       "INTU",
       "CRM",
+      "NOW",
       "ISRG",
       "ADBE",
       "ADSK",
+      "RMD",
+      "STE",
       "ACN"
     ],
     "safestQuality": [
       "ISRG",
+      "RMD",
       "ADBE",
       "ADSK",
+      "STE",
       "ACN",
+      "NOW",
       "INTU",
       "CRM",
       "RDDT",
       "HUBS"
     ]
   },
-  "method": "Two-lane profitable-company LEAPS universe. Lane A seeks deep 30–70% drawdowns; Lane B admits high-quality profitable compounders on smaller pullbacks or major support/valuation resets. GAAP profitability, revenue quality, cash generation, valuation, moat and thesis integrity remain strict. Tariff exposure is not a qualification filter or score penalty. Tariff headlines may explain a temporary dip but do not automatically exclude hardware or med-tech businesses. Option quality remains provisional until live delta, IV and spreads are verified. Sector and industry context is included for every qualified company with explicit long-term tailwinds and structural risks. Fundamental expiration targets now use a Bear/Base/Bull blended GAAP P/E + P/FCF model tied to Jan 2029. Contract selection must be tested against these targets rather than prior highs alone.",
+  "method": "Two-lane profitable-company LEAPS universe. Lane A seeks deep 30–70% drawdowns; Lane B admits high-quality profitable compounders on smaller pullbacks or major support/valuation resets. GAAP profitability, revenue quality, cash generation, valuation, moat and thesis integrity remain strict. Tariff exposure is not a qualification filter or score penalty. Tariff headlines may explain a temporary dip but do not automatically exclude hardware or med-tech businesses. Option quality remains provisional until live delta, IV and spreads are verified. Sector and industry context is included for every qualified company with explicit long-term tailwinds and structural risks. Fundamental expiration targets now use a Bear/Base/Bull blended GAAP P/E + P/FCF model tied to Jan 2029. Contract selection must be tested against these targets rather than prior highs alone. This 2026-10-07 refresh expands the qualified universe to 11 after a 765-name broad discovery screen and a 31-name deep review. Good companies can still be excluded for structural downtrend, valuation, dilution or lack of a current dislocation.",
   "qualificationModel": {
     "hardGates": [
       "GAAP profitable now",
@@ -2267,23 +3032,58 @@
     "scheduledJobs": "Market/entry timing only; core candidate universe remains unchanged until manual generate."
   },
   "researchFunnel": {
-    "universeScanned": 20,
+    "universeScanned": 765,
+    "discoveryPoolCount": 249,
     "passedProfitability": null,
     "passedCashFlow": null,
     "passedRevenueGrowth": null,
-    "deepReviewCount": 20,
-    "qualifiedCount": 8,
-    "tier1Count": 4,
-    "tier2Count": 4,
+    "deepReviewCount": 31,
+    "qualifiedCount": 11,
+    "tier1Count": 5,
+    "tier2Count": 6,
     "tier3Count": 0,
     "actionableToday": 0,
-    "rejectedCount": 11,
-    "scanMode": "legacy-curated-snapshot",
-    "universeDefinition": "This published snapshot was produced from a legacy curated 20-name research set. The next manual `generate` is required to use the new broad 150–300 stock discovery funnel. Counts that were not tracked by the legacy pass are left null rather than invented."
+    "rejectedCount": 19,
+    "scanMode": "broad-universe",
+    "universeDefinition": "765 liquid large-cap U.S.-listed names were in the broad discovery universe; 249 appeared in the broad fundamental-return screen; 31 names received deep review in this manual cycle. The connected Massive plan does not include market-wide fundamentals, so intermediate profitability/FCF pass counts are intentionally left blank rather than estimated."
   },
   "trendIntegrityPolicy": {
     "structuralReject": "Reject when persistent trend deterioration stacks across moving-average structure, negative slopes, severe 6/12-month returns, large drawdown, repeated lower monthly closes and weak relative strength.",
     "qualityTrap": "Quarantine profitable chronic underperformers when long-term relative-price damage is combined with at least two business-deterioration flags.",
     "reentry": "Quarantined names require business repair plus at least three technical repair signals; prior structural-downtrend rejects require at least four."
-  }
+  },
+  "deepReviewUniverse": [
+    "ADSK",
+    "ISRG",
+    "RDDT",
+    "ADBE",
+    "ACN",
+    "INTU",
+    "CRM",
+    "HUBS",
+    "IOT",
+    "ORCL",
+    "NET",
+    "PANW",
+    "APP",
+    "MNDY",
+    "PYPL",
+    "SAP",
+    "CRWD",
+    "DOCU",
+    "VEEV",
+    "FTNT",
+    "NOW",
+    "RMD",
+    "STE",
+    "NFLX",
+    "ALGN",
+    "DOCN",
+    "BSX",
+    "PTC",
+    "SHOP",
+    "QCOM",
+    "ANET"
+  ],
+  "generationNote": "Fresh manual generate on 2026-10-07 using the broad discovery funnel, current web research, AlphaStocks context, Massive technical history where available, the refined structural-downtrend gate, and the current two-lane qualification model. Core research remains manual-controlled from ChatGPT."
 }
