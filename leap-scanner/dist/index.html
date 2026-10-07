@@ -7,8 +7,8 @@
 <title>LEAPS Desk</title>
 <meta name="description" content="Public mobile-first LEAPS research, entry planning, valuation and contract-quality dashboard.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="styles.css?v=20261007-desk-v14-liquidity">
-<script src="app.js?v=20261007-desk-v14-liquidity" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261007-desk-v15-refresh">
+<script src="app.js?v=20261007-desk-v15-refresh" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -68,10 +68,13 @@
       </div>
     </div>
     <div id="scan-coverage" class="scan-coverage-grid">
-      <div><span>UNIVERSE</span><b id="coverage-universe">—</b></div>
+      <div><span>DISCOVERY LISTINGS</span><b id="coverage-universe">—</b></div>
+      <div><span>FOCUSED REVIEWS</span><b id="coverage-reviewed">—</b></div>
       <div><span>QUALIFIED</span><b id="coverage-qualified">—</b></div>
       <div><span>ACTIONABLE</span><b id="coverage-actionable">—</b></div>
     </div>
+    <p class="feed-note" id="coverage-note"></p>
+    <div id="coverage-rejections"></div>
   </section>
 </main>
 </div>

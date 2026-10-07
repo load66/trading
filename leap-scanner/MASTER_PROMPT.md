@@ -9,7 +9,7 @@ These rules override older wording elsewhere:
 - Primary drawdown reference is the 52-week / most relevant recent major high; ATH drawdown may be shown separately. Quality Compounder Pullback candidates may qualify with less than a 30% drawdown.
 - Technical downtrend / quality-trap analysis is diagnostic for timing and scoring, not an automatic exclusion by itself.
 - LEAP delta must be 0.60 through 0.75 inclusive.
-- Maximum selected LEAP contract cost is $6,500.
+- No premium, price or contract-cost cap, per the owner's request to remove the price filter.
 - Only show a contract for a stock that is in the current qualified universe.
 - Prefer 18–30 months when available; require ITM/moderately ITM structure, acceptable spread, OI, IV, breakeven and expiration-specific Bear/Base/Bull valuation coverage.
 - Among otherwise eligible contracts, highest open interest wins; tightest relative bid/ask spread breaks ties after the spread-quality gate.
@@ -192,7 +192,7 @@ Preferred liquidity guidelines:
 - Bid/ask width <= 5% of midpoint preferred
 - <= 3% is better
 
-Hard maximum contract cost is $6,500 per standard 100-share contract (maximum option premium $65.00). Do not publish a selected contract above this cost. Among eligible ITM calls within the 0.60–0.75 delta band, under the $6,500 cap, with comparable current quotes and acceptable liquidity, rank by highest open interest, then lowest bid/ask width as a percentage of midpoint. Apply the tight-spread quality gate before ranking; a high-OI contract with a poor spread must not win. Missing OI or bid/ask makes a reference provisional, not the verified winner. Do not invent missing quotes. Preserve expiration, valuation-coverage and event-risk requirements. If no eligible contract meets the cap and quality rules, publish NO ELIGIBLE CONTRACT UNDER $6,500 VERIFIED — WAIT.
+There is no premium or contract-cost cap. Among eligible ITM calls within the 0.60–0.75 delta band, with comparable current quotes and acceptable liquidity, rank by highest open interest, then lowest bid/ask width as a percentage of midpoint. Apply the tight-spread quality gate before ranking; a high-OI contract with a poor spread must not win. Missing OI or bid/ask makes a reference provisional, not the verified winner. Do not invent missing quotes. Preserve expiration, valuation-coverage and event-risk requirements.
 
 If live delta, IV, spread or OI cannot be verified, do not invent them. Label the contract as a delayed reference only.
 
@@ -283,7 +283,7 @@ NO A+ LEAP ENTRY TODAY — WAIT.
 
 ## Trend Integrity — Diagnostic, Not Automatic Exclusion
 
-Technical weakness must be researched and reported, but it must NOT automatically remove an otherwise fundamentally qualified company solely because of past price weakness, moving-average damage, long-term underperformance, or a deep drawdown.
+Structural-downtrend and quality-trap automatic exclusion filters are removed. No technical quarantine or mandatory trend-reentry gate applies. Technical weakness must be researched and reported, but it must NOT automatically remove an otherwise fundamentally qualified company solely because of past price weakness, moving-average damage, long-term underperformance, or a deep drawdown.
 
 For every deep-review candidate evaluate:
 - Price versus 20DMA / 50DMA / 100DMA / 200DMA
@@ -518,8 +518,8 @@ Primary contract profile:
 - Strike below Bear target
 - Material cushion below Base target
 
-LIQUIDITY-FIRST SELECTION WITH COST CAP:
-Require total contract cost <= $6,500 and delta from 0.60 through 0.75 inclusive. There is no fixed $70 stock-above-strike requirement. Among otherwise eligible contracts with comparable current data, highest open interest wins; tightest relative bid/ask spread breaks ties. Require acceptable spreads (<=5% of midpoint preferred, <=3% better) before ranking. Never treat missing spread/OI as zero or claim a verified winner without current comparable quotes.
+LIQUIDITY-FIRST SELECTION:
+Require delta from 0.60 through 0.75 inclusive, with no premium or contract-cost cap. There is no fixed $70 stock-above-strike requirement. Among otherwise eligible contracts with comparable current data, highest open interest wins; tightest relative bid/ask spread breaks ties. Require acceptable spreads (<=5% of midpoint preferred, <=3% better) before ranking. Never treat missing spread/OI as zero or claim a verified winner without current comparable quotes.
 
 Every selected contract must still:
 - Be ITM now

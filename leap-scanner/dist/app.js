@@ -44,7 +44,7 @@ function contractSpread(c){
 function contractFor(t){
   if(!(market&&market.contractProfiles)||!(companyFor(t)&&companyFor(t).qualified))return null;
   return market.contractProfiles.filter(x=>{
-    if(x.ticker!==t)return false;
+    if(x.ticker!==t||!Number.isFinite(x.strike)||x.strike>=companyFor(t).price)return false;
     const delta=contractDelta(x);
     const spread=contractSpread(x);
     return Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA&&(spread===null||spread<=0.05);
@@ -58,6 +58,13 @@ function contractFor(t){
   })[0]||null;
 }
 function companyFor(t){return research&&research.candidates?research.candidates.find(x=>x.ticker===t):null}
+function fundamentalDetails(c){
+  const q=c.quarter||{},num=n=>Number.isFinite(n)?money.format(n)+"M":"—";
+  const trend=n=>Number.isFinite(n)?(n>=0?"+":"")+n.toFixed(1)+"% YoY":"Prior loss / unavailable";
+  const rows=(q.periods||[]).slice(0,4).map((period,i)=>'<tr><th scope="row">'+safe(period)+'</th><td>'+num(q.revenues&&q.revenues[i])+'<small>'+trend(q.revg&&q.revg[i])+'</small></td><td>'+num(q.net&&q.net[i])+'<small>'+trend(q.nyoy&&q.nyoy[i])+'</small></td><td>'+(Number.isFinite((q.eps||c.eps||[])[i])?money.format((q.eps||c.eps)[i]):"—")+'</td></tr>').join("");
+  const sources=(c.sources||[]).filter(s=>/^https:\/\//.test(s.url||"")).map(s=>'<a class="source-link" href="'+safe(s.url)+'" target="_blank" rel="noopener">'+safe(s.label||"Source")+' ↗</a>').join("");
+  return '<div class="fundamental-history"><h4>Latest four fiscal quarters · GAAP</h4><table class="fundamental-table"><thead><tr><th>Quarter</th><th>Revenue</th><th>Net income</th><th>EPS</th></tr></thead><tbody>'+rows+'</tbody></table><p class="history-note">Revenue and net income in USD millions. YoY compares the same fiscal quarter. '+safe(q.verification||"Verify against the linked filings.")+'</p></div><p><b>Cash flow:</b> '+safe(c.cash)+'</p><p><b>Margins:</b> '+safe(c.margins)+'</p><p><b>Balance sheet:</b> '+safe(c.balance)+'</p><p><b>Catalysts:</b> '+safe((c.catalysts||[]).join(" "))+'</p><p><b>Biggest risk:</b> '+safe(c.risk)+'</p><p><b>Prior-high reference:</b> '+safe(c.recovery)+'</p><div class="research-sources">'+sources+'</div>';
+}
 
 function setupCard(c,compact){
   const p=planFor(c.ticker)||{};
@@ -71,12 +78,12 @@ function setupCard(c,compact){
   const targetBlock=vm?'<div class="target-strip"><div><span>BEAR VALUE</span><b>'+money.format(vm.bear.blended)+'</b><small>Conservative case</small></div><div><span>BASE VALUE</span><b>'+money.format(vm.base.blended)+'</b><small>Most reasonable case</small></div><div><span>BULL VALUE</span><b>'+money.format(vm.bull.blended)+'</b><small>Strong execution case</small></div></div>':"";
   const sector='<div class="sector-line"><span>'+safe(c.sector||"Sector N/A")+'</span><b>'+safe(c.industry||"")+'</b></div>';
   const sectorDetail=(c.sectorLongTermGood||c.sectorLongTermRisk)?'<div class="sector-box"><div><b>Sector tailwinds</b><p>'+safe((c.sectorLongTermGood||[]).join(" · "))+'</p></div><div><b>Sector risks</b><p>'+safe((c.sectorLongTermRisk||[]).join(" · "))+'</p></div></div>':"";
-  const more=compact?sectorDetail:'<details class="card-more" data-detail-key="research:'+safe(c.ticker)+'"><summary>Research details + thesis ⌄</summary><div class="deep-detail">'+sectorDetail+'<p><b>Why down:</b> '+safe(c.down)+'</p><p><b>Valuation:</b> '+safe(c.valuation)+'</p><p><b>Moat:</b> '+safe(c.moat)+'</p><p><b>Invalidation:</b> '+safe(c.invalidation)+'</p><p><b>Target method:</b> '+safe(c.valuationModel&&c.valuationModel.method?c.valuationModel.method:"Recompute after earnings.")+'</p></div></details>';
+  const more=compact?sectorDetail:'<details class="card-more" data-detail-key="research:'+safe(c.ticker)+'"><summary>Research details + thesis ⌄</summary><div class="deep-detail">'+sectorDetail+fundamentalDetails(c)+'<p><b>Why down:</b> '+safe(c.down)+'</p><p><b>Valuation:</b> '+safe(c.valuation)+'</p><p><b>Moat:</b> '+safe(c.moat)+'</p><p><b>Invalidation:</b> '+safe(c.invalidation)+'</p><p><b>Target method:</b> '+safe(c.valuationModel&&c.valuationModel.method?c.valuationModel.method:"Recompute after earnings.")+'</p></div></details>';
   const price=(p.price!=null?p.price:c.price);
   const rev=c.quarter&&c.quarter.revg&&c.quarter.revg[0]!=null?"+"+Number(c.quarter.revg[0]).toFixed(1)+"%":"—";
   return'<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'">'+
-    '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span></div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">'+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
-    '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b></div><div><span>REV. YOY</span><b class="up">'+rev+'</b></div></div>'+
+    '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span></div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">Tier '+safe(c.tier||"—")+' · '+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
+    '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b><small>52-week high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest fiscal quarter</small></div></div><p class="business-summary"><b>'+safe(c.netSummary)+'</b> · FCF '+safe(c.fcfSummary)+'<br>Technical: '+safe(p.technicalState||c.state||"Unverified")+'</p>'+
     targetBlock+ladder+reasons+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+more+optionBlock+
   '</article>';
 }
@@ -100,6 +107,10 @@ function renderDesk(){
   if(universe)universe.textContent=f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString();
   if(qualified)qualified.textContent=f.qualifiedCount==null?cards.length:Number(f.qualifiedCount).toLocaleString();
   if(actionEl)actionEl.textContent=actionable.toLocaleString();
+  document.getElementById("coverage-reviewed").textContent=f.deepReviewCount==null?"—":Number(f.deepReviewCount).toLocaleString();
+  document.getElementById("coverage-note").textContent=f.universeDefinition||"Coverage details unavailable.";
+  const rejected=(research&&research.rejected)||[];
+  document.getElementById("coverage-rejections").innerHTML=rejected.length?'<details class="card-more" data-detail-key="rejected"><summary>Reviewed · '+rejected.length+' not qualified ⌄</summary><div class="deep-detail">'+rejected.map(x=>'<p><b>'+safe(x.ticker)+':</b> '+safe(x.reason)+'</p>').join("")+'</div></details>':"";
 }
 function contractCard(c,embedded=false){
   const readiness=c.approval||c.readiness||"VERIFY LIVE";
@@ -123,7 +134,7 @@ function contractCard(c,embedded=false){
   const tag=embedded?"section":"article";
   return '<'+tag+' class="contract-card contract-card-v12'+(embedded?" embedded-contract":"")+'" aria-label="'+safe(c.ticker)+' LEAP contract reference">'+
     '<header class="contract-card-head"><div class="contract-identity"><span class="contract-eyebrow">OPTION REFERENCE</span><div class="contract-title">'+(embedded?'<h4>LEAP call</h4>':'<h3>'+safe(c.ticker)+'</h3><span>'+safe(company&&company.company||"")+'</span>')+'</div></div><span class="readiness '+tone+'"><i aria-hidden="true"></i>'+status+'</span></header>'+
-    '<div class="contract-reference">'+safe(reference)+'</div>'+(horizonText?'<p class="contract-horizon">'+safe(horizonText)+'</p>':"")+
+    '<div class="contract-reference">'+safe(reference)+'</div>'+(horizonText?'<p class="contract-horizon">'+safe(horizonText)+'</p>':"")+'<p class="reference-cutoff">'+safe(c.sourceAsOf||"Reference feed timestamp unavailable; verify the current chain.")+'</p>'+
     '<div class="contract-price-panel"><div><span>Cost per contract</span><strong>'+(Number.isFinite(cost)?money.format(cost):"—")+'</strong><small>Reference ask × 100 shares</small></div><div><span>Expiration breakeven</span><strong>'+(Number.isFinite(c.breakeven)?money.format(c.breakeven):"—")+'</strong><small>Underlying price to cover premium</small></div></div>'+
     '<dl class="contract-facts"><div><dt>Delta <span>'+(Number.isFinite(c.delta)?"reported":"modeled")+'</span></dt><dd>'+delta+'</dd><small>Stock-price sensitivity · verify live</small></div><div><dt>Open interest</dt><dd>'+oiText+'</dd><small>'+oiNote+'</small></div><div><dt>Bid/ask spread</dt><dd>'+(Number.isFinite(spread)?pct(spread):"—")+'</dd><small>'+(Number.isFinite(spread)?"Percent of midpoint · verify live":"Bid/ask not recorded; ranking provisional")+'</small></div><div><dt>Ask per share</dt><dd>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</dd><small>Delayed premium reference</small></div><div><dt>Implied volatility <span>modeled</span></dt><dd>'+iv+'</dd><small>Estimate; verify the live chain</small></div></dl><p class="contract-screen-note">0.60–0.75 delta · no price cap. Highest open interest first; tightest spread breaks ties. '+(spread===null?"This snapshot cannot confirm the liquidity winner.":"Compare current quotes before entry.")+'</p>'+
     '<section class="contract-scenarios" aria-label="Estimated underlying value at expiration"><div class="contract-section-heading"><h4>Value at expiration</h4><span>Underlying stock · estimates</span></div><table class="scenario-table"><thead><tr><th scope="col">Scenario</th><th scope="col">Stock value</th><th scope="col">Call status</th></tr></thead><tbody>'+rows+'</tbody></table><p class="scenario-footnote">'+safe(em.coverage||"Scenario coverage unverified")+'. ITM does not mean profitable; compare stock value with breakeven.</p></section>'+

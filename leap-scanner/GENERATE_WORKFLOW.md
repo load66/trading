@@ -23,6 +23,10 @@ in the LEAPS ChatGPT project chat, perform a full research refresh and publish t
 9. Deploy from `main` to Railway.
 10. Verify the public deployment before reporting completion.
 
+## Current owner policy
+
+Structural-downtrend and quality-trap automatic exclusion filters are disabled. Keep technical risk/action labels and business-quality checks. Include HUBS and INTU when their business data qualify; do not require technical re-entry gates.
+
 ## Scheduled-job boundary
 
 The 2 PM daily job and intraday dip watcher may update market regime, support/action labels, event risk and contract readiness only. They must not change the core qualified universe or fundamental scores.
