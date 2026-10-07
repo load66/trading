@@ -98,6 +98,16 @@ function contractCard(c){
 function renderContracts(){const list=(market&&market.contractProfiles)||[];document.getElementById("contract-list").innerHTML=list.length?list.map(contractCard).join(""):'<div class="loading">No contract references loaded.</div>';}
 function renderResearch(){
   const rt=document.getElementById("research-refresh-time");if(rt)rt.textContent=researchStamp?dateFmt.format(new Date(researchStamp)):(research&&research.asOf?research.asOf:"Dated snapshot");
+  const f=(research&&research.researchFunnel)||{};
+  const funnel=document.getElementById("research-funnel");
+  const funnelNote=document.getElementById("research-funnel-note");
+  if(funnel){
+    const cells=[
+      ["UNIVERSE",f.universeScanned],["DEEP REVIEW",f.deepReviewCount],["QUALIFIED",f.qualifiedCount],["TIER 1",f.tier1Count],["TIER 2",f.tier2Count],["TIER 3",f.tier3Count],["ACTIONABLE",f.actionableToday],["REJECTED",f.rejectedCount]
+    ];
+    funnel.innerHTML=cells.map(x=>'<div><span>'+x[0]+'</span><b>'+(x[1]==null?"—":Number(x[1]).toLocaleString())+'</b></div>').join("");
+  }
+  if(funnelNote)funnelNote.textContent=f.universeDefinition||"Broad-universe counts will appear after the next manual generate.";
   const r=(research&&research.rankings)||{};
   const map=[["BEST OVERALL",r.bestOverall],["HIGHEST BOUNCE",r.highestBounce],["SAFEST QUALITY",r.safestQuality]];
   document.getElementById("rankings").innerHTML=map.map(row=>'<div class="rank-card"><span>'+row[0]+'</span><b>'+((row[1]||[]).slice(0,8).map((t,i)=>(i+1)+". "+safe(t)).join(" · ")||"—")+'</b></div>').join("");
