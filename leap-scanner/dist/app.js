@@ -4,7 +4,7 @@ const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maxim
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-let research=null,market=null,history=[],filter="all";
+let research=null,market=null,history=[],researchMeta=null,filter="all";
 
 async function sb(table,query){
   const r=await fetch(SB_URL+"/rest/v1/"+table+"?"+query,{headers:{apikey:SB_KEY},cache:"no-store"});
@@ -85,7 +85,7 @@ function renderResearch(){
   const r=(research&&research.rankings)||{};
   const map=[["BEST OVERALL",r.bestOverall],["HIGHEST BOUNCE",r.highestBounce],["SAFEST QUALITY",r.safestQuality]];
   document.getElementById("rankings").innerHTML=map.map(row=>'<div class="rank-card"><span>'+row[0]+'</span><b>'+((row[1]||[]).slice(0,8).map((t,i)=>(i+1)+". "+safe(t)).join(" · ")||"—")+'</b></div>').join("");
-  document.getElementById("scan-history").innerHTML=history.length?history.slice(0,8).map(h=>'<div class="history-item"><div><b>'+safe(h.payload&&h.payload.marketState?h.payload.marketState:"SCAN")+'</b><p>'+safe(h.payload&&h.payload.message?h.payload.message:"Automated LEAPS update")+'</p></div><time>'+(h.scan_time?dateFmt.format(new Date(h.scan_time)):"—")+'</time></div>').join(""):'<div class="loading">No scan history yet.</div>';
+  const prov=document.getElementById("research-provenance");if(prov){const src=researchMeta&&researchMeta.source_type?researchMeta.source_type:"manual_chat";const when=researchMeta&&researchMeta.snapshot_time?dateFmt.format(new Date(researchMeta.snapshot_time)):"dated snapshot";prov.innerHTML="<b>Research source · "+safe(src==="manual_chat"?"MANUAL CHAT GENERATE":src.toUpperCase())+"</b><p>Authoritative company research last updated "+safe(when)+". Scheduled scans update market/action data only.</p>";} document.getElementById("scan-history").innerHTML=history.length?history.slice(0,8).map(h=>'<div class="history-item"><div><b>'+safe(h.payload&&h.payload.marketState?h.payload.marketState:"SCAN")+' · '+safe((h.source_type||"scheduled").toUpperCase())+'</b><p>'+safe(h.payload&&h.payload.message?h.payload.message:"Automated LEAPS update")+'</p></div><time>'+(h.scan_time?dateFmt.format(new Date(h.scan_time)):"—")+'</time></div>').join(""):'<div class="loading">No scan history yet.</div>';
   document.getElementById("rejected-list").innerHTML=((research&&research.rejected)||[]).map(x=>'<div class="reject"><b>'+safe(x.ticker)+'</b><p>'+safe(x.reason)+'</p></div>').join("")||"<p>No rejections loaded.</p>";
 }
 function renderAll(){renderDesk();renderSetups();renderContracts();renderResearch();}
@@ -94,12 +94,12 @@ async function load(){
   let live=false,stamp=null;
   try{
     const results=await Promise.all([
-      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=12"),
-      sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=1")
+      sb("leap_scans","select=payload,scan_time,source_type&order=scan_time.desc&limit=12"),
+      sb("leap_research_snapshots","select=payload,snapshot_time,source_type&order=snapshot_time.desc&limit=1")
     ]);
     const scans=results[0],res=results[1];
     if(scans&&scans[0]&&scans[0].payload)market=scans[0].payload;
-    if(res&&res[0]&&res[0].payload)research=res[0].payload;
+    if(res&&res[0]&&res[0].payload){research=res[0].payload;researchMeta=res[0];}
     history=scans||[];stamp=scans&&scans[0]?scans[0].scan_time:(res&&res[0]?res[0].snapshot_time:null);live=!!(market&&research);
   }catch(e){console.info("Supabase fallback",e.message);}
   if(!research)research=await json("data/research-latest.json");
@@ -110,7 +110,7 @@ async function load(){
 load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
 setInterval(async()=>{
   try{
-    const rows=await sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=12");
+    const rows=await sb("leap_scans","select=payload,scan_time,source_type&order=scan_time.desc&limit=12");
     if(rows&&rows[0]&&rows[0].payload){market=rows[0].payload;history=rows;sourceMode("LIVE DATA",rows[0].scan_time);renderAll();}
   }catch(e){}
 },60000);
