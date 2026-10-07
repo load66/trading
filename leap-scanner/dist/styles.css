@@ -201,3 +201,9 @@ main.desk-page{width:min(100%,1080px);margin:0 auto;padding:14px 14px calc(30px 
 .quick-guide>div>span{display:grid;place-items:center;flex:0 0 27px;height:27px;border-radius:8px;background:var(--blue2);color:var(--blue);font:900 11px var(--mono)}
 .quick-guide p{font-size:11px;line-height:1.55;color:#aab7c6}.quick-guide b{color:var(--text)}
 @media(min-width:760px){.quick-guide{grid-template-columns:repeat(3,1fr)}}
+
+.readiness.reference{
+  color:#b7c6d8;
+  background:rgba(110,171,255,.08);
+  border:1px solid rgba(110,171,255,.18);
+}
