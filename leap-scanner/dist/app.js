@@ -227,6 +227,60 @@ function setupCard(c,compact){
     '</div>'+
   '</article>';
 }
+function supportZone(value){
+  const nums=(String(value||"").replace(/,/g,"").match(/\d+(?:\.\d+)?/g)||[]).map(Number).filter(Number.isFinite);
+  if(!nums.length)return null;
+  return {low:Math.min(...nums),high:Math.max(...nums)};
+}
+function supportAlertTarget(value){const z=supportZone(value);return z?z.high:null;}
+function robinhoodLevels(p){
+  const defs=[
+    {key:"entry1",label:(p&&p.entry1Label)||"1st Major Support",size:"30%"},
+    {key:"add2",label:(p&&p.add2Label)||"2nd Major Support",size:"30%"},
+    {key:"finalAdd",label:(p&&p.finalAddLabel)||"Final Deep Support",size:"40%"}
+  ];
+  return defs.map(d=>{
+    const raw=p&&p[d.key],zone=supportZone(raw);
+    return {...d,raw:raw||"",zone,target:zone?zone.high:null};
+  });
+}
+function nextRobinhoodAlert(p){
+  const price=Number(p&&p.price);
+  if(!Number.isFinite(price))return null;
+  return robinhoodLevels(p).filter(x=>Number.isFinite(x.target)&&price>x.target).sort((a,b)=>b.target-a.target)[0]||null;
+}
+function robinhoodLevelState(price,level){
+  if(!Number.isFinite(price)||!level||!level.zone||!Number.isFinite(level.target))return {label:"PENDING",tone:"pending"};
+  if(price>level.target)return {label:"READY TO SET",tone:"future"};
+  if(price>=level.zone.low&&price<=level.zone.high)return {label:"IN ZONE",tone:"zone"};
+  return {label:"CROSSED",tone:"crossed"};
+}
+function robinhoodAlertCard(c){
+  const p=planFor(c.ticker)||{},price=Number(p.price),levels=robinhoodLevels(p),next=nextRobinhoodAlert(p);
+  const validPlan=Number.isFinite(price)&&levels.every(x=>Number.isFinite(x.target));
+  if(!validPlan){
+    return '<article class="rh-card pending"><div class="rh-card-head"><div><span class="rank-badge">#'+safe(c.rank||"—")+'</span><b>'+safe(c.ticker)+'</b></div><span class="rh-state pending">SUPPORT PLAN PENDING</span></div><p>Waiting for a verified three-level market support plan. This row will populate automatically when the next market snapshot is published.</p></article>';
+  }
+  const levelsHtml=levels.map(level=>{
+    const state=robinhoodLevelState(price,level),target=money.format(level.target);
+    const copy=state.tone==="future"?'<button type="button" class="rh-copy" data-copy-price="'+level.target.toFixed(2)+'">COPY '+target+'</button>':"";
+    return '<div class="rh-level '+state.tone+'"><div><span>'+safe(level.label)+'</span><small>'+safe(level.raw)+' · '+safe(level.size)+'</small></div><div class="rh-level-price"><b>'+target+'</b><small>'+state.label+'</small></div>'+copy+'</div>';
+  }).join("");
+  const nextBlock=next?'<div class="rh-next"><div><span>NEXT ROBINHOOD ALERT</span><b>'+money.format(next.target)+'</b><small>'+safe(next.label)+' · set trigger to “Falls below”</small></div><button type="button" data-copy-price="'+next.target.toFixed(2)+'">COPY TARGET</button></div>':'<div class="rh-next exhausted"><div><span>NEXT ROBINHOOD ALERT</span><b>NO LOWER PLANNED LEVEL</b><small>Price has already reached or crossed every published support alert. Wait for a refreshed plan.</small></div></div>';
+  const action=p.action||"RESEARCH ONLY";
+  return '<article class="rh-card"><div class="rh-card-head"><div class="rh-symbol"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><div><b>'+safe(c.ticker)+'</b><small>'+safe(c.company||"Qualified company")+'</small></div></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+
+    '<div class="rh-current"><div><span>CURRENT PRICE</span><b>'+money.format(price)+'</b></div><div><span>TODAY</span><b class="'+(Number(p.todayPct)<0?"down":Number(p.todayPct)>0?"up":"")+'">'+fmtMove(Number(p.todayPct))+'</b></div><div><span>ROBINHOOD TRIGGER</span><b>Falls below</b></div></div>'+
+    nextBlock+'<div class="rh-levels">'+levelsHtml+'</div>'+
+    '<p class="rh-card-note">Price alert only. A LEAPS entry still requires the −2% to −5% red-day condition, valid support, intact thesis and confirmation from the intraday watch.</p></article>';
+}
+function renderRobinhoodAlerts(allCards){
+  const el=document.getElementById("robinhood-alert-list");
+  if(!el)return;
+  const cards=(allCards||[]).slice().sort((a,b)=>(a.rank||999)-(b.rank||999));
+  el.innerHTML=cards.length?cards.map(robinhoodAlertCard).join(""):'<div class="loading">No qualified stocks currently require alert levels.</div>';
+  const note=document.getElementById("robinhood-alert-note");
+  if(note)note.textContent="Generated from the current qualified list and latest published support plan. Auto-refreshes every 60 seconds; list additions/removals and support changes update this section automatically.";
+}
 function renderDesk(){
   const state=market&&market.marketState?market.marketState:"UNAVAILABLE";
   document.getElementById("market-state").textContent=state;
@@ -265,6 +319,7 @@ function renderDesk(){
   const rejected=(research&&research.rejected)||[];
   const re=document.getElementById("coverage-rejections");
   if(re)re.innerHTML=rejected.length?'<details class="card-more" data-detail-key="rejected"><summary>Reviewed · '+rejected.length+' not qualified ⌄</summary><div class="deep-detail">'+rejected.map(x=>'<p><b>'+safe(x.ticker)+':</b> '+safe(x.reason)+'</p>').join("")+'</div></details>':"";
+  renderRobinhoodAlerts(allCards);
 }
 function contractCard(c,embedded=false){
   const readiness=c.approval||c.readiness||"VERIFY LIVE";
@@ -326,4 +381,17 @@ async function pollLatest(){
 }
 setInterval(pollLatest,60000);
 
-document.addEventListener("click",e=>{const b=e.target.closest("[data-filter]");if(!b)return;activeFilter=b.dataset.filter||"all";renderAll();});
+document.addEventListener("click",e=>{
+  const copy=e.target.closest("[data-copy-price]");
+  if(copy){
+    const value=copy.dataset.copyPrice;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(value).then(()=>toast("$"+value+" copied")).catch(()=>toast("Target $"+value));
+    }else toast("Target $"+value);
+    return;
+  }
+  const b=e.target.closest("[data-filter]");
+  if(!b)return;
+  activeFilter=b.dataset.filter||"all";
+  renderAll();
+});

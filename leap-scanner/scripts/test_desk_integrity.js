@@ -20,8 +20,12 @@ company.earningsSurprises=[{epsBasis:'unknown',epsConsensus:1,epsResult:'BEAT'}]
 const html=vm.runInContext('earningsQuality('+JSON.stringify(company)+')',ctx);
 assert.ok(html.includes('Net income')&&html.includes('UNVERIFIED'));
 assert.ok(!html.includes('>BEAT<'),'Unverifiable basis cannot display an EPS beat');
+assert.equal(vm.runInContext('supportAlertTarget("$390–396")',ctx),396,'Support alert uses the upper edge of the zone');
+assert.equal(vm.runInContext('nextRobinhoodAlert({price:414.46,entry1:"$390–396",add2:"$378–384",finalAdd:"$345–355"}).target',ctx),396,'Next alert should be first uncrossed support');
+assert.equal(vm.runInContext('nextRobinhoodAlert({price:227.6,entry1:"$234–238",add2:"$223–228",finalAdd:"$209–213"}).target',ctx),213,'Already-crossed/in-zone supports must advance to the next lower alert');
+assert.equal(vm.runInContext('research.candidates.filter(c=>c.qualified).filter(c=>planFor(c.ticker)).length',ctx),research.candidates.filter(c=>c.qualified).length,'Every qualified ticker must have a market plan');
 const currentIV=vm.runInContext('contractCard('+JSON.stringify(base)+',true)',ctx);
 assert.ok(currentIV.includes('Implied volatility <span>reported</span>')&&currentIV.includes('30.0%'));
 const modeled=vm.runInContext('contractCard('+JSON.stringify({...base,iv:null,modeledIV:.43})+',true)',ctx);
 assert.ok(modeled.includes('Implied volatility <span>modeled</span>')&&modeled.includes('~43.0%'));
-console.log('Desk integrity passed: permanent ranks, filters, comparable earnings, current/modeled IV, no cost cap, OI/spread ranking, and eligibility boundaries.');
+console.log('Desk integrity passed: permanent ranks, filters, comparable earnings, Robinhood alert targets, current/modeled IV, no cost cap, OI/spread ranking, and eligibility boundaries.');

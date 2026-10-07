@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import math
+import re
 import sys
 from pathlib import Path
 from datetime import datetime, timezone
@@ -24,6 +25,11 @@ def timestamp(value):
 
 def comparison(actual, estimate):
     return 'MEET' if abs(actual-estimate) < .005 else 'BEAT' if actual > estimate else 'MISS'
+
+def support_zone(value):
+    matches = re.findall(r'\d+(?:,\d{3})*(?:\.\d+)?', str(value or ''))
+    values = [float(v.replace(',', '')) for v in matches]
+    return (min(values), max(values)) if values else None
 
 research_path = Path(sys.argv[1] if len(sys.argv) > 1 else "dist/data/research-latest.json")
 market_path = Path(sys.argv[2] if len(sys.argv) > 2 else "dist/data/market-latest.json")
@@ -149,6 +155,12 @@ for p in market.get("candidatePlans") or []:
     t = p.get("ticker")
     if t and t not in qualified_tickers:
         fail(f"market plan exists for non-qualified ticker {t}", errors)
+    if not finite(p.get("price")) or p.get("price") <= 0:
+        fail(f"{t}: market plan requires a positive current/reference price", errors)
+    for key in ("entry1", "add2", "finalAdd"):
+        zone = support_zone(p.get(key))
+        if zone is None or zone[0] <= 0 or zone[1] < zone[0]:
+            fail(f"{t}: {key} must be a parseable positive support zone; Robinhood alert automation requires all three zones", errors)
 
 for c in market.get("contractProfiles") or []:
     t = c.get("ticker")

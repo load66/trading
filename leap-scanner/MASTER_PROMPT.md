@@ -588,3 +588,20 @@ For every level explain exactly why the zone exists, using evidence such as:
 - Weekly support
 
 A support zone without a specific technical reason should not be published.
+
+
+## Automated Robinhood Price-Alert Panel
+
+The public LEAPS Desk must maintain a bottom-of-page Robinhood alert section derived dynamically from the CURRENT qualified research universe and CURRENT published market plans. Never hard-code tickers or alert prices.
+
+For each qualified ticker:
+- Read the published 1st Major Support, 2nd Major Support and Final Deep Support zones.
+- For a Robinhood **Falls below target price** alert, use the **upper edge of the support zone** as the suggested target. This produces an early warning when price first enters the support zone.
+- If price is already inside or below a support zone, mark that level **IN ZONE** or **CROSSED** and promote the next lower uncrossed support as the next usable Robinhood alert.
+- Preserve all three support levels on screen so the user can stage alerts consistently with the 30% / 30% / 40% entry plan.
+- A Robinhood price alert is only an early warning, never a buy signal. Action still requires the stock-specific entry rules: roughly −2% to −5% on the day, valid major support, intact fundamentals, no thesis-damaging earnings/guidance/FCF deterioration, and stabilization/reversal confirmation.
+- When the qualified list changes, newly qualified names must appear automatically after their market plan is published; removed names must disappear automatically. If research updates before a matching market plan exists, show **SUPPORT PLAN PENDING** rather than inventing levels.
+- The app should poll the latest Supabase research and market snapshots and rebuild the alert section automatically. GitHub JSON remains fallback only.
+- Publication validation must reject a qualified market plan whose current/reference price or three support zones are missing/unparseable, because the automated alert panel depends on those fields.
+
+This alert panel is a user setup aid for external brokerage alerts; it does not place trades or create brokerage alerts automatically.

@@ -9,8 +9,8 @@
 <link rel="canonical" href="https://leaps-desk.up.railway.app/">
 <script>if(location.search){history.replaceState(null,"",location.pathname+location.hash);}</script>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="styles.css?v=20261007-financial-growth-v5">
-<script src="app.js?v=20261007-financial-growth-v5" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261007-robinhood-alerts-v1">
+<script src="app.js?v=20261007-robinhood-alerts-v1" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -97,6 +97,24 @@
     </div>
     <p class="feed-note" id="coverage-note"></p>
     <div id="coverage-rejections"></div>
+  </section>
+
+  <section class="desk-section robinhood-alerts" id="robinhood-alerts">
+    <div class="section-head">
+      <div>
+        <span class="kicker">ROBINHOOD PRICE ALERTS</span>
+        <h2>Automatic support alert levels</h2>
+        <p class="home-queue-note">Use Robinhood’s <b>Falls below target price</b> alert. LEAPS Desk sets the suggested target at the <b>upper edge of each major support zone</b>, so the alert fires as price enters the zone.</p>
+      </div>
+    </div>
+    <div class="rh-rule-card">
+      <div><span>TRIGGER</span><strong>Falls below</strong><small>Robinhood price alert</small></div>
+      <div><span>ALERT TARGET</span><strong>Upper edge of support</strong><small>Early warning as the zone is entered</small></div>
+      <div><span>ENTRY CONFIRMATION</span><strong>−2% to −5% red day</strong><small>Plus intact thesis + support confirmation</small></div>
+      <div><span>AUTO UPDATE</span><strong>Current qualified list</strong><small>Supabase refresh every 60 seconds</small></div>
+    </div>
+    <div id="robinhood-alert-list" class="rh-alert-grid"><div class="loading">Building current alert levels…</div></div>
+    <p class="feed-note" id="robinhood-alert-note">Alert targets will load from the latest support plan.</p>
   </section>
 </main>
 </div>
