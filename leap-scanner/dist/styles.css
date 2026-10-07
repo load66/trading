@@ -326,3 +326,15 @@ main.desk-page{width:min(100%,1080px);margin:0 auto;padding:14px 14px calc(30px 
   .queue-tools{align-items:flex-end}
   .fcf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* v17 rank movement + earnings audit */
+.rank-context{margin:8px 0 2px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.018);color:#8fa0b3;font:700 9px/1.45 var(--mono)}
+.earnings-table{min-width:720px}
+.earnings-table td b,.earnings-table td small{display:block}
+.earnings-table td small{margin-top:3px;color:var(--dim);font-size:8px}
+.surprise{display:inline-flex;margin-top:4px;padding:3px 5px;border-radius:999px;font:800 7px var(--mono);letter-spacing:.04em}
+.surprise.beat,.surprise.met,.surprise.meet{background:var(--green2);color:var(--green)}
+.surprise.miss{background:rgba(255,84,112,.10);color:#ff879b}
+.surprise.neutral,.surprise.unverified{background:rgba(255,255,255,.045);color:var(--muted)}
+.fcf-guidance{margin-top:8px!important;padding-top:8px;border-top:1px solid var(--line)}
