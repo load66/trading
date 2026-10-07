@@ -76,3 +76,45 @@ The first dated entry map is prepared for the October 7, 2026 session using Octo
 2. **Intraday condition watch:** check market conditions during the session and notify only when SPY/QQQ/VIX/macro conditions produce a meaningful dip.
 3. On a triggered scan, refresh the market regime first, then evaluate the qualified company list against support, thesis integrity, valuation and reversal confirmation.
 4. If GitHub write access is available during the scheduled run, update `dist/data/market-latest.json` with the new dated snapshot. Do not modify historical strict-scan files merely because market prices moved.
+
+
+## Professional mobile public app (v3)
+
+The public LEAPS Desk is now designed mobile-first and backed by a public read-only Supabase feed.
+
+### Architecture
+
+- **Railway** — public hosting and automatic deploys from GitHub main.
+- **GitHub** — source of truth for the app and fallback JSON snapshots.
+- **Supabase** — persistent latest scan + research history for the public dashboard.
+- **Massive** — market price/history and technical support inputs when available.
+- **AlphaStocks** — company risk/news context.
+- **Current web research** — earnings, macro/event risk and option-chain verification when connected tools do not provide the needed fact.
+- **ChatGPT automations** — 2 PM daily scan plus intraday dip-condition watch.
+
+Public Supabase tables:
+- `public.leap_scans`
+- `public.leap_research_snapshots`
+
+Both tables use RLS and grant **SELECT only** to `anon` and `authenticated`. There is no public browser write path.
+
+### Qualification model
+
+There are now two paths into the qualified universe:
+
+1. **Deep Discount / Recovery** — normally 30–70% below a meaningful high with fundamentals intact.
+2. **Quality Compounder Pullback** — elite GAAP-profitable companies can qualify with a smaller pullback when valuation compression, major support or broad-market weakness creates attractive long-term risk/reward.
+
+Tariff exposure is **not** a qualification filter or scoring penalty. Tariff headlines can be recorded as temporary event/margin context, but hardware, med-tech, robotics and other physical-product businesses are not rejected merely for tariff exposure.
+
+The current master instructions live in `MASTER_PROMPT.md`.
+
+### Mobile information architecture
+
+Bottom navigation:
+- **Desk** — market regime, SPY/QQQ/VIX, top opportunity queue.
+- **Setups** — qualified company cards with 30/30/40 entry ladders and confirmation.
+- **Contracts** — delayed contract references, liquidity/readiness and live-verification warnings.
+- **Research** — two-lane methodology, rankings, scan history, rejections and scoring.
+
+The app reads Supabase first and falls back to GitHub JSON if the database feed is temporarily unavailable.
