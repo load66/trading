@@ -318,6 +318,7 @@ function entryTimingStatus(p){
     const stage=s.level.key==="entry1"?"BUY ZONE — ENTRY 1":s.level.key==="add2"?"ADD ZONE — ADD 2":"ADD ZONE — FINAL ADD";
     return {label:stage,tone:"buy",detail:(Number.isFinite(day)?fmtMove(day)+" today · ":"")+s.label+" · verify event risk and contract"};
   }
+  if(action.includes("DO NOT ADD"))return {label:"NO ENTRY",tone:"stop",detail:"Current market plan says do not add; wait for a planned major support zone."};
   if(s.state==="near")return {label:"NEAR SUPPORT — WATCH",tone:"watch",detail:(Number.isFinite(day)?fmtMove(day)+" today · ":"")+s.label};
   return {label:"WAIT",tone:"watch",detail:s.label};
 }
