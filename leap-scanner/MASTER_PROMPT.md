@@ -280,3 +280,106 @@ When the owner sends the standalone command **generate** in the LEAPS project ch
 10. Never invent live option Greeks, IV, spreads or open interest.
 
 Scheduled 2 PM and intraday jobs are **market/entry-timing refreshes only**. They must use the latest manually approved research universe and must not add/remove candidates or overwrite fundamental research unless the owner explicitly uses **generate** in the project chat.
+
+
+## Expiration Valuation Target Model
+
+For every qualified company, calculate a Bear / Base / Bull fundamental price range tied to the preferred LEAP expiration, ideally Dec 2028–Jan 2029 from the current Oct 2026 research horizon.
+
+Use BOTH when available:
+- Projected GAAP EPS × terminal GAAP P/E
+- Projected FCF/share × terminal P/FCF
+
+Normalize growth assumptions from recent YoY revenue, GAAP net-income and FCF trends. Cap extreme growth rates so unusually strong quarters do not create unrealistic targets.
+
+Use conservative valuation compression in the Bear case, a reasonable normalized multiple in Base, and only a justified premium in Bull.
+
+Show:
+- Current GAAP P/E
+- Current P/FCF
+- Implied trailing GAAP EPS
+- Implied TTM FCF/share
+- Bear/Base/Bull normalized growth
+- Bear/Base/Bull terminal P/E
+- Bear/Base/Bull terminal P/FCF
+- EPS-based target
+- FCF-based target
+- Blended target
+
+Do not call one number the guaranteed price target. Present the scenario range and recompute it after material earnings/guidance changes.
+
+## Contract Survivability / ITM Coverage
+
+Do not select a LEAP solely because delta is attractive.
+
+For every contract evaluate the strike against the fundamental Bear/Base/Bull expiration targets.
+
+Label each scenario:
+- OTM
+- ITM
+- DEEP ITM
+
+Prefer contracts where the strike is below the Bear target and materially below the Base target.
+
+Show:
+- Expiration
+- Strike
+- Current stock price
+- Stock dollars above strike
+- Delta
+- Open interest
+- Bid/ask spread
+- IV
+- Ask/premium
+- Approximate cost per contract
+- Intrinsic value
+- Extrinsic value
+- Breakeven
+- Bear target and projected moneyness
+- Base target and projected moneyness
+- Bull target and projected moneyness
+- Scenario coverage such as 3/3 scenarios ITM or better
+
+Never describe a contract as high probability solely from delta. Require both option quality and fundamental valuation coverage.
+
+Primary contract profile:
+- 18–30 months preferred
+- 0.70–0.85 delta preferred
+- ITM
+- OI >= 100 preferred, >= 500 strong
+- Bid/ask width <= 5% of midpoint preferred, <= 3% better
+- Reasonable IV versus the stock's own regime
+- Strike below Bear target
+- Material cushion below Base target
+
+COST FALLBACK:
+A 0.60–0.70 delta contract may be considered only when the preferred 0.70–0.85 delta contract is materially too expensive AND the current stock price is at least $70 above the strike.
+
+The fallback contract must still:
+- Be ITM now
+- Pass the Bear/Base fundamental target coverage test
+- Have acceptable OI/liquidity
+- Have an acceptable spread and IV
+- Have enough time remaining
+
+If live delta, IV, spread or OI cannot be verified, label them clearly as modeled/delayed/unverified and do not call the contract fully approved.
+
+## Support-Level Reasoning
+
+Never show only generic labels such as Entry 1 / Add 2 / Final Add.
+
+Use:
+- 1st Major Support
+- 2nd Major Support
+- Final Deep Support
+
+For every level explain exactly why the zone exists, using evidence such as:
+- 20DMA / 50DMA / 100DMA / 200DMA confluence
+- Recent 20-day / 60-day / 252-day swing low
+- Prior breakout shelf
+- Earnings-gap support
+- High-volume demand
+- Previous capitulation low
+- Weekly support
+
+A support zone without a specific technical reason should not be published.
