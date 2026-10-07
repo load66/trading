@@ -1,11 +1,11 @@
 {
-  "schemaVersion": 1,
-  "marketAsOf": "AlphaStocks observed Oct 07, 2026, 11:47 AM CDT; exact exchange timestamps unavailable. MAs/highs: Oct 6 close. VIX context may be older.",
+  "schemaVersion": 2,
+  "marketAsOf": "AlphaStocks quotes observed 2026-10-07T12:21:22-05:00; provider supplied no exchange timestamps. VIX context observed 2026-10-07T15:52:00Z and is not synchronized. Technical bars: 2026-10-06 close.",
   "preparedFor": "2026-10-07",
-  "marketState": "MINOR DIP",
+  "marketState": "NORMAL DAY",
   "triggered": false,
   "triggerReasons": [],
-  "message": "NO A+ LEAP ENTRY TODAY — WAIT. CRM is AT 1ST MAJOR SUPPORT ($221–225) near $224.72 but is only -0.12% today, so it does not meet the -2% to -5% red-day entry gate. ADBE is -2.75% but remains above its next valid major support zone and is not an entry.",
+  "message": "NO A+ LEAP ENTRY TODAY — WAIT. Dashboard refreshed: SPY/QQQ remain below dip thresholds; VIX context remains below 20; no qualified stock meets both the -2% to -5% rule and current major-support geometry with reversal confirmation.",
   "thresholds": {
     "spyDayPct": -1.75,
     "qqqDayPct": -2.25,
@@ -15,14 +15,14 @@
   },
   "market": {
     "spy": {
-      "close": 776.49,
+      "close": 777.38,
       "previousClose": 779.09,
-      "dayChangePct": -0.3337,
+      "dayChangePct": -0.2195,
       "intradayLow": 773.61,
-      "intradayHigh": 776.905,
-      "observedAt": "2026-10-07T16:47:30Z",
+      "intradayHigh": 777.4,
+      "observedAt": "2026-10-07T17:21:22.389Z",
       "exchangeQuoteTimestamp": null,
-      "source": "AlphaStocks current quote observed by LEAPS scan; exact exchange timestamp unavailable",
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
       "averages": {
         "20": 765.717,
         "50": 765.2202000000001,
@@ -37,14 +37,14 @@
       "stabilization": "Not verified without intraday bar sequence"
     },
     "qqq": {
-      "close": 756.34,
+      "close": 757.21,
       "previousClose": 759.66,
-      "dayChangePct": -0.437,
+      "dayChangePct": -0.3225,
       "intradayLow": 751.75,
-      "intradayHigh": 757.17,
-      "observedAt": "2026-10-07T16:47:30Z",
+      "intradayHigh": 757.43,
+      "observedAt": "2026-10-07T17:21:22.389Z",
       "exchangeQuoteTimestamp": null,
-      "source": "AlphaStocks current quote observed by LEAPS scan; exact exchange timestamp unavailable",
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
       "averages": {
         "20": 731.7065,
         "50": 719.8072,
@@ -59,19 +59,20 @@
       "stabilization": "Not verified without intraday bar sequence"
     },
     "vix": {
-      "value": 15.82,
-      "dayChangePct": 5.4,
+      "value": 15.67,
       "previousClose": 15.01,
-      "source": "Cboe public page, as of October 7, 2026; no time-of-day shown",
-      "url": "https://www.cboe.com/tradable-products/vix",
+      "dayChangePct": 4.3971,
+      "source": "Barron's market update published 2026-10-07T15:52:00Z; not synchronized with equity quotes",
+      "url": "https://www.barrons.com/articles/stocks-bonds-volatility-vix-move-index-risk-626842cb",
+      "observedAt": "2026-10-07T15:52:00Z",
       "intradayHigh": null,
-      "direction": "Above prior close; spike acceleration/fade not verified"
+      "direction": "Below 20; no equity-fear trigger"
     }
   },
   "candidatePlans": [
     {
       "ticker": "ISRG",
-      "price": 414,
+      "price": 414.74,
       "action": "WATCH",
       "entry1": "$390–396",
       "add2": "$378–384",
@@ -86,7 +87,7 @@
       "add2Reason": "$378–384 surrounds the 50DMA near $382.38. It is a deeper trend-support test and should only be used if the first zone fails without thesis damage.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$345–355 surrounds the recent 20-day swing low near $345.25. This is a major reset zone; below it, the next structural low near $328.57 becomes an invalidation/reassessment level rather than an automatic fourth add.",
-      "todayPct": 2.2828,
+      "todayPct": 2.4657,
       "technicalState": "BUILDING BASE",
       "intradayConfirmationVerified": false,
       "reasonForDip": "NORMAL VOLATILITY",
@@ -109,13 +110,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 416.81,
       "intradayLow": 404.2,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 1,
+      "previousClose": 404.76,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$390–396",
+      "supportDistancePct": 4.7323,
+      "supportReason": "$390–396 is a high-quality confluence zone: the 20DMA is about $392.09 and the 100DMA about $393.98. This is the first area where trend support and price support overlap.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "ADSK",
-      "price": 232.05,
+      "price": 232.97,
       "action": "WATCH",
       "entry1": "$220–224",
       "add2": "$198–203",
@@ -128,10 +140,10 @@
       "add2Reason": "$198–203 aligns with the 20-day and 60-day swing-low cluster around $199.18, making it a materially stronger historical demand zone.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$184–189 surrounds the 252-session low near $185.50. A test here would represent a much deeper valuation reset; only add if fundamentals and guidance remain intact.",
-      "todayPct": 0.3329,
+      "todayPct": 0.7307,
       "technicalState": "BUILDING BASE",
       "intradayConfirmationVerified": false,
-      "reasonForDip": "MARKET-DRIVEN DIP (provisional; causality not confirmed)",
+      "reasonForDip": "NORMAL VOLATILITY",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
       "supportLevels": {
         "sma20": 215.69250000000002,
@@ -153,13 +165,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 234.86,
       "intradayLow": 228.76,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 2,
+      "previousClose": 231.28,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$220–224",
+      "supportDistancePct": 4.0045,
+      "supportReason": "$220–224 is the first nearby demand/rebound shelf below current price. It is the area where buyers recently defended the stock before the rebound; require a hold/reclaim rather than buying a straight breakdown.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "RDDT",
-      "price": 151.58,
+      "price": 152.78,
       "action": "WATCH",
       "entry1": "$141–145",
       "add2": "$133–137",
@@ -172,10 +195,10 @@
       "add2Reason": "$133–137 surrounds the 60-session low near $135.22, a stronger medium-term demand zone after a deeper selloff.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$118–122 brackets the 252-session low near $119.27. Only use this zone if Reddit's revenue, margins and profitability remain intact.",
-      "todayPct": 1.7657,
+      "todayPct": 2.5713,
       "technicalState": "EARLY BOTTOM",
       "intradayConfirmationVerified": false,
-      "reasonForDip": "MARKET-DRIVEN DIP (provisional; causality not confirmed)",
+      "reasonForDip": "NORMAL VOLATILITY",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
       "supportLevels": {
         "sma20": 151.971,
@@ -197,13 +220,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 151.98,
       "intradayLow": 146.2486,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 3,
+      "previousClose": 148.95,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$141–145",
+      "supportDistancePct": 5.3655,
+      "supportReason": "$141–145 surrounds the recent 20-day low near $141.32 and the late-September demand area. It is the closest meaningful support beneath price.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "ADBE",
-      "price": 231.48,
+      "price": 232.37,
       "action": "DO NOT ADD YET",
       "entry1": "$234–238",
       "add2": "$223–228",
@@ -216,10 +250,10 @@
       "add2Reason": "$223–228 brackets the 20-day swing low near $224.67, giving a clearer recent-demand reference than the first shelf.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$209–213 surrounds the 60-day low near $210.88. A break of this zone raises the risk of revisiting the 52-week low around $190 and should trigger thesis reassessment.",
-      "todayPct": -2.7885,
+      "todayPct": -2.4147,
       "technicalState": "STILL FALLING",
       "intradayConfirmationVerified": false,
-      "reasonForDip": "COMPANY-SPECIFIC / SECTOR NEWS — INVESTIGATE",
+      "reasonForDip": "COMPANY-SPECIFIC / SECTOR NEWS — INVESTIGATE; NO NEW THESIS DAMAGE VERIFIED",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
       "supportLevels": {
         "sma20": 244.71125,
@@ -241,13 +275,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 237.3,
       "intradayLow": 227,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "2nd Major Support"
+      "supportLevel": "2ND MAJOR SUPPORT",
+      "rank": 4,
+      "previousClose": 238.12,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$223–228",
+      "supportDistancePct": 1.9167,
+      "supportReason": "$223–228 brackets the 20-day swing low near $224.67, giving a clearer recent-demand reference than the first shelf.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT / CURRENT NEWS CAUSALITY UNRESOLVED",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "ACN",
-      "price": 197.37,
+      "price": 197.96,
       "action": "WATCH",
       "entry1": "$180–184",
       "add2": "$171–174",
@@ -260,7 +305,7 @@
       "add2Reason": "$171–174 brackets the recent 20-day swing low near $172.11, where a second layer of demand has already appeared.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$128–132 surrounds the 60-day low near $129.96 created during the prior capitulation. This is only for an intact business thesis after an extreme market reset.",
-      "todayPct": 2.0527,
+      "todayPct": 2.3578,
       "technicalState": "BUILDING BASE",
       "intradayConfirmationVerified": false,
       "reasonForDip": "NORMAL VOLATILITY",
@@ -285,19 +330,30 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 197.75,
       "intradayLow": 194.0507,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 5,
+      "previousClose": 193.4,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$180–184",
+      "supportDistancePct": 7.587,
+      "supportReason": "$180–184 surrounds the 50DMA near $181.84, the first major trend-support zone below price.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "TYL",
-      "price": 332.91,
-      "todayPct": 0.6044,
+      "price": 334.05,
+      "todayPct": 0.9489,
       "technicalState": "BUILDING BASE",
       "intradayConfirmationVerified": false,
       "action": "WATCH",
       "confirmation": "Require the underlying to hold/reclaim support, form a higher low and show buying follow-through. Intraday bars/VWAP and live option IV/spreads are not verified in this scan; no buy signal issued.",
-      "reasonForDip": "MARKET-DRIVEN DIP (provisional; causality not confirmed)",
+      "reasonForDip": "NORMAL VOLATILITY",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
       "entry1": "$318–324",
       "add2": "$309–315",
@@ -328,14 +384,25 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 333.74,
       "intradayLow": 328.01,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 6,
+      "previousClose": 330.91,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$318–324",
+      "supportDistancePct": 3.1019,
+      "supportReason": "100DMA $320.60; requires a support hold/reclaim.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "CRM",
-      "price": 224.76,
-      "action": "AT SUPPORT — WAIT FOR CONFIRMATION",
+      "price": 225.14,
+      "action": "NEAR SUPPORT — WATCH",
       "entry1": "$221–225",
       "add2": "$198–203",
       "finalAdd": "$154–160",
@@ -347,10 +414,10 @@
       "add2Reason": "$198–203 surrounds the 200DMA near $200.21, a major long-term trend level and a natural second staged entry.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$154–160 brackets the 60-day swing low near $155.15 from the prior washout. Reaching it would require severe weakness; only add if the fundamental thesis is clearly intact.",
-      "todayPct": -0.1022,
+      "todayPct": 0.0667,
       "technicalState": "BUILDING BASE",
       "intradayConfirmationVerified": false,
-      "reasonForDip": "MARKET-DRIVEN DIP (provisional; causality not confirmed)",
+      "reasonForDip": "NORMAL VOLATILITY",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
       "supportLevels": {
         "sma20": 238.455,
@@ -372,13 +439,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 225.8,
       "intradayLow": 221.53,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
-      "supportStatus": "AT SUPPORT",
-      "supportLevel": "1st Major Support"
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
+      "supportStatus": "NEAR SUPPORT",
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 7,
+      "previousClose": 224.99,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$221–225",
+      "supportDistancePct": 0.0622,
+      "supportReason": "$221–225 has unusually strong confluence: the 20-day low is about $221.18 and the 50DMA about $222.41. The stock is already testing this zone, so a hold/reclaim is required.",
+      "entryStatus": "NEAR SUPPORT — WAIT FOR CONFIRMATION",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "INTU",
-      "price": 295.46,
+      "price": 296.64,
       "action": "DO NOT ADD YET",
       "entry1": "$278–283",
       "add2": "$262–268",
@@ -391,7 +469,7 @@
       "add2Reason": "$262–268 brackets the 20-day and 60-day lows near $262.32, making it the strongest recent technical support cluster.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$251–255 surrounds the 252-session low near $252.84. This is the final planned add only if earnings, guidance and cash-flow quality remain intact.",
-      "todayPct": 1.9496,
+      "todayPct": 2.3567,
       "technicalState": "STILL FALLING",
       "intradayConfirmationVerified": false,
       "reasonForDip": "NORMAL VOLATILITY",
@@ -416,13 +494,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 296.7,
       "intradayLow": 290.7,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 8,
+      "previousClose": 289.81,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$278–283",
+      "supportDistancePct": 4.8198,
+      "supportReason": "$278–283 is the nearest short-term demand shelf beneath price and gives a first controlled entry before the larger swing-low zone.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "RMD",
-      "price": 227.42,
+      "price": 227.78,
       "action": "WATCH",
       "entry1": "$215–220",
       "add2": "$208–213",
@@ -437,7 +526,7 @@
       "confirmation": "Require the underlying to hold/reclaim support, form a higher low and show buying follow-through. Intraday bars/VWAP and live option IV/spreads are not verified in this scan; no buy signal issued.",
       "basis": "Recent swing-low support, 100DMA, and 60-day demand zone.",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
-      "todayPct": 3.0495,
+      "todayPct": 3.2127,
       "technicalState": "AT MAJOR SUPPORT",
       "intradayConfirmationVerified": false,
       "reasonForDip": "NORMAL VOLATILITY",
@@ -460,13 +549,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 228.75,
       "intradayLow": 221.83,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 9,
+      "previousClose": 220.69,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$215–220",
+      "supportDistancePct": 3.5364,
+      "supportReason": "$215–220 brackets the recent 20-day swing low near $215.80 and sits just below the current price. It is the first area where recent demand can prove itself.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "HUBS",
-      "price": 220.46,
+      "price": 220.94,
       "action": "DO NOT ADD YET",
       "entry1": "$188–193",
       "add2": "$183–187",
@@ -479,10 +579,10 @@
       "add2Reason": "$183–187 surrounds the 60-day low near $185.05. Because it is close to the first zone, require a clear failed breakdown or reclaim before adding.",
       "finalAddLabel": "Final Deep Support",
       "finalAddReason": "$168–172 surrounds the 252-session low near $169.63. This is the deepest planned support and should not be used if profitability or SBC economics worsen.",
-      "todayPct": 1.5524,
+      "todayPct": 1.7735,
       "technicalState": "STILL FALLING",
       "intradayConfirmationVerified": false,
-      "reasonForDip": "MARKET-DRIVEN DIP (provisional; causality not confirmed)",
+      "reasonForDip": "NORMAL VOLATILITY",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
       "supportLevels": {
         "sma20": 221.102,
@@ -504,13 +604,24 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 221.905,
       "intradayLow": 214.02,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "ABOVE SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 10,
+      "previousClose": 217.09,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$188–193",
+      "supportDistancePct": 14.4767,
+      "supportReason": "$188–193 surrounds the 20-day low near $190.03, the first meaningful demand area beneath price.",
+      "entryStatus": "WAIT FOR SUPPORT",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     },
     {
       "ticker": "STE",
-      "price": 211.78,
+      "price": 211.82,
       "action": "NEAR SUPPORT — WATCH",
       "entry1": "$207–211",
       "add2": "$202–205",
@@ -525,7 +636,7 @@
       "confirmation": "Require the underlying to hold/reclaim support, form a higher low and show buying follow-through. Intraday bars/VWAP and live option IV/spreads are not verified in this scan; no buy signal issued.",
       "basis": "20DMA/current shelf; repeated 20/60-day low; 52-week demand zone.",
       "eventRisk": "Fed September-meeting minutes due today; check the official calendar and fresh quotes around release. Confirm the company’s next earnings date in its IR calendar before entry.",
-      "todayPct": 1.5001,
+      "todayPct": 1.5193,
       "technicalState": "EARLY BOTTOM",
       "intradayConfirmationVerified": false,
       "reasonForDip": "NORMAL VOLATILITY",
@@ -548,9 +659,20 @@
       "note": "Support zones are research areas, not purchase instructions. Entry approval requires fresh intraday confirmation and contract verification.",
       "intradayHigh": 211.825,
       "intradayLow": 208.37,
-      "quoteObservedAt": "2026-10-07T16:47:30Z",
+      "quoteObservedAt": "2026-10-07T17:21:22.389Z",
       "supportStatus": "NEAR SUPPORT",
-      "supportLevel": "1st Major Support"
+      "supportLevel": "1ST MAJOR SUPPORT",
+      "rank": 11,
+      "previousClose": 208.65,
+      "exchangeQuoteTimestamp": null,
+      "source": "AlphaStocks observed quote; provider supplied no exchange timestamp",
+      "supportZone": "$207–211",
+      "supportDistancePct": 0.3886,
+      "supportReason": "$207–211 surrounds the current price and 20DMA near $209.90. It is the first potential stabilization shelf, but the 50/100/200DMAs remain overhead, so reversal confirmation matters.",
+      "entryStatus": "NEAR SUPPORT — WAIT FOR CONFIRMATION",
+      "thesisStatus": "INTACT — NO NEWLY VERIFIED THESIS DAMAGE",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT",
+      "staging": "30% / 30% / 40%; no stage activated without confirmation"
     }
   ],
   "rules": {
@@ -600,7 +722,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "ADSK",
@@ -640,7 +763,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "RDDT",
@@ -680,7 +804,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "ADBE",
@@ -720,7 +845,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "STE",
@@ -759,7 +885,8 @@
       "selectionRule": "Among eligible ITM contracts with comparable current data, apply the acceptable-spread gate, then highest OI wins; tightest relative spread breaks ties.",
       "selectionReason": "The public chain is short-dated and very thin, with little open interest at many strikes. The stock qualifies, but forcing an illiquid short-duration call would weaken the trade.",
       "verified": false,
-      "classification": "no_verified_contract"
+      "classification": "no_verified_contract",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "ACN",
@@ -799,7 +926,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "INTU",
@@ -839,7 +967,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "CRM",
@@ -879,7 +1008,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "HUBS",
@@ -919,7 +1049,8 @@
       "selectionReason": "Historical illustration only. Updated fundamental scenarios use this actual expiration. Live delta, IV, spread and OI have not been verified; no confirmed liquidity winner or buy approval.",
       "approval": "REFERENCE ONLY — NOT FULLY APPROVED",
       "verified": false,
-      "classification": "historical_reference"
+      "classification": "historical_reference",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     },
     {
       "ticker": "RMD",
@@ -953,7 +1084,8 @@
       "selectionRule": "Among eligible ITM contracts with comparable current data, apply the acceptable-spread gate, then highest OI wins; tightest relative spread breaks ties.",
       "verified": false,
       "deltaSource": "Retained prior modeled Greek based on a delayed ask; not refreshed/live. It cannot certify current eligibility.",
-      "classification": "no_verified_contract"
+      "classification": "no_verified_contract",
+      "contractReadiness": "NO ELIGIBLE LIQUID CONTRACT VERIFIED — WAIT"
     }
   ],
   "contractRules": {
@@ -982,7 +1114,7 @@
     "HUBS",
     "STE"
   ],
-  "scanCompletedAt": "2026-10-07T16:47:30Z",
+  "scanCompletedAt": "2026-10-07T12:21:22-05:00",
   "macroContext": {
     "treasuryYields": "Current web reports put the 10-year yield near 5.33%; contextual news estimate, not a synchronized live Treasury quote.",
     "breadth": "No verified live advance/decline series available. Do not infer broad capitulation from a single falling stock.",
@@ -1007,5 +1139,34 @@
     "eligibleDefinition": "Current verified ITM call with reported delta 0.60–0.75, current bid/ask, OI, IV and spread <=5% of midpoint.",
     "historicalDefinition": "Saved/delayed/modeled chain data may be displayed only as historical reference and must never be treated as the selected current contract.",
     "selection": "Among eligible comparable contracts, highest OI wins; tightest relative spread breaks ties."
+  },
+  "marketSession": {
+    "calendar": "NYSE 2026 holiday calendar",
+    "status": "REGULAR SESSION",
+    "sessionDate": "2026-10-07",
+    "regularHours": "09:30–16:00 America/New_York",
+    "holiday": false,
+    "earlyClose": false,
+    "verifiedAt": "2026-10-07T12:21:22-05:00",
+    "source": "https://www.nyse.com/trade/hours-calendars"
+  },
+  "quoteObservation": {
+    "observedAt": "2026-10-07T17:21:22.389Z",
+    "displayedAtChicago": "2026-10-07T12:21:22-05:00",
+    "source": "AlphaStocks",
+    "exchangeTimestampsAvailable": false
+  },
+  "technicalBarCutoff": "2026-10-06 regular-session close",
+  "optionFeedCutoff": "Historical/delayed references only; no current comparable live chain verified on this run.",
+  "dashboardRefreshed": true,
+  "stockEntryTriggers": [],
+  "publicationMode": "scheduled_intraday_dashboard_refresh",
+  "researchSnapshotImmutable": true,
+  "researchSnapshotAsOf": "2026-10-07 manual generate with owner-updated filters",
+  "quoteCutoffs": {
+    "equities": "2026-10-07T17:21:22.389Z",
+    "vix": "2026-10-07T15:52:00Z",
+    "technicals": "2026-10-06 regular-session close",
+    "options": "No current live comparable chain verified"
   }
 }
