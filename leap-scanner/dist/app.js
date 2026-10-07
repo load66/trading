@@ -21,7 +21,7 @@ async function json(path){
 }
 function toast(msg){const e=document.getElementById("toast");e.textContent=msg;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200);}
 function normalizedStatus(value){return String(value||"").trim().toUpperCase().replace(/^[^A-Z]+/,"");}
-function actionTone(value){const a=normalizedStatus(value);if(a==="HIGH-CONVICTION DIP"||a==="BUY ZONE — ENTRY 1"||a==="ADD ZONE")return"buy";if(a.includes("BROKEN")||a.includes("AVOID")||a.includes("DO NOT"))return"stop";return"watch";}
+function actionTone(value){const a=normalizedStatus(value);if(a==="HIGH-CONVICTION DIP"||a.startsWith("BUY ZONE")||a.startsWith("ADD ZONE"))return"buy";if(a.includes("BROKEN")||a.includes("AVOID")||a.includes("DO NOT"))return"stop";return"watch";}
 function actionRank(value){const a=normalizedStatus(value),order=["HIGH-CONVICTION DIP","BUY ZONE — ENTRY 1","ADD ZONE","NEAR SUPPORT — WATCH","WAIT FOR REVERSAL","WATCH"],rank=order.indexOf(a);return rank<0?6:rank;}
 function readinessTone(value){const r=normalizedStatus(value);if(/\b(?:NO CONTRACT APPROVED|NOT(?: FULLY)? APPROVED|POOR|AVOID|REJECT(?:ED)?|FAILED)\b/.test(r))return"bad";if(/\b(?:DELAYED|MODELED|REFERENCE|VERIFY|VERIFICATION|UNVERIFIED|WAIT|WATCH|NOT READY)\b/.test(r))return"reference";return["APPROVED","FULLY APPROVED","LIVE VERIFIED"].includes(r)?"good":"reference";}
 function readinessLabel(value){const tone=readinessTone(value);return tone==="good"?"APPROVED":tone==="bad"?"NOT APPROVED":"REFERENCE · VERIFY LIVE";}
@@ -66,6 +66,11 @@ function planFor(t){
   const base=market&&market.candidatePlans?market.candidatePlans.find(x=>x.ticker===t):null;
   const q=ownerQuoteFor(t);
   return base&&q?{...base,price:q.price,todayPct:Number.isFinite(q.dayChangePct)?q.dayChangePct:base.todayPct,quoteObservedAt:q.observedAt,livePriceSource:"ALPACA "+String(q.feed||"IEX").toUpperCase()}:base;
+}
+function stageAction(p){
+  const status=entryTimingStatus(p);
+  if(status.tone==="buy")return status.label;
+  return p&&p.action||"RESEARCH ONLY";
 }
 function contractDelta(c){return Number.isFinite(c.delta)?c.delta:Number.isFinite(c.modeledDelta)?c.modeledDelta:null;}
 function contractSpread(c){
@@ -225,8 +230,8 @@ function matchesFilter(c){
 }
 function todayPriority(c){
   const p=planFor(c.ticker)||{},a=normalizedStatus(p.action),support=supportTiming(p),entry=entryTimingStatus(p);
-  if(actionTone(a)==="buy")return 0;
-  if(entry.label==="RED-DAY ENTRY WATCH")return 1;
+  if(entry.tone==="buy")return 0;
+  if(actionTone(a)==="buy")return 1;
   if(support.state==="in")return 2;
   if(support.state==="near")return 3;
   if(a.includes("WAIT FOR REVERSAL"))return 4;
@@ -240,7 +245,7 @@ function supportTimingBadge(p){
   return '<div class="support-timing '+safe(e.tone)+'"><div><span>SUPPORT STATUS</span><b>'+safe(s.label)+'</b><small>'+safe(e.detail)+safe(pctText)+'</small></div><strong>'+safe(e.label)+'</strong></div>';
 }
 function setupCard(c,compact){
-  const p=planFor(c.ticker)||{},contract=contractFor(c.ticker),historical=historicalContractFor(c.ticker),action=p.action||"RESEARCH ONLY";
+  const p=planFor(c.ticker)||{},contract=contractFor(c.ticker),historical=historicalContractFor(c.ticker),action=stageAction(p);
   const event=p.eventRisk?'<div class="event-note">⚠ '+safe(p.eventRisk)+'</div>':"";
   const ladder=(p.entry1||p.add2||p.finalAdd)?'<div class="entry-ladder"><div><span>'+safe(p.entry1Label||"1ST MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.entry1||"—")+'</b></div><div><span>'+safe(p.add2Label||"2ND MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.add2||"—")+'</b></div><div><span>'+safe(p.finalAddLabel||"FINAL DEEP SUPPORT")+' · 40%</span><b>'+safe(p.finalAdd||"—")+'</b></div></div>':"";
   const reasons=(p.entry1Reason||p.add2Reason||p.finalAddReason)?'<div class="support-reasons"><div><b>Why this is the 1st buy area</b><p>'+safe(p.entry1Reason||"—")+'</p></div><div><b>Why this is the 2nd buy area</b><p>'+safe(p.add2Reason||"—")+'</p></div><div><b>Why this is the final deep-buy area</b><p>'+safe(p.finalAddReason||"—")+'</p></div></div>':"";
@@ -259,7 +264,7 @@ function setupCard(c,compact){
     qualificationGates(c)+rankMovementDetail(c)+supportTimingBadge(p)+
     '<p class="business-summary"><b>'+safe(c.netSummary)+'</b> · FCF '+safe(c.fcfSummary)+'<br>Technical: '+safe(p.technicalState||c.state||"Unverified")+' · '+contractSummary+'</p>'+
     '<div class="card-section-stack">'+
-      '<details class="card-more" data-detail-key="entry:'+safe(c.ticker)+'"><summary>Entry plan & support <span>⌄</span></summary><div class="deep-detail">'+ladder+reasons+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+'</div></details>'+
+      '<details class="card-more" data-detail-key="entry:'+safe(c.ticker)+'"><summary>Entry plan & support <span>⌄</span></summary><div class="deep-detail">'+ladder+reasons+'<p class="confirm"><b>Entry rule:</b> Buy or add in the planned major support zone while the thesis remains intact. Verify material news and the actual LEAPS contract before placing a trade.</p>'+event+'</div></details>'+
       '<details class="card-more" data-detail-key="fundamentals:'+safe(c.ticker)+'"><summary>Fundamentals & cash flow <span>⌄</span></summary><div class="deep-detail">'+cashFlowPanel(c)+earningsQuality(c)+sectorDetail+fundamentalDetails(c)+'</div></details>'+
       '<details class="card-more" data-detail-key="valuation:'+safe(c.ticker)+'"><summary>Valuation & thesis <span>⌄</span></summary><div class="deep-detail">'+targetBlock+'<p><b>Why down:</b> '+safe(c.down||"—")+'</p><p><b>Valuation:</b> '+safe(c.valuation||"—")+'</p><p><b>Moat:</b> '+safe(c.moat||"—")+'</p><p><b>Prior-high reference:</b> '+safe(c.recovery||"—")+'</p><p><b>Invalidation:</b> '+safe(c.invalidation||"—")+'</p></div></details>'+
       '<details class="contract-panel" data-detail-key="contract-panel:'+safe(c.ticker)+'"><summary><span class="contract-panel-title">LEAP contract<small>'+safe(contract?contract.reference||"Verified candidate":historical?"Historical reference only":"Awaiting verified chain")+'</small></span><span class="contract-panel-toggle">⌄</span></summary><div class="contract-panel-body">'+optionBody+'</div></details>'+
@@ -306,12 +311,14 @@ function supportTiming(p){
 }
 function entryTimingStatus(p){
   const s=supportTiming(p),day=Number(p&&p.todayPct),action=normalizedStatus(p&&p.action);
-  if(action.includes("DO NOT ADD")||action.includes("BROKEN")||action.includes("AVOID"))return {label:"NO ENTRY",tone:"stop",detail:"Action blocked by the current market plan."};
-  if(s.state==="in"||s.state==="near"){
-    if(Number.isFinite(day)&&day>=-5&&day<=-2)return {label:"RED-DAY ENTRY WATCH",tone:"buy",detail:fmtMove(day)+" today · "+s.label};
-    if(Number.isFinite(day)&&day<-5)return {label:"EXTENDED SELLOFF — WAIT",tone:"stop",detail:fmtMove(day)+" today · require reversal confirmation"};
-    return {label:s.state==="in"?"AT SUPPORT — WAIT FOR CONFIRMATION":"NEAR SUPPORT — WATCH",tone:"watch",detail:(Number.isFinite(day)?fmtMove(day)+" today · ":"")+s.label};
+  if(action.includes("BROKEN")||action.includes("AVOID"))return {label:"NO ENTRY",tone:"stop",detail:"Thesis or market plan blocks an entry."};
+  if(s.state==="in"){
+    const thesis=normalizedStatus(p&&p.thesisStatus);
+    if(!thesis.startsWith("INTACT")||thesis.includes("UNRESOLVED"))return {label:"THESIS CHECK — WAIT",tone:"stop",detail:"Verify material news and business thesis before a staged entry."};
+    const stage=s.level.key==="entry1"?"BUY ZONE — ENTRY 1":s.level.key==="add2"?"ADD ZONE — ADD 2":"ADD ZONE — FINAL ADD";
+    return {label:stage,tone:"buy",detail:(Number.isFinite(day)?fmtMove(day)+" today · ":"")+s.label+" · verify event risk and contract"};
   }
+  if(s.state==="near")return {label:"NEAR SUPPORT — WATCH",tone:"watch",detail:(Number.isFinite(day)?fmtMove(day)+" today · ":"")+s.label};
   return {label:"WAIT",tone:"watch",detail:s.label};
 }
 function robinhoodLevelState(price,level){
@@ -334,11 +341,11 @@ function robinhoodAlertCard(c){
   const timing=supportTiming(p),timingEntry=entryTimingStatus(p);
   const currentSupport='<div class="rh-current-support '+safe(timing.state)+'"><span>CURRENT SUPPORT STATUS</span><b>'+safe(timing.label)+'</b><small>'+safe(timingEntry.detail)+'</small></div>';
   const nextBlock=next?'<div class="rh-next"><div><span>NEXT ROBINHOOD ALERT</span><b>'+money.format(next.target)+'</b><small>'+safe(next.label)+' · set trigger to “Falls below”</small></div><button type="button" data-copy-price="'+next.target.toFixed(2)+'">COPY TARGET</button></div>':'<div class="rh-next exhausted"><div><span>NEXT ROBINHOOD ALERT</span><b>NO LOWER PLANNED LEVEL</b><small>Price has already reached or crossed every published support alert. Wait for a refreshed plan.</small></div></div>';
-  const action=p.action||"RESEARCH ONLY";
+  const action=stageAction(p);
   return '<article class="rh-card"><div class="rh-card-head"><div class="rh-symbol"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><div><b>'+safe(c.ticker)+'</b><small>'+safe(c.company||"Qualified company")+'</small></div></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+
     '<div class="rh-current"><div><span>CURRENT PRICE</span><b>'+money.format(price)+'</b></div><div><span>TODAY</span><b class="'+(Number(p.todayPct)<0?"down":Number(p.todayPct)>0?"up":"")+'">'+fmtMove(Number(p.todayPct))+'</b></div><div><span>ROBINHOOD TRIGGER</span><b>Falls below</b></div></div>'+
     currentSupport+nextBlock+'<div class="rh-levels">'+levelsHtml+'</div>'+
-    '<p class="rh-card-note">Price alert only. A LEAPS entry still requires the −2% to −5% red-day condition, valid support, intact thesis and confirmation from the intraday watch.</p></article>';
+    '<p class="rh-card-note">Price alert only. The 30% / 30% / 40% plan uses the three published major support zones while the thesis remains intact. Verify material news and the LEAPS contract before trading; day-change percentage is context.</p></article>';
 }
 function renderRobinhoodAlerts(allCards){
   const el=document.getElementById("robinhood-alert-list");
@@ -367,8 +374,7 @@ function renderDesk(){
   const count=document.getElementById("filter-count");if(count)count.textContent=visible.length+" of "+allCards.length;
   document.querySelectorAll("[data-filter]").forEach(b=>b.classList.toggle("active",b.dataset.filter===activeFilter));
 
-  const actions=allCards.map(c=>normalizedStatus((planFor(c.ticker)||{}).action));
-  const buyCount=actions.filter(a=>actionTone(a)==="buy").length;
+  const buyCount=allCards.filter(c=>entryTimingStatus(planFor(c.ticker)||{}).tone==="buy").length;
   const geometricSupportCount=allCards.filter(c=>{const s=supportTiming(planFor(c.ticker)||{});return s.state==="in"||s.state==="near";}).length;
   const supportCount=geometricSupportCount;
   const waitCount=allCards.filter(c=>entryTimingStatus(planFor(c.ticker)||{}).label.includes("WAIT")).length;
@@ -377,7 +383,7 @@ function renderDesk(){
   set("decision-buy",buyCount);set("decision-support",supportCount);set("decision-wait",waitCount);set("decision-stop",stopCount);
   const today=allCards.slice().sort((a,b)=>todayPriority(a)-todayPriority(b)||a.rank-b.rank).slice(0,3);
   const topToday=document.getElementById("decision-top3");
-  if(topToday)topToday.innerHTML=today.map(c=>{const p=planFor(c.ticker)||{};return '<span><b>#'+safe(c.rank)+' '+safe(c.ticker)+'</b><small>'+safe(ownerLive?entryTimingStatus(p).label:p.action||"RESEARCH ONLY")+'</small></span>';}).join("");
+  if(topToday)topToday.innerHTML=today.map(c=>{const p=planFor(c.ticker)||{};return '<span><b>#'+safe(c.rank)+' '+safe(c.ticker)+'</b><small>'+safe(stageAction(p))+'</small></span>';}).join("");
 
   const f=(research&&research.researchFunnel)||{};
   set("coverage-universe",f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString());

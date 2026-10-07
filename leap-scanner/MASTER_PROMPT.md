@@ -190,7 +190,7 @@ For each qualified stock provide:
 Use meaningful underlying-stock support zones, not arbitrary percentage drops.
 
 Only add when:
-MAJOR SUPPORT + INTACT THESIS + ACCEPTABLE VALUATION + PRICE CONFIRMATION
+PUBLISHED MAJOR SUPPORT + INTACT THESIS + ACCEPTABLE VALUATION + MATERIAL-NEWS CHECK
 
 Never average because the option premium alone is down.
 
@@ -322,7 +322,7 @@ Classify:
 - STILL FALLING
 - TECHNICALLY BROKEN
 
-Use weak technical structure to reduce Technical Quality points and to control ACTIONABILITY:
+Use weak technical structure to reduce Technical Quality points and inform support quality, while preserving the staged support-entry rule:
 - WAIT FOR REVERSAL
 - DO NOT ADD YET
 - THESIS BROKEN — AVOID only when the business thesis itself is broken or technical failure is confirmed alongside material fundamental deterioration.
@@ -599,7 +599,7 @@ For each qualified ticker:
 - For a Robinhood **Falls below target price** alert, use the **upper edge of the support zone** as the suggested target. This produces an early warning when price first enters the support zone.
 - If price is already inside or below a support zone, mark that level **IN ZONE** or **CROSSED** and promote the next lower uncrossed support as the next usable Robinhood alert.
 - Preserve all three support levels on screen so the user can stage alerts consistently with the 30% / 30% / 40% entry plan.
-- A Robinhood price alert is only an early warning, never a buy signal. Action still requires the stock-specific entry rules: roughly −2% to −5% on the day, valid major support, intact fundamentals, no thesis-damaging earnings/guidance/FCF deterioration, and stabilization/reversal confirmation.
+- A Robinhood price alert is an early warning. A staged stock entry occurs when the current price is inside the published support zone and the thesis remains intact, with no thesis-damaging earnings/guidance/FCF deterioration. Check material news and current LEAPS contract data before trading. The day-change percentage and reversal are not entry gates.
 - When the qualified list changes, newly qualified names must appear automatically after their market plan is published; removed names must disappear automatically. If research updates before a matching market plan exists, show **SUPPORT PLAN PENDING** rather than inventing levels.
 - The app should poll the latest Supabase research and market snapshots and rebuild the alert section automatically. GitHub JSON remains fallback only.
 - Publication validation must reject a qualified market plan whose current/reference price or three support zones are missing/unparseable, because the automated alert panel depends on those fields.
@@ -615,7 +615,7 @@ Support-state calculation must be geometric, not inferred from the action-label 
 - If price is above but within approximately 1% of the next support zone, display **NEAR SUPPORT**.
 - If price has already passed a support zone, mark that level crossed and evaluate the next lower planned support.
 - The dashboard's AT / NEAR SUPPORT count must use these price-versus-zone calculations, not action-label strings.
-- Being at support is not automatically an A+ entry. The separate entry-timing layer still requires the roughly -2% to -5% red-day condition, intact thesis, no damaging earnings/guidance/FCF change, and stabilization/reversal confirmation.
+- Inside 1st Major Support means BUY ZONE — ENTRY 1 (30%), inside 2nd Major Support means ADD ZONE — ADD 2 (30%), and inside Final Deep Support means ADD ZONE — FINAL ADD (40%), provided the thesis remains intact and no damaging earnings/guidance/FCF change is known. Near support is a watch state. Day-change percentage and reversal confirmation are context, not hard gates. Option contract readiness remains separately verified.
 - Every intraday scheduled run during the regular market session must publish a fresh market snapshot with refreshed qualified-stock prices/day changes and recomputed support status, even when no user notification is warranted. User notifications remain conditional; dashboard freshness does not.
 
 
@@ -627,8 +627,13 @@ LEAPS Desk owner live-price mode must be zero-touch after the owner has authenti
 - On page load, if a valid owner session exists, start the Alpaca quote overlay automatically without requiring an Enable or Refresh button.
 - Poll the private Alpaca quote service about every 15 seconds while the page is visible.
 - Refresh immediately when the page regains focus or visibility.
-- Recompute current price, day-change percentage, AT / NEAR / ABOVE support status, red-day entry status, and Robinhood alert progression from the Alpaca overlay in the browser.
+- Recompute current price, day-change percentage, AT / NEAR / ABOVE support status, 30% / 30% / 40% staged entry state, and Robinhood alert progression from the Alpaca overlay in the browser.
 - Keep a visible source/status badge such as ALPACA IEX LIVE.
 - Never expose Alpaca API credentials in browser code.
 - Do not make the private Alpaca quote endpoint anonymous merely to remove the owner sign-in requirement.
 - Public visitors remain on the published scheduled snapshot; owner live data is private and supplemental.
+
+
+## Owner Staged-Support Entry Override — October 7, 2026
+
+This section overrides older red-day or reversal language throughout this prompt and previous snapshots. For each fundamentally qualified company with a published three-zone support plan, current price inside the 1st, 2nd, or Final Deep Support zone marks the corresponding 30% / 30% / 40% staged underlying-stock entry. Do not require a −2% to −5% day move, intraday stabilization, VWAP reclaim, or reversal confirmation. If price is merely near a zone, show watch. If price moves outside a zone, recompute the state geometrically. Preserve business qualification, the intact-thesis requirement, material earnings/guidance/FCF damage checks, and the separate live LEAPS contract-quality requirements. A zone label does not assert that a particular option contract is approved or place an order. Do not average down solely because an option premium falls; use the next planned underlying support and recheck the thesis. Public prices are dated provider observations; owner Alpaca remains private.
