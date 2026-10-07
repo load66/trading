@@ -24,6 +24,8 @@
     liveState="off";
     liveError="";
     stopPolling();
+    const panel=document.getElementById("alpaca-owner-panel");if(panel)panel.hidden=true;
+    const toggle=document.getElementById("alpaca-owner-toggle");if(toggle)toggle.setAttribute("aria-expanded","false");
     updateUi();
   }
   function clearQuotes(){
@@ -129,16 +131,24 @@
   }
   function setStatus(mode,message=""){
     const status=document.getElementById("alpaca-live-status");
-    if(!status)return;
-    status.className="alpaca-live-status "+mode;
-    status.title=mode==="error"?message:"";
+    const toggle=document.getElementById("alpaca-owner-toggle");
+    if(status){status.className="alpaca-live-status "+mode;status.title=mode==="error"?message:"";}
     if(mode==="live"){
       const age=lastAsOf?Math.max(0,Math.round((Date.now()-Date.parse(lastAsOf))/1000)):0;
       const state=window.leapsOwnerPriceState||{};
-      status.textContent="ALPACA "+String(feed).toUpperCase()+" LIVE"+(state.count<state.total?" · "+state.count+"/"+state.total:"")+" · "+age+"s";
-    }else if(mode==="error")status.textContent="LIVE PRICE ERROR · SAVED SNAPSHOT";
-    else if(mode==="ready")status.textContent="OWNER MODE READY";
-    else status.textContent="OWNER LIVE OFF";
+      if(status)status.textContent="ALPACA "+String(feed).toUpperCase()+" LIVE"+(state.count<state.total?" · "+state.count+"/"+state.total:"")+" · "+age+"s";
+      if(toggle)toggle.textContent="● IEX LIVE"+(state.count<state.total?" "+state.count+"/"+state.total:"");
+    }else if(mode==="error"){
+      if(status)status.textContent="LIVE PRICE ERROR · SAVED SNAPSHOT";
+      if(toggle)toggle.textContent="● PRICE PAUSED";
+    }else if(mode==="ready"){
+      if(status)status.textContent="OWNER MODE READY";
+      if(toggle)toggle.textContent="● OWNER READY";
+    }else{
+      if(status)status.textContent="OWNER LIVE OFF";
+      if(toggle)toggle.textContent="Owner sign in";
+    }
+    if(toggle){toggle.className="alpaca-owner-toggle "+mode;toggle.title=mode==="error"?message:"";}
   }
   function updateUi(){
     const signed=Boolean(session?.access_token);
@@ -155,10 +165,10 @@
     const desc=document.getElementById("alpaca-live-description");
     if(desc){
       desc.textContent=!signed
-        ?"Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward."
+        ?"Private stock and ETF prices. Sign in once; your session refreshes automatically."
         :liveState==="error"
-          ?"Live quotes are unavailable. Showing the saved market snapshot and retrying automatically."
-          :"Owner Live Mode checks qualified stocks, SPY and QQQ about every 15 seconds. Recent trades update prices and support status; symbols without a recent trade stay on the saved snapshot. VIX, research and option references use the published snapshot.";
+          ?"Live quotes are unavailable. Saved prices are shown while automatic retries continue."
+          :"Qualified stocks, SPY and QQQ refresh about every 15 seconds. VIX stays on the saved snapshot.";
     }
     if(signed&&liveState==="live"&&lastAsOf&&Date.now()-Date.parse(lastAsOf)>45000){
       liveUnavailable("Quotes are stale; showing scheduled snapshot");
@@ -168,13 +178,18 @@
   }
   function injectUi(){
     if(document.getElementById("alpaca-owner-live"))return;
-    const anchor=document.querySelector(".quick-guide")||document.getElementById("market");
-    if(!anchor)return;
+    const mount=document.getElementById("owner-mount");
+    if(!mount)return;
     const section=document.createElement("section");
     section.id="alpaca-owner-live";
-    section.className="alpaca-owner-live";
-    section.innerHTML='<div class="alpaca-live-head"><div><span class="kicker">OWNER LIVE PRICE MODE</span><h2>Alpaca price overlay</h2></div><span id="alpaca-live-status" class="alpaca-live-status off">OWNER LIVE OFF</span></div><p class="home-queue-note" id="alpaca-live-description">Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward.</p><form id="alpaca-signin-form" class="alpaca-signin"><input id="alpaca-email" type="email" autocomplete="email" placeholder="Email" required><input id="alpaca-password" type="password" autocomplete="current-password" placeholder="Password" required><button type="submit">Sign in once</button><small id="alpaca-auth-note"></small></form><div id="alpaca-live-controls" class="alpaca-live-controls" hidden><small>Automatic mode is on. Alpaca refreshes qualified-stock prices about every 15 seconds whenever this page is open. Your saved owner session refreshes itself automatically.</small><button type="button" id="alpaca-signout">Sign out</button></div>';
-    anchor.insertAdjacentElement("afterend",section);
+    section.className="alpaca-owner-menu";
+    section.innerHTML='<button type="button" id="alpaca-owner-toggle" class="alpaca-owner-toggle off" aria-controls="alpaca-owner-panel" aria-expanded="false">Owner sign in</button><div id="alpaca-owner-panel" class="alpaca-owner-panel" hidden><div class="alpaca-live-head"><div><span class="kicker">OWNER ACCESS</span><h2>Private live prices</h2></div><span id="alpaca-live-status" class="alpaca-live-status off">OWNER LIVE OFF</span></div><p id="alpaca-live-description">Private stock and ETF prices. Sign in once; your session refreshes automatically.</p><form id="alpaca-signin-form" class="alpaca-signin"><input id="alpaca-email" type="email" autocomplete="email" placeholder="Email" required><input id="alpaca-password" type="password" autocomplete="current-password" placeholder="Password" required><button type="submit">Sign in</button><small id="alpaca-auth-note" role="alert"></small></form><div id="alpaca-live-controls" class="alpaca-live-controls" hidden><small>Automatic updates are on for this device.</small><button type="button" id="alpaca-signout">Sign out</button></div></div>';
+    mount.appendChild(section);
+    const panel=section.querySelector("#alpaca-owner-panel"),toggle=section.querySelector("#alpaca-owner-toggle");
+    const close=()=>{panel.hidden=true;toggle.setAttribute("aria-expanded","false");};
+    toggle.addEventListener("click",()=>{panel.hidden=!panel.hidden;toggle.setAttribute("aria-expanded",String(!panel.hidden));});
+    document.addEventListener("click",e=>{if(!section.contains(e.target))close();});
+    document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
     section.querySelector("#alpaca-signin-form").addEventListener("submit",async e=>{
       e.preventDefault();
       const note=section.querySelector("#alpaca-auth-note");
@@ -185,6 +200,7 @@
         note.textContent="";
         liveState="ready";
         updateUi();
+        close();
         await poll();
         schedule();
       }catch(err){note.textContent=err?.message||"Sign in failed";}

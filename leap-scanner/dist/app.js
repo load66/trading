@@ -7,6 +7,7 @@ const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maxim
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"});
+const shortDateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 let research=null,previousResearch=null,market=null,marketSavedAt=null,researchSavedAt=null,marketFromDatabase=false,researchFromDatabase=false,activeFilter="all";
 
 async function sb(table,query){
@@ -27,11 +28,12 @@ function readinessTone(value){const r=normalizedStatus(value);if(/\b(?:NO CONTRA
 function readinessLabel(value){const tone=readinessTone(value);return tone==="good"?"APPROVED":tone==="bad"?"NOT APPROVED":"REFERENCE · VERIFY LIVE";}
 function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
 function formatTime(value){const time=new Date(value||"");return Number.isNaN(time.getTime())?"Timestamp unrecorded":dateFmt.format(time);}
+function shortTime(value){const time=new Date(value||"");return Number.isNaN(time.getTime())?"time unavailable":shortDateFmt.format(time);}
 function sourceMode(mode,time){const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="DATABASE SNAPSHOT"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=formatTime(time);}
 function renderFreshness(){
   document.getElementById("market-saved-time").textContent=formatTime(marketSavedAt||market&&market.scanCompletedAt);
   document.getElementById("research-saved-time").textContent=formatTime(researchSavedAt||research&&research.scanCompletedAt);
-  const cutoff=document.getElementById("price-cutoff"),note=document.getElementById("feed-note");
+  const cutoff=document.getElementById("price-cutoff"),note=document.getElementById("feed-note"),summary=document.getElementById("source-short");
   const savedCutoff=market&&market.marketAsOf?market.marketAsOf:"Price cutoff unverified";
   const owner=typeof window!=="undefined"?window.leapsOwnerPriceState:null;
   if(owner?.active){
@@ -40,6 +42,7 @@ function renderFreshness(){
     document.getElementById("fresh-time").textContent=formatTime(owner.asOf);
     cutoff.textContent="Owner Alpaca "+String(owner.feed||"IEX").toUpperCase()+" response "+formatTime(owner.asOf)+". Saved public cutoff: "+savedCutoff;
     note.textContent="Private owner quotes update "+owner.count+" of "+owner.total+" qualified stocks/ETFs with recent trades. Any remaining prices, VIX, market regime, fundamentals and option references use the latest published snapshot.";
+    if(summary)summary.textContent="Owner Alpaca "+String(owner.feed||"IEX").toUpperCase()+" · "+owner.count+"/"+owner.total+" recent · "+shortTime(owner.asOf);
     return;
   }
   sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
@@ -47,6 +50,7 @@ function renderFreshness(){
   const observed=Date.parse(market&&market.market&&market.market.spy&&market.market.spy.observedAt||"");
   const age=Number.isFinite(observed)?Math.max(0,Math.floor((Date.now()-observed)/60000)):null;
   note.textContent=(age===null?"Price observation time is unverified. ":"Prices were observed "+age+" minutes ago. ")+"Saved research snapshots; prices and option references may be delayed. A new upload does not make the quotes live.";
+  if(summary)summary.textContent="Public snapshot · observed "+shortTime(market?.quoteObservation?.observedAt||market?.market?.spy?.observedAt);
 }
 function ownerQuoteFor(t){
   if(typeof window==="undefined"||!window.leapsOwnerPriceState?.active)return null;
@@ -363,7 +367,8 @@ function renderDesk(){
   const trig=document.getElementById("trigger-pill");
   trig.textContent=ownerLive?"PUBLISHED SCAN":market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";
   trig.className="state-pill "+(market&&market.triggered?"hot":"good");
-  document.getElementById("market-message").textContent=(ownerLive?"Saved market-regime assessment; owner prices below refresh separately. ":"")+(market&&market.message?market.message:"No current market message.");
+  document.getElementById("market-message").textContent=(market?.triggered?"Broad-market dip trigger active. Review the support zones below.":"No broad-market dip trigger. Review qualified stocks at planned support below.")+(ownerLive?" Owner prices refresh automatically.":"");
+  const published=document.getElementById("published-assessment");if(published)published.textContent=market?.message||"No published assessment available.";
   document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
 
   const allCards=((research&&research.candidates)||[]).filter(c=>c.qualified).sort((a,b)=>{
@@ -453,7 +458,7 @@ async function pollLatest(){
     if(snapshots&&snapshots[0]&&snapshots[0].payload){if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]&&snapshots[1].payload?snapshots[1].payload:null;changed=true;}researchFromDatabase=true;}
     sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
     if(changed)renderAll();else renderFreshness();
-  }catch(e){sourceMode("REFRESH UNAVAILABLE",marketSavedAt);document.getElementById("feed-note").textContent="Latest refresh unavailable. Showing the last saved snapshot; verify its price cutoff before acting.";}
+  }catch(e){sourceMode("REFRESH UNAVAILABLE",marketSavedAt);document.getElementById("feed-note").textContent="Latest refresh unavailable. Showing the last saved snapshot; verify its price cutoff before acting.";const summary=document.getElementById("source-short");if(summary)summary.textContent="Refresh unavailable · saved prices "+shortTime(market?.quoteObservation?.observedAt);}
 }
 setInterval(pollLatest,60000);
 
