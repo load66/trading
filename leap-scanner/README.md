@@ -46,3 +46,33 @@ Massive daily adjusted price history supplied moving averages and support refere
 Update `scripts/build_strict_scan.py` only after a fresh manual financial audit; `render_strict.py` renders the current data to one combined PNG, eight individual cards and a ZIP. `strict_technicals.json` is a dated snapshot, not a data feed. Do not rerun the one-time UI migration script on an already migrated checkout.
 
 Share tests cover cached file preparation, synchronous native-share invocation, cancellation, fallback preview and full-list selection. No physical phone/browser share-sheet test was available. Mobile CSS retains 44px+ controls and readable horizontal scrolling for quarterly evidence.
+
+
+## Daily dip / entry-plan layer
+
+The dashboard now separates **audited company qualification** from **dated market-entry timing**.
+
+- `dist/data/strict-scan-YYYY-MM-DD.json` remains the fundamental research record.
+- `dist/data/market-latest.json` is the replaceable market-regime and staged-support layer.
+- The daily layer may change without rewriting the audited company screen.
+- A market trigger starts analysis; it never creates an automatic trade.
+
+Default market-dislocation thresholds:
+
+- SPY <= -1.75% from the prior close
+- QQQ <= -2.25% from the prior close
+- VIX > 20
+- or a material macro/news shock causing broad indiscriminate selling
+
+Stronger dip context is SPY <= -2.5% and/or QQQ <= -3.0%, especially with elevated volatility.
+
+Each qualified name can carry up to three underlying-stock support zones using a 30% / 30% / 40% staged plan. Adds require an intact thesis and price confirmation. Never average because an option premium alone is falling.
+
+The first dated entry map is prepared for the October 7, 2026 session using October 6 closing data. It correctly reports no A+ broad-market dip trigger. Live option contract selection remains separate and must verify expiration, delta, IV, bid/ask spread and open interest before any contract is chosen.
+
+### Intended automation
+
+1. **2:00 PM America/Chicago on U.S. trading weekdays:** always create the daily LEAPS market/entry report.
+2. **Intraday condition watch:** check market conditions during the session and notify only when SPY/QQQ/VIX/macro conditions produce a meaningful dip.
+3. On a triggered scan, refresh the market regime first, then evaluate the qualified company list against support, thesis integrity, valuation and reversal confirmation.
+4. If GitHub write access is available during the scheduled run, update `dist/data/market-latest.json` with the new dated snapshot. Do not modify historical strict-scan files merely because market prices moved.
