@@ -118,3 +118,20 @@ Bottom navigation:
 - **Research** — two-lane methodology, rankings, scan history, rejections and scoring.
 
 The app reads Supabase first and falls back to GitHub JSON if the database feed is temporarily unavailable.
+
+
+## Manual research publishing from ChatGPT
+
+The main LEAPS research chat is the authoritative source for full company-universe research.
+
+Typing **generate** in that chat means:
+
+- Run a fresh full-company research pass using Massive, AlphaStocks, current filings/web research, market data, earnings/event dates and option-chain research where available.
+- Rebuild the ranked qualified universe under `MASTER_PROMPT.md`.
+- Insert a new Supabase `public.leap_research_snapshots` row with `source_type='manual_chat'`.
+- Insert a new Supabase `public.leap_scans` row with `source_type='manual_chat'`.
+- Update `dist/data/research-latest.json` and `dist/data/market-latest.json` as GitHub fallbacks.
+- Do not require a Railway redeploy for a data-only refresh; the public app reads Supabase first.
+- Preserve older dated research snapshots for auditability.
+
+Scheduled jobs are intentionally narrower: they refresh market regime, support/action status, event risk and contract readiness for the latest manually approved universe. They must not add/remove/re-rank companies or rewrite the fundamental research universe.
