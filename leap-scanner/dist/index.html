@@ -9,8 +9,8 @@
 <link rel="canonical" href="https://leaps-desk.up.railway.app/">
 <script>if(location.search){history.replaceState(null,"",location.pathname+location.hash);}</script>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="styles.css?v=20261007-desk-v15-refresh">
-<script src="app.js?v=20261007-rank-order-v2" defer></script>
+<link rel="stylesheet" href="styles.css?v=20261007-decision-desk-v1">
+<script src="app.js?v=20261007-decision-desk-v1" defer></script>
 </head>
 <body>
 <div class="app-shell">
@@ -36,9 +36,17 @@
   </section>
 
   <section class="quick-guide" aria-label="How to use the LEAPS Desk">
-    <div><span>1</span><p><b>Check the action.</b> WATCH means wait. BUY ZONE means price and support are lining up.</p></div>
-    <div><span>2</span><p><b>Read the support reason.</b> We explain why each buy area matters before risking money.</p></div>
-    <div><span>3</span><p><b>Check the contract last.</b> Prefer a liquid ITM LEAP that stays ITM in conservative valuation scenarios.</p></div>
+    <div><span>1</span><p><b>Check qualification.</b> Green gates mean the business passes the hard research requirements.</p></div>
+    <div><span>2</span><p><b>Check today’s action.</b> Qualification and entry timing are separate decisions.</p></div>
+    <div><span>3</span><p><b>Check the contract last.</b> Only a current, liquid 0.60–0.75 delta ITM LEAP can be contract-ready.</p></div>
+  </section>
+
+  <section class="decision-bar" id="decision-bar" aria-label="Today's LEAPS decision summary">
+    <div class="decision-stat"><span>A+ ENTRIES</span><b id="decision-buy">—</b></div>
+    <div class="decision-stat"><span>NEAR SUPPORT</span><b id="decision-support">—</b></div>
+    <div class="decision-stat"><span>WAIT</span><b id="decision-wait">—</b></div>
+    <div class="decision-stat"><span>DO NOT ADD</span><b id="decision-stop">—</b></div>
+    <div class="decision-top"><span>TOP 3 TO WATCH TODAY</span><div id="decision-top3"></div></div>
   </section>
 
   <section class="desk-section" id="setups">
@@ -47,8 +55,20 @@
       <div>
         <span class="kicker">QUALIFIED OPPORTUNITY QUEUE</span>
         <h2>All qualified setups</h2>
-        <p class="home-queue-note">Each qualified stock includes its research, support plan and eligible LEAP contract reference. Ranked by research score; today’s action is shown separately.</p>
+        <p class="home-queue-note">Each qualified stock includes its research, support plan and eligible LEAP contract reference. Ranked permanently by research rank. Filters never renumber companies; today’s action is shown separately.</p>
       </div>
+    </div>
+    <div class="queue-tools" aria-label="Qualified list filters">
+      <div class="filter-bar">
+        <button type="button" data-filter="all" class="active">ALL</button>
+        <button type="button" data-filter="tier1">TIER 1</button>
+        <button type="button" data-filter="tier2">TIER 2</button>
+        <button type="button" data-filter="tier3">TIER 3</button>
+        <button type="button" data-filter="support">NEAR SUPPORT</button>
+        <button type="button" data-filter="wait">WAIT</button>
+        <button type="button" data-filter="contract">CONTRACT READY</button>
+      </div>
+      <span id="filter-count" class="filter-count">—</span>
     </div>
     <div id="top-setups" class="stack"></div>
   </section>
