@@ -113,8 +113,20 @@
     const signed=Boolean(session?.access_token);
     const form=document.getElementById("alpaca-signin-form");
     const controls=document.getElementById("alpaca-live-controls");
-    if(form)form.hidden=signed;
-    if(controls)controls.hidden=!signed;
+    if(form){
+      form.hidden=signed;
+      form.style.display=signed?"none":"";
+    }
+    if(controls){
+      controls.hidden=!signed;
+      controls.style.display=signed?"flex":"none";
+    }
+    const desc=document.getElementById("alpaca-live-description");
+    if(desc){
+      desc.textContent=signed
+        ?"Owner Live Mode is active. Qualified-stock prices refresh automatically about every 15 seconds and support/entry status recalculates with no manual action."
+        :"Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward.";
+    }
     setStatus(signed?(Object.keys(liveQuotes).length?"live":"ready"):"off");
   }
   function injectUi(){
@@ -124,7 +136,7 @@
     const section=document.createElement("section");
     section.id="alpaca-owner-live";
     section.className="alpaca-owner-live";
-    section.innerHTML='<div class="alpaca-live-head"><div><span class="kicker">OWNER LIVE PRICE MODE</span><h2>Alpaca price overlay</h2></div><span id="alpaca-live-status" class="alpaca-live-status off">OWNER LIVE OFF</span></div><p class="home-queue-note">Private owner-only Alpaca market data. After one successful owner sign-in, qualified-stock prices refresh automatically about every 15 seconds whenever this page is open, and the support/entry display recalculates with no manual refresh. Public visitors continue seeing the scheduled snapshot.</p><form id="alpaca-signin-form" class="alpaca-signin"><input id="alpaca-email" type="email" autocomplete="email" placeholder="Email" required><input id="alpaca-password" type="password" autocomplete="current-password" placeholder="Password" required><button type="submit">Sign in once</button><small id="alpaca-auth-note"></small></form><div id="alpaca-live-controls" class="alpaca-live-controls" hidden><small>Automatic mode is on. Alpaca refreshes qualified-stock prices about every 15 seconds whenever this page is open. Your saved owner session refreshes itself automatically.</small><button type="button" id="alpaca-signout">Sign out</button></div>';
+    section.innerHTML='<div class="alpaca-live-head"><div><span class="kicker">OWNER LIVE PRICE MODE</span><h2>Alpaca price overlay</h2></div><span id="alpaca-live-status" class="alpaca-live-status off">OWNER LIVE OFF</span></div><p class="home-queue-note" id="alpaca-live-description">Sign in once on this device to enable private Alpaca live prices. Your saved owner session will refresh automatically afterward.</p><form id="alpaca-signin-form" class="alpaca-signin"><input id="alpaca-email" type="email" autocomplete="email" placeholder="Email" required><input id="alpaca-password" type="password" autocomplete="current-password" placeholder="Password" required><button type="submit">Sign in once</button><small id="alpaca-auth-note"></small></form><div id="alpaca-live-controls" class="alpaca-live-controls" hidden><small>Automatic mode is on. Alpaca refreshes qualified-stock prices about every 15 seconds whenever this page is open. Your saved owner session refreshes itself automatically.</small><button type="button" id="alpaca-signout">Sign out</button></div>';
     anchor.insertAdjacentElement("afterend",section);
     section.querySelector("#alpaca-signin-form").addEventListener("submit",async e=>{
       e.preventDefault();
