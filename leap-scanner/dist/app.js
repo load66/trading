@@ -4,7 +4,7 @@ const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maxim
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-let research=null,market=null,history=[],filter="all",researchStamp=null;
+let research=null,market=null;
 
 async function sb(table,query){
   const r=await fetch(SB_URL+"/rest/v1/"+table+"?"+query,{headers:{apikey:SB_KEY},cache:"no-store"});
@@ -22,15 +22,6 @@ function actionRank(a){a=String(a||"").toUpperCase();if(a.includes("HIGH-CONVICT
 function readinessTone(r){r=String(r||"").toUpperCase();if(r.includes("NOT APPROVED")||r.includes("POOR"))return"bad";if(r.includes("GOOD")||r.includes("STRONG")||r.includes("READY"))return"good";return"watch";}
 function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
 function sourceMode(mode,time){const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="LIVE DATA"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=time?dateFmt.format(new Date(time)):"Dated snapshot";}
-function nav(name){
-  document.querySelectorAll(".screen").forEach(x=>x.classList.toggle("on",x.id==="screen-"+name));
-  document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("on",x.dataset.screen===name));
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.screen)));
-document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.go)));
-document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("on",x===b));renderSetups();}));
-
 function marketStat(label,x){
   if(!x)return'<div class="market-stat"><span>'+label+'</span><b>—</b><small class="flat">Unavailable</small></div>';
   const val=label==="VIX"?Number(x.value).toFixed(2):money.format(x.close);
@@ -64,19 +55,23 @@ function setupCard(c,compact){
 function renderDesk(){
   const s=market&&market.marketState?market.marketState:"UNAVAILABLE";
   document.getElementById("market-state").textContent=s;
-  const trig=document.getElementById("trigger-pill");trig.textContent=market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";trig.className="state-pill "+(market&&market.triggered?"hot":"good");
+  const trig=document.getElementById("trigger-pill");
+  trig.textContent=market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";
+  trig.className="state-pill "+(market&&market.triggered?"hot":"good");
   document.getElementById("market-message").textContent=market&&market.message?market.message:"No current market message.";
   document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
+
   const cards=((research&&research.candidates)||[]).filter(c=>c.qualified).sort((a,b)=>actionRank(planFor(a.ticker)&&planFor(a.ticker).action)-actionRank(planFor(b.ticker)&&planFor(b.ticker).action)||b.score-a.score);
-  document.getElementById("top-setups").innerHTML=cards.length?cards.map(c=>setupCard(c,true)).join(""):'<div class="loading">No qualified setups are loaded.</div>';
-}
-function renderSetups(){
-  let list=((research&&research.candidates)||[]).filter(c=>c.qualified);
-  if(filter==="actionable")list=list.filter(c=>actionTone(planFor(c.ticker)&&planFor(c.ticker).action)==="buy");
-  if(filter==="deep")list=list.filter(c=>String(c.strategyLane||"").toLowerCase().includes("deep"));
-  if(filter==="compounder")list=list.filter(c=>String(c.strategyLane||"").toLowerCase().includes("compounder"));
-  list.sort((a,b)=>actionRank(planFor(a.ticker)&&planFor(a.ticker).action)-actionRank(planFor(b.ticker)&&planFor(b.ticker).action)||b.score-a.score);
-  document.getElementById("setup-list").innerHTML=list.length?list.map(c=>setupCard(c,false)).join(""):'<div class="loading">No setups match this filter.</div>';
+  document.getElementById("top-setups").innerHTML=cards.length?cards.map(c=>setupCard(c,false)).join(""):'<div class="loading">No qualified setups are loaded.</div>';
+
+  const f=(research&&research.researchFunnel)||{};
+  const actionable=cards.filter(c=>actionTone(planFor(c.ticker)&&planFor(c.ticker).action)==="buy").length;
+  const universe=document.getElementById("coverage-universe");
+  const qualified=document.getElementById("coverage-qualified");
+  const actionEl=document.getElementById("coverage-actionable");
+  if(universe)universe.textContent=f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString();
+  if(qualified)qualified.textContent=f.qualifiedCount==null?cards.length:Number(f.qualifiedCount).toLocaleString();
+  if(actionEl)actionEl.textContent=actionable.toLocaleString();
 }
 function contractCard(c){
   const readiness=c.approval||c.readiness||"VERIFY LIVE";
@@ -96,39 +91,21 @@ function contractCard(c){
   '<p><b>Target profile:</b> '+safe(c.preferred)+'</p><p style="margin-top:7px"><b>Selection rule:</b> '+safe(c.selectionRule||"Use verified 0.70–0.85 delta ITM contracts.")+'</p><p style="margin-top:7px"><b>Greek note:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">Delayed chain source ↗</a></article>';
 }
 function renderContracts(){const list=(market&&market.contractProfiles)||[];document.getElementById("contract-list").innerHTML=list.length?list.map(contractCard).join(""):'<div class="loading">No contract references loaded.</div>';}
-function renderResearch(){
-  const rt=document.getElementById("research-refresh-time");if(rt)rt.textContent=researchStamp?dateFmt.format(new Date(researchStamp)):(research&&research.asOf?research.asOf:"Dated snapshot");
-  const f=(research&&research.researchFunnel)||{};
-  const funnel=document.getElementById("research-funnel");
-  const funnelNote=document.getElementById("research-funnel-note");
-  if(funnel){
-    const cells=[
-      ["UNIVERSE",f.universeScanned],["DEEP REVIEW",f.deepReviewCount],["QUALIFIED",f.qualifiedCount],["TIER 1",f.tier1Count],["TIER 2",f.tier2Count],["TIER 3",f.tier3Count],["ACTIONABLE",f.actionableToday],["REJECTED",f.rejectedCount]
-    ];
-    funnel.innerHTML=cells.map(x=>'<div><span>'+x[0]+'</span><b>'+(x[1]==null?"—":Number(x[1]).toLocaleString())+'</b></div>').join("");
-  }
-  if(funnelNote)funnelNote.textContent=f.universeDefinition||"Broad-universe counts will appear after the next manual generate.";
-  const r=(research&&research.rankings)||{};
-  const map=[["BEST OVERALL",r.bestOverall],["HIGHEST BOUNCE",r.highestBounce],["SAFEST QUALITY",r.safestQuality]];
-  document.getElementById("rankings").innerHTML=map.map(row=>'<div class="rank-card"><span>'+row[0]+'</span><b>'+((row[1]||[]).slice(0,8).map((t,i)=>(i+1)+". "+safe(t)).join(" · ")||"—")+'</b></div>').join("");
-  document.getElementById("scan-history").innerHTML=history.length?history.slice(0,8).map(h=>'<div class="history-item"><div><b>'+safe(h.payload&&h.payload.marketState?h.payload.marketState:"SCAN")+'</b><p>'+safe(h.payload&&h.payload.message?h.payload.message:"Automated LEAPS update")+'</p></div><time>'+(h.scan_time?dateFmt.format(new Date(h.scan_time)):"—")+'</time></div>').join(""):'<div class="loading">No scan history yet.</div>';
-  document.getElementById("rejected-list").innerHTML=((research&&research.rejected)||[]).map(x=>'<div class="reject"><b>'+safe(x.ticker)+'</b><p>'+safe(x.reason)+'</p></div>').join("")||"<p>No rejections loaded.</p>";
-}
-function renderAll(){renderDesk();renderSetups();renderContracts();renderResearch();}
+function renderAll(){renderDesk();renderContracts();}
 
 async function load(){
   let live=false,stamp=null;
   try{
     const results=await Promise.all([
-      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=12"),
+      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=1"),
       sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=1")
     ]);
     const scans=results[0],res=results[1];
     if(scans&&scans[0]&&scans[0].payload)market=scans[0].payload;
-    if(res&&res[0]&&res[0].payload){research=res[0].payload;researchStamp=res[0].snapshot_time||null;}
-    history=scans||[];stamp=scans&&scans[0]?scans[0].scan_time:(res&&res[0]?res[0].snapshot_time:null);live=!!(market&&research);
+    if(res&&res[0]&&res[0].payload)research=res[0].payload;
+    stamp=scans&&scans[0]?scans[0].scan_time:(res&&res[0]?res[0].snapshot_time:null);live=!!(market&&research);
   }catch(e){console.info("Supabase fallback",e.message);}
-  if(!research){research=await json("data/research-latest.json");researchStamp=null;}
+  if(!research)research=await json("data/research-latest.json");
   if(!market)market=await json("data/market-latest.json");
   sourceMode(live?"LIVE DATA":"DATED FALLBACK",stamp);
   renderAll();
@@ -136,7 +113,7 @@ async function load(){
 load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
 setInterval(async()=>{
   try{
-    const rows=await sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=12");
-    if(rows&&rows[0]&&rows[0].payload){market=rows[0].payload;history=rows;sourceMode("LIVE DATA",rows[0].scan_time);renderAll();}
+    const rows=await sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=1");
+    if(rows&&rows[0]&&rows[0].payload){market=rows[0].payload;sourceMode("LIVE DATA",rows[0].scan_time);renderAll();}
   }catch(e){}
 },60000);
