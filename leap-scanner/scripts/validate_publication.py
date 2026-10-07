@@ -63,6 +63,22 @@ for c in qualified:
     if not finite(latest_fcf) or latest_fcf <= 0:
         fail(f"{t}: latest-quarter free cash flow must be verified and positive", errors)
 
+    surprises = c.get("earningsSurprises")
+    if surprises is None:
+        warnings.append(f"{t}: earnings-surprise history not stored; UI must show UNVERIFIED")
+    elif not isinstance(surprises, list):
+        fail(f"{t}: earningsSurprises must be an array when present", errors)
+    else:
+        for i, row in enumerate(surprises[:4]):
+            if not isinstance(row, dict):
+                fail(f"{t}: earningsSurprises[{i}] must be an object", errors)
+                continue
+            basis = row.get("epsBasis") or row.get("basis")
+            result = row.get("epsResult") or row.get("result")
+            consensus = row.get("epsConsensus") if finite(row.get("epsConsensus")) else row.get("consensus")
+            if result and (not basis or not finite(consensus)):
+                fail(f"{t}: earnings surprise result requires verified consensus and GAAP/adjusted basis", errors)
+
 funnel = research.get("researchFunnel") or {}
 if finite(funnel.get("qualifiedCount")) and int(funnel["qualifiedCount"]) != len(qualified):
     fail(f"researchFunnel.qualifiedCount={funnel['qualifiedCount']} but {len(qualified)} candidates are qualified", errors)
