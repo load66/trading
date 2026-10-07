@@ -39,7 +39,13 @@
       "add2": "$198–203",
       "finalAdd": "$184–189",
       "confirmation": "Reclaim/hold support; avoid adding through a fresh fundamental break.",
-      "basis": "Prior-session support, recent swing low cluster, 252-session low."
+      "basis": "Prior-session support, recent swing low cluster, 252-session low.",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$220–224 is the first nearby demand/rebound shelf below current price. It is the area where buyers recently defended the stock before the rebound; require a hold/reclaim rather than buying a straight breakdown.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$198–203 aligns with the 20-day and 60-day swing-low cluster around $199.18, making it a materially stronger historical demand zone.",
+      "finalAddLabel": "Final Deep Support",
+      "finalAddReason": "$184–189 surrounds the 252-session low near $185.50. A test here would represent a much deeper valuation reset; only add if fundamentals and guidance remain intact."
     },
     {
       "ticker": "ISRG",
@@ -51,7 +57,13 @@
       "invalidation": "Sustained break below the deep support zone plus fundamental deterioration",
       "confirmation": "Prefer a hold/reclaim of the 20/100-day area or a higher low. Earnings are Oct. 20, so avoid paying elevated pre-earnings IV unless intentionally trading the event.",
       "basis": "20-day/100-day support cluster, 50-day area, and recent deep swing-low zone.",
-      "eventRisk": "Confirmed earnings Oct. 20, 2026 after close"
+      "eventRisk": "Confirmed earnings Oct. 20, 2026 after close",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$390–396 is a high-quality confluence zone: the 20DMA is about $392.09 and the 100DMA about $393.98. This is the first area where trend support and price support overlap.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$378–384 surrounds the 50DMA near $382.38. It is a deeper trend-support test and should only be used if the first zone fails without thesis damage.",
+      "finalAddLabel": "Final Major Support",
+      "finalAddReason": "$345–355 surrounds the recent 20-day swing low near $345.25. This is a major reset zone; below it, the next structural low near $328.57 becomes an invalidation/reassessment level rather than an automatic fourth add."
     },
     {
       "ticker": "RDDT",
@@ -61,7 +73,13 @@
       "add2": "$133–137",
       "finalAdd": "$118–122",
       "confirmation": "Look for failed breakdown, higher low or strong reclaim while thesis remains intact.",
-      "basis": "Sept. 28–30 low cluster, 60-session low, 252-session low."
+      "basis": "Sept. 28–30 low cluster, 60-session low, 252-session low.",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$141–145 surrounds the recent 20-day low near $141.32 and the late-September demand area. It is the closest meaningful support beneath price.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$133–137 surrounds the 60-session low near $135.22, a stronger medium-term demand zone after a deeper selloff.",
+      "finalAddLabel": "Final Deep Support",
+      "finalAddReason": "$118–122 brackets the 252-session low near $119.27. Only use this zone if Reddit's revenue, margins and profitability remain intact."
     },
     {
       "ticker": "ADBE",
@@ -71,7 +89,13 @@
       "add2": "$223–228",
       "finalAdd": "$209–213",
       "confirmation": "Prefer a hold/reclaim and improving relative strength; do not average on new thesis damage.",
-      "basis": "Current multi-session shelf, Sept. 28 low, 60-session low."
+      "basis": "Current multi-session shelf, Sept. 28 low, 60-session low.",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$234–238 is the current multi-session shelf around the present price. It is an early support zone, so confirmation is essential because the major moving averages remain overhead.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$223–228 brackets the 20-day swing low near $224.67, giving a clearer recent-demand reference than the first shelf.",
+      "finalAddLabel": "Final Major Support",
+      "finalAddReason": "$209–213 surrounds the 60-day low near $210.88. A break of this zone raises the risk of revisiting the 52-week low around $190 and should trigger thesis reassessment."
     },
     {
       "ticker": "ACN",
@@ -81,7 +105,13 @@
       "add2": "$171–174",
       "finalAdd": "$128–132",
       "confirmation": "Wait for support contact plus stabilization; macro weakness alone is not enough.",
-      "basis": "50-day area, Sept. 28–29 swing lows, deeper 60-session demand."
+      "basis": "50-day area, Sept. 28–29 swing lows, deeper 60-session demand.",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$180–184 surrounds the 50DMA near $181.84, the first major trend-support zone below price.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$171–174 brackets the recent 20-day swing low near $172.11, where a second layer of demand has already appeared.",
+      "finalAddLabel": "Final Deep Support",
+      "finalAddReason": "$128–132 surrounds the 60-day low near $129.96 created during the prior capitulation. This is only for an intact business thesis after an extreme market reset."
     },
     {
       "ticker": "INTU",
@@ -91,7 +121,13 @@
       "add2": "$262–268",
       "finalAdd": "$251–255",
       "confirmation": "Require stabilization or reclaim; avoid buying a fast breakdown through support.",
-      "basis": "Recent October lows, Sept. 28–30 low cluster, 252-session low."
+      "basis": "Recent October lows, Sept. 28–30 low cluster, 252-session low.",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$278–283 is the nearest short-term demand shelf beneath price and gives a first controlled entry before the larger swing-low zone.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$262–268 brackets the 20-day and 60-day lows near $262.32, making it the strongest recent technical support cluster.",
+      "finalAddLabel": "Final Deep Support",
+      "finalAddReason": "$251–255 surrounds the 252-session low near $252.84. This is the final planned add only if earnings, guidance and cash-flow quality remain intact."
     },
     {
       "ticker": "CRM",
@@ -101,7 +137,13 @@
       "add2": "$198–203",
       "finalAdd": "$154–160",
       "confirmation": "Already at nearby support; require a hold/reclaim because the broad market is not in a dip regime.",
-      "basis": "20-session low + 50-day area, 200-day area, 60-session demand."
+      "basis": "20-session low + 50-day area, 200-day area, 60-session demand.",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$221–225 has unusually strong confluence: the 20-day low is about $221.18 and the 50DMA about $222.41. The stock is already testing this zone, so a hold/reclaim is required.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$198–203 surrounds the 200DMA near $200.21, a major long-term trend level and a natural second staged entry.",
+      "finalAddLabel": "Final Deep Support",
+      "finalAddReason": "$154–160 brackets the 60-day swing low near $155.15 from the prior washout. Reaching it would require severe weakness; only add if the fundamental thesis is clearly intact."
     },
     {
       "ticker": "HUBS",
@@ -111,7 +153,13 @@
       "add2": "$183–187",
       "finalAdd": "$168–172",
       "confirmation": "Wait for price to reach support and confirm; profitability is young and SBC remains a key check.",
-      "basis": "20-session low, 60-session low, 252-session low."
+      "basis": "20-session low, 60-session low, 252-session low.",
+      "entry1Label": "1st Major Support",
+      "entry1Reason": "$188–193 surrounds the 20-day low near $190.03, the first meaningful demand area beneath price.",
+      "add2Label": "2nd Major Support",
+      "add2Reason": "$183–187 surrounds the 60-day low near $185.05. Because it is close to the first zone, require a clear failed breakdown or reclaim before adding.",
+      "finalAddLabel": "Final Deep Support",
+      "finalAddReason": "$168–172 surrounds the 252-session low near $169.63. This is the deepest planned support and should not be used if profitability or SBC economics worsen."
     }
   ],
   "rules": {
@@ -133,7 +181,33 @@
       "readiness": "WATCH LIQUIDITY",
       "sourceAsOf": "Delayed chain snapshot; feed Oct 5, 2026",
       "source": "https://public.com/stocks/adsk/options-chain?expiration=2028-01-21",
-      "note": "Strike profile is attractive, but preferred-strike OI is below the ≥100 guideline. Verify live spread and consider nearby deeper-ITM strikes only if liquidity is better."
+      "note": "Strike profile is attractive, but preferred-strike OI is below the ≥100 guideline. Verify live spread and consider nearby deeper-ITM strikes only if liquidity is better.",
+      "expiration": "2028-01-21",
+      "strike": 200,
+      "modeledDelta": 0.7413,
+      "modeledIV": 0.4301,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 31.28,
+      "currentExtrinsic": 33.22,
+      "stockAboveStrike": 31.28,
+      "costPerContract": 6450,
+      "durationMonths": 15.474332648870636,
+      "preferredHorizonStatus": "SHORTER THAN 18-MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 206.99505143775775,
+        "base": 354.61136220325443,
+        "bull": 487.1992252091867
+      },
+      "expirationMoneyness": {
+        "bear": "ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.03497525718878876,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike stays ITM in all three modeled fundamental scenarios, but bear-case cushion is thin; treat as conditional rather than high-conviction.",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
       "ticker": "ISRG",
@@ -145,7 +219,33 @@
       "readiness": "GOOD DELAYED PROFILE — VERIFY LIVE",
       "sourceAsOf": "Delayed public chain snapshot; recheck before order",
       "source": "https://public.com/stocks/isrg/options-chain?expiration=2028-01-21",
-      "note": "The $350C is materially ITM with usable displayed OI. Jan 2028 is shorter than the ideal 18–30 month window from Oct. 2026, so also compare Dec. 2028/Jan. 2029 expirations live. Do not approve without live delta, bid/ask and IV."
+      "note": "The $350C is materially ITM with usable displayed OI. Jan 2028 is shorter than the ideal 18–30 month window from Oct. 2026, so also compare Dec. 2028/Jan. 2029 expirations live. Do not approve without live delta, bid/ask and IV.",
+      "expiration": "2028-01-21",
+      "strike": 350,
+      "modeledDelta": 0.8232,
+      "modeledIV": 0.2153,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 54.75999999999999,
+      "currentExtrinsic": 28.24000000000001,
+      "stockAboveStrike": 54.75999999999999,
+      "costPerContract": 8300,
+      "durationMonths": 15.474332648870636,
+      "preferredHorizonStatus": "SHORTER THAN 18-MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 350.150134797542,
+        "base": 583.7612164553539,
+        "bull": 786.6793269661912
+      },
+      "expirationMoneyness": {
+        "bear": "ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.00042895656440578023,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike stays ITM in all three modeled fundamental scenarios, but bear-case cushion is thin; treat as conditional rather than high-conviction.",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
       "ticker": "RDDT",
@@ -157,7 +257,33 @@
       "readiness": "CONTRACT-READY PROFILE",
       "sourceAsOf": "Delayed public chain snapshot",
       "source": "https://public.com/stocks/rddt/options-chain?expiration=2028-06-16",
-      "note": "Longer-dated deep-ITM structure with usable OI; recheck delta, live spread and IV before entry."
+      "note": "Longer-dated deep-ITM structure with usable OI; recheck delta, live spread and IV before entry.",
+      "expiration": "2028-06-16",
+      "strike": 100,
+      "modeledDelta": 0.8366,
+      "modeledIV": 0.8844,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 48.94999999999999,
+      "currentExtrinsic": 35.250000000000014,
+      "stockAboveStrike": 48.94999999999999,
+      "costPerContract": 8420,
+      "durationMonths": 20.303901437371664,
+      "preferredHorizonStatus": "WITHIN 18–30 MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 137.6938113033438,
+        "base": 241.91096822139497,
+        "bull": 322.8180063066684
+      },
+      "expirationMoneyness": {
+        "bear": "ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.37693811303343805,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike passes all three fundamental scenarios with at least 10% bear-case strike cushion. Still requires live OI/spread/IV verification.",
+      "approval": "FUNDAMENTAL PASS — LIVE CHAIN VERIFICATION REQUIRED"
     },
     {
       "ticker": "ADBE",
@@ -169,7 +295,33 @@
       "readiness": "STRONG REFERENCE LIQUIDITY",
       "sourceAsOf": "Delayed chain; feed Oct 6, 2026 2:30 PM",
       "source": "https://public.com/stocks/adbe/options-chain?expiration=2028-01-21",
-      "note": "Exceptional displayed OI makes this the cleanest reference contract in the current set. Still recheck live IV, bid/ask and delta."
+      "note": "Exceptional displayed OI makes this the cleanest reference contract in the current set. Still recheck live IV, bid/ask and delta.",
+      "expiration": "2028-01-21",
+      "strike": 200,
+      "modeledDelta": 0.7516,
+      "modeledIV": 0.5121,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 38.120000000000005,
+      "currentExtrinsic": 38.47999999999999,
+      "stockAboveStrike": 38.120000000000005,
+      "costPerContract": 7659.999999999999,
+      "durationMonths": 15.474332648870636,
+      "preferredHorizonStatus": "SHORTER THAN 18-MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 278.54004225139016,
+        "base": 411.1760675103154,
+        "bull": 559.4408696761925
+      },
+      "expirationMoneyness": {
+        "bear": "DEEP ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.3927002112569508,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike passes all three fundamental scenarios with at least 10% bear-case strike cushion. Still requires live OI/spread/IV verification.",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
       "ticker": "ACN",
@@ -181,7 +333,33 @@
       "readiness": "GOOD REFERENCE LIQUIDITY",
       "sourceAsOf": "Delayed chain; feed Oct 5, 2026",
       "source": "https://public.com/stocks/acn/options-chain?expiration=2028-01-21",
-      "note": "Good OI and ITM structure; only enter if the underlying support setup confirms after the recent volatility."
+      "note": "Good OI and ITM structure; only enter if the underlying support setup confirms after the recent volatility.",
+      "expiration": "2028-01-21",
+      "strike": 175,
+      "modeledDelta": 0.7091,
+      "modeledIV": 0.471,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 18.400000000000006,
+      "currentExtrinsic": 34.599999999999994,
+      "stockAboveStrike": 18.400000000000006,
+      "costPerContract": 5300,
+      "durationMonths": 15.474332648870636,
+      "preferredHorizonStatus": "SHORTER THAN 18-MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 197.1688051253508,
+        "base": 281.5179807867006,
+        "bull": 374.59277964619463
+      },
+      "expirationMoneyness": {
+        "bear": "ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.12667888643057593,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike passes all three fundamental scenarios with at least 10% bear-case strike cushion. Still requires live OI/spread/IV verification.",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
       "ticker": "INTU",
@@ -193,7 +371,33 @@
       "readiness": "CONSERVATIVE / HIGH CAPITAL",
       "sourceAsOf": "Delayed chain; feed Oct 5, 2026 6:23 PM",
       "source": "https://public.com/stocks/intu/options-chain?expiration=2028-01-21",
-      "note": "Deeper ITM improves stock-like behavior but costs more capital. Verify that the live spread is acceptable before using this strike."
+      "note": "Deeper ITM improves stock-like behavior but costs more capital. Verify that the live spread is acceptable before using this strike.",
+      "expiration": "2028-01-21",
+      "strike": 200,
+      "modeledDelta": 0.858,
+      "modeledIV": 0.4587,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 89.81,
+      "currentExtrinsic": 24.189999999999998,
+      "stockAboveStrike": 89.81,
+      "costPerContract": 11400,
+      "durationMonths": 15.474332648870636,
+      "preferredHorizonStatus": "SHORTER THAN 18-MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 354.6909739497106,
+        "base": 605.0818045050969,
+        "bull": 901.589613359771
+      },
+      "expirationMoneyness": {
+        "bear": "DEEP ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.773454869748553,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike passes all three fundamental scenarios with at least 10% bear-case strike cushion. Still requires live OI/spread/IV verification.",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
       "ticker": "CRM",
@@ -205,7 +409,33 @@
       "readiness": "GOOD REFERENCE LIQUIDITY",
       "sourceAsOf": "Delayed chain; feed Oct 6, 2026 3:55 PM",
       "source": "https://public.com/stocks/crm/options-chain?expiration=2028-01-21",
-      "note": "Strong OI and meaningful intrinsic value. Underlying is near support, so wait for reversal confirmation rather than buying simply because the contract looks liquid."
+      "note": "Strong OI and meaningful intrinsic value. Underlying is near support, so wait for reversal confirmation rather than buying simply because the contract looks liquid.",
+      "expiration": "2028-01-21",
+      "strike": 180,
+      "modeledDelta": 0.7768,
+      "modeledIV": 0.5172,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 44.99000000000001,
+      "currentExtrinsic": 32.50999999999999,
+      "stockAboveStrike": 44.99000000000001,
+      "costPerContract": 7750,
+      "durationMonths": 15.474332648870636,
+      "preferredHorizonStatus": "SHORTER THAN 18-MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 215.62209042785844,
+        "base": 352.0377003813311,
+        "bull": 495.2745866050283
+      },
+      "expirationMoneyness": {
+        "bear": "ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.19790050237699133,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike passes all three fundamental scenarios with at least 10% bear-case strike cushion. Still requires live OI/spread/IV verification.",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     },
     {
       "ticker": "HUBS",
@@ -217,7 +447,33 @@
       "readiness": "NOT APPROVED — THIN OI",
       "sourceAsOf": "Delayed public chain snapshot",
       "source": "https://public.com/stocks/hubs/options-chain?expiration=2028-01-21",
-      "note": "Underlying can remain on watch, but the preferred deep-ITM reference strike is too thin. Wait for better liquidity or a superior expiration/strike."
+      "note": "Underlying can remain on watch, but the preferred deep-ITM reference strike is too thin. Wait for better liquidity or a superior expiration/strike.",
+      "expiration": "2028-01-21",
+      "strike": 150,
+      "modeledDelta": 0.8315,
+      "modeledIV": 0.5975,
+      "deltaSource": "Modeled from delayed option ask using Black-Scholes assumptions; NOT a live broker Greek.",
+      "currentIntrinsic": 67.09,
+      "currentExtrinsic": 26.409999999999997,
+      "stockAboveStrike": 67.09,
+      "costPerContract": 9350,
+      "durationMonths": 15.474332648870636,
+      "preferredHorizonStatus": "SHORTER THAN 18-MONTH TARGET",
+      "fundamentalTargets": {
+        "bear": 162.41821871871088,
+        "base": 280.89637395398927,
+        "bull": 403.9040379284763
+      },
+      "expirationMoneyness": {
+        "bear": "ITM",
+        "base": "DEEP ITM",
+        "bull": "DEEP ITM",
+        "coverage": "3/3 scenarios ITM or better"
+      },
+      "bearCaseCushion": 0.08278812479140583,
+      "selectionRule": "Primary: verified 0.70–0.85 delta ITM. Cost fallback: 0.60–0.70 delta only if the preferred contract is materially too expensive AND the stock is at least $70 above the strike. In all cases, strike must remain below the fundamental Bear target and materially below the Base target.",
+      "selectionReason": "Strike stays ITM in all three modeled fundamental scenarios, but bear-case cushion is thin; treat as conditional rather than high-conviction.",
+      "approval": "REFERENCE ONLY — NOT FULLY APPROVED"
     }
   ],
   "contractRules": {
@@ -228,6 +484,9 @@
     "breakeven": "Prefer expiration breakeven roughly ≤20% above the underlying for high-probability profiles, adjusted for time and growth.",
     "iv": "Avoid panic-volatility overpayment. Compare IV to the stock's own recent IV regime before buying.",
     "earnings": "Avoid opening/adding immediately before earnings unless the event risk is deliberately part of the plan.",
-    "management": "Manage the thesis on the underlying first; do not let an option quote alone dictate averaging."
+    "management": "Manage the thesis on the underlying first; do not let an option quote alone dictate averaging.",
+    "fundamentalTarget": "Before selecting a LEAP, project Bear/Base/Bull expiration values using GAAP EPS × terminal P/E and FCF/share × terminal P/FCF. Prefer strikes below the Bear target and materially below the Base target.",
+    "fallbackDelta": "A 0.60–0.70 delta fallback is allowed only when the preferred 0.70–0.85 delta contract is materially too expensive AND current stock price is at least $70 above the strike; it must still pass the Bear/Base valuation coverage test.",
+    "probabilityLanguage": "Do not claim a guaranteed probability of profit. Use scenario coverage, delta, liquidity, spread, IV, breakeven and fundamental valuation together."
   }
 }
