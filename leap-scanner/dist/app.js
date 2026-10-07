@@ -1,5 +1,6 @@
 const SB_URL="https://ppsljqaaanpkksxbpalk.supabase.co";
 const SB_KEY="sb_publishable_2JLPa7GMpdacVfxBnfCv_w_wl36jn2n";
+const MAX_CONTRACT_COST=6500;
 const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2});
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -41,7 +42,14 @@ function marketStat(label,x){
   return'<div class="market-stat"><span>'+label+'</span><b>'+val+'</b><small class="'+(move>0?"up":move<0?"down":"flat")+'">'+fmtMove(move)+'</small></div>';
 }
 function planFor(t){return market&&market.candidatePlans?market.candidatePlans.find(x=>x.ticker===t):null}
-function contractFor(t){return market&&market.contractProfiles?market.contractProfiles.find(x=>x.ticker===t):null}
+function contractFor(t){
+  if(!(market&&market.contractProfiles))return null;
+  return market.contractProfiles.find(x=>{
+    if(x.ticker!==t)return false;
+    const cost=Number.isFinite(x.costPerContract)?x.costPerContract:(Number.isFinite(x.ask)?x.ask*100:null);
+    return Number.isFinite(cost)&&cost<=MAX_CONTRACT_COST;
+  })||null;
+}
 function companyFor(t){return research&&research.candidates?research.candidates.find(x=>x.ticker===t):null}
 
 function setupCard(c,compact){
@@ -105,7 +113,11 @@ function contractCard(c){
 function renderContracts(){
   const qualified=new Set(((research&&research.candidates)||[]).filter(c=>c.qualified).map(c=>c.ticker));
   const list=((market&&market.contractProfiles)||[])
-    .filter(c=>qualified.has(c.ticker))
+    .filter(c=>{
+      if(!qualified.has(c.ticker))return false;
+      const cost=Number.isFinite(c.costPerContract)?c.costPerContract:(Number.isFinite(c.ask)?c.ask*100:null);
+      return Number.isFinite(cost)&&cost<=MAX_CONTRACT_COST;
+    })
     .sort((a,b)=>{
       const ca=companyFor(a.ticker),cb=companyFor(b.ticker);
       return (cb&&cb.score||0)-(ca&&ca.score||0);
