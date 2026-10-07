@@ -1,6 +1,8 @@
 const SB_URL="https://ppsljqaaanpkksxbpalk.supabase.co";
 const SB_KEY="sb_publishable_2JLPa7GMpdacVfxBnfCv_w_wl36jn2n";
 const MAX_CONTRACT_COST=6500;
+const MIN_CONTRACT_DELTA=0.60;
+const MAX_CONTRACT_DELTA=0.75;
 const money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2});
 const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -47,7 +49,8 @@ function contractFor(t){
   return market.contractProfiles.find(x=>{
     if(x.ticker!==t)return false;
     const cost=Number.isFinite(x.costPerContract)?x.costPerContract:(Number.isFinite(x.ask)?x.ask*100:null);
-    return Number.isFinite(cost)&&cost<=MAX_CONTRACT_COST;
+    const delta=Number(x.modeledDelta);
+    return Number.isFinite(cost)&&cost<=MAX_CONTRACT_COST&&Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA;
   })||null;
 }
 function companyFor(t){return research&&research.candidates?research.candidates.find(x=>x.ticker===t):null}
@@ -108,7 +111,7 @@ function contractCard(c){
   '<div class="itm-grid"><div><span>BEAR CASE · '+(em.bear||"—")+'</span><b>'+ (Number.isFinite(ft.bear)?money.format(ft.bear):"—") +'</b><small>Conservative business value</small></div><div><span>BASE CASE · '+(em.base||"—")+'</span><b>'+ (Number.isFinite(ft.base)?money.format(ft.base):"—") +'</b><small>Most reasonable value</small></div><div><span>BULL CASE · '+(em.bull||"—")+'</span><b>'+ (Number.isFinite(ft.bull)?money.format(ft.bull):"—") +'</b><small>Strong execution value</small></div></div>'+
   '<p class="coverage"><b>Expiration cushion:</b> '+safe(em.coverage||"Not modeled")+' <span>— more scenarios ITM is better.</span></p>'+
   '<div class="contract-reason"><b>Why this contract was chosen</b><p>'+safe(c.selectionReason||c.note||"Verify live chain before entry.")+'</p></div>'+
-  '<details class="contract-more"><summary>More contract details</summary><div class="contract-more-body"><div class="contract-metrics three"><div><span>STOCK ABOVE STRIKE</span><b>'+stockAbove+'</b></div><div><span>INTRINSIC VALUE</span><b>'+intrinsic+'</b></div><div><span>EXTRINSIC VALUE</span><b>'+extrinsic+'</b></div></div><p><b>Target profile:</b> '+safe(c.preferred)+'</p><p><b>Selection rule:</b> '+safe(c.selectionRule||"Use verified 0.70–0.85 delta ITM contracts.")+'</p><p><b>Greek note:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">Delayed chain source ↗</a></div></details></article>';
+  '<details class="contract-more"><summary>More contract details</summary><div class="contract-more-body"><div class="contract-metrics three"><div><span>STOCK ABOVE STRIKE</span><b>'+stockAbove+'</b></div><div><span>INTRINSIC VALUE</span><b>'+intrinsic+'</b></div><div><span>EXTRINSIC VALUE</span><b>'+extrinsic+'</b></div></div><p><b>Target profile:</b> '+safe(c.preferred)+'</p><p><b>Selection rule:</b> '+safe(c.selectionRule||"Use verified 0.70–0.75 delta ITM contracts.")+'</p><p><b>Greek note:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">Delayed chain source ↗</a></div></details></article>';
 }
 function renderContracts(){
   const qualified=new Set(((research&&research.candidates)||[]).filter(c=>c.qualified).map(c=>c.ticker));
@@ -116,7 +119,8 @@ function renderContracts(){
     .filter(c=>{
       if(!qualified.has(c.ticker))return false;
       const cost=Number.isFinite(c.costPerContract)?c.costPerContract:(Number.isFinite(c.ask)?c.ask*100:null);
-      return Number.isFinite(cost)&&cost<=MAX_CONTRACT_COST;
+      const delta=Number(c.modeledDelta);
+      return Number.isFinite(cost)&&cost<=MAX_CONTRACT_COST&&Number.isFinite(delta)&&delta>=MIN_CONTRACT_DELTA&&delta<=MAX_CONTRACT_DELTA;
     })
     .sort((a,b)=>{
       const ca=companyFor(a.ticker),cb=companyFor(b.ticker);
