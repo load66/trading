@@ -261,3 +261,27 @@ Be strict on business quality, but flexible on drawdown for elite profitable com
 
 If no A+ entry exists, say:
 NO A+ LEAP ENTRY TODAY — WAIT.
+
+
+## Manual Chat Command — GENERATE
+
+The main ChatGPT research conversation is the authoritative fundamental-research workflow.
+
+When the user sends exactly **generate** (case-insensitive) in the LEAPS research chat:
+
+1. Perform a fresh FULL research cycle immediately using Massive, AlphaStocks, current web research, current company filings, current market prices, current technical levels, earnings/event dates and option-chain research where available.
+2. Re-evaluate the entire candidate universe under this master prompt. Companies may be added, removed, re-ranked or moved between the Deep Discount and Quality Compounder lanes.
+3. Recalculate the latest 4-quarter YoY revenue/GAAP profit evidence, FCF/margins, valuation, moat, catalysts, technical state, support ladder, invalidation and LEAP contract-readiness.
+4. Refresh the current market regime and each qualified stock's Entry 1 / Add 2 / Final Add plan.
+5. Write a NEW authoritative research snapshot to Supabase `public.leap_research_snapshots` with `source_type='manual_chat'`.
+6. Write a NEW current market/action snapshot to Supabase `public.leap_scans` with `source_type='manual_chat'`.
+7. Update GitHub fallback files:
+   - `leap-scanner/dist/data/research-latest.json`
+   - `leap-scanner/dist/data/market-latest.json`
+8. Preserve historical dated research files. Do not overwrite the old audit merely to make the new result look cleaner.
+9. Do not require a Railway redeploy for data-only changes. The public app reads Supabase first, so the manual update should appear without changing application code.
+10. Return a concise completion summary in chat: market state, added/removed names, top rankings, top three actionable setups, support ladders, event risk and contract readiness.
+
+Scheduled automations are NOT allowed to rewrite the authoritative fundamental universe. Scheduled jobs may update only current market/action data and must use `source_type='scheduled'`.
+
+If the user says **generate**, do not ask for confirmation. Run the full manual refresh and publish the result to the app.
