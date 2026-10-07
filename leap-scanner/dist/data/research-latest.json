@@ -318,7 +318,87 @@
       "tariff": "Medium",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2026-07-16",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.8,
+          "epsConsensus": 2.41,
+          "revenueConsensus": 2820,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ISRG/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": "2026-04-21",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.5,
+          "epsConsensus": 1.92,
+          "revenueConsensus": 2610,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ISRG/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2025",
+          "reportedDate": "2026-01-22",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.53,
+          "epsConsensus": 2.09,
+          "revenueConsensus": 2800,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ISRG/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2025",
+          "reportedDate": "2025-10-21",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.4,
+          "epsConsensus": 1.82,
+          "revenueConsensus": 2410,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ISRG/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/ISRG/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2025",
+          "revenue": 10065,
+          "netIncome": 2856
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 8352,
+          "netIncome": 2323
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 7124,
+          "netIncome": 1798
+        },
+        {
+          "period": "FY 2022",
+          "revenue": 6222,
+          "netIncome": 1322
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/isrg/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 2,
@@ -622,7 +702,87 @@
       "tariff": "Low",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q2 2027",
+          "reportedDate": "2026-08-27",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.3,
+          "epsConsensus": 2.97,
+          "revenueConsensus": 2010,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADSK/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2027",
+          "reportedDate": "2026-05-28",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.99,
+          "epsConsensus": 2.7,
+          "revenueConsensus": 1890,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADSK/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2026",
+          "reportedDate": "2026-02-26",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.85,
+          "epsConsensus": 2.36,
+          "revenueConsensus": 1910,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADSK/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2026",
+          "reportedDate": "2025-11-25",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.67,
+          "epsConsensus": 2.21,
+          "revenueConsensus": 1800,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADSK/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/ADSK/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2026",
+          "revenue": 7206,
+          "netIncome": 1124
+        },
+        {
+          "period": "FY 2025",
+          "revenue": 6131,
+          "netIncome": 1112
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 5497,
+          "netIncome": 906
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 5005,
+          "netIncome": 823
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/adsk/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 3,
@@ -919,7 +1079,87 @@
       "tariff": "Low",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2026-07-30",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 1.25,
+          "epsConsensus": 0.97,
+          "revenueConsensus": 732.82,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RDDT/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": "2026-04-30",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 1.01,
+          "epsConsensus": 0.58,
+          "revenueConsensus": 609.04,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RDDT/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2025",
+          "reportedDate": "2026-02-05",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 1.24,
+          "epsConsensus": 0.94,
+          "revenueConsensus": 667.29,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RDDT/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2025",
+          "reportedDate": "2025-10-30",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 0.8,
+          "epsConsensus": 0.52,
+          "revenueConsensus": 549.63,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RDDT/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/RDDT/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2025",
+          "revenue": 2203,
+          "netIncome": 529.72
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 1300,
+          "netIncome": -484.28
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 804.03,
+          "netIncome": -90.82
+        },
+        {
+          "period": "FY 2022",
+          "revenue": 666.7,
+          "netIncome": -158.55
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/rddt/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 4,
@@ -1214,7 +1454,87 @@
       "tariff": "Low",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q3 2026",
+          "reportedDate": "2026-09-10",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 6.13,
+          "epsConsensus": 5.84,
+          "revenueConsensus": 6700,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADBE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2026-06-11",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 5.96,
+          "epsConsensus": 5.6,
+          "revenueConsensus": 6450,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADBE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": "2026-03-12",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 6.06,
+          "epsConsensus": 5.46,
+          "revenueConsensus": 6280,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADBE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2025",
+          "reportedDate": "2025-12-10",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 5.5,
+          "epsConsensus": 4.99,
+          "revenueConsensus": 6110,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ADBE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/ADBE/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2025",
+          "revenue": 23769,
+          "netIncome": 7130
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 21505,
+          "netIncome": 5560
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 19409,
+          "netIncome": 5428
+        },
+        {
+          "period": "FY 2022",
+          "revenue": 17606,
+          "netIncome": 4756
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/adbe/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 5,
@@ -1507,7 +1827,87 @@
       "tariff": "Low",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q4 2026",
+          "reportedDate": "2026-10-01",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.29,
+          "epsConsensus": 3.18,
+          "revenueConsensus": 18030,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ACN/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2026",
+          "reportedDate": "2026-06-18",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.8,
+          "epsConsensus": 3.71,
+          "revenueConsensus": 18750,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ACN/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2026-03-19",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.93,
+          "epsConsensus": 2.85,
+          "revenueConsensus": 17800,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ACN/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": "2025-12-18",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.94,
+          "epsConsensus": 3.73,
+          "revenueConsensus": 18540,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/ACN/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/ACN/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2026",
+          "revenue": 74183,
+          "netIncome": 8367
+        },
+        {
+          "period": "FY 2025",
+          "revenue": 69673,
+          "netIncome": 7678
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 64896,
+          "netIncome": 7265
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 64112,
+          "netIncome": 6872
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/acn/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 6,
@@ -1793,7 +2193,87 @@
       "tariff": "Low",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2026-07-29",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.08,
+          "epsConsensus": 2.95,
+          "revenueConsensus": 648.07,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/TYL/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": "2026-04-29",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.09,
+          "epsConsensus": 2.88,
+          "revenueConsensus": 609.17,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/TYL/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2025",
+          "reportedDate": "2026-02-11",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.64,
+          "epsConsensus": 2.45,
+          "revenueConsensus": 590.5,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/TYL/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2025",
+          "reportedDate": "2025-10-29",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.97,
+          "epsConsensus": 2.6,
+          "revenueConsensus": 594.51,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/TYL/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/TYL/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2025",
+          "revenue": 2332,
+          "netIncome": 315.6
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 2138,
+          "netIncome": 263.03
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 1952,
+          "netIncome": 165.92
+        },
+        {
+          "period": "FY 2022",
+          "revenue": 1850,
+          "netIncome": 164.24
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/tyl/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 7,
@@ -2090,7 +2570,87 @@
       "tariff": "Low",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q2 2027",
+          "reportedDate": "2026-08-26",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 5.9,
+          "epsConsensus": 3.09,
+          "revenueConsensus": 11320,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/CRM/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2027",
+          "reportedDate": "2026-05-27",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.88,
+          "epsConsensus": 2.96,
+          "revenueConsensus": 11060,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/CRM/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2026",
+          "reportedDate": "2026-02-25",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.81,
+          "epsConsensus": 2.69,
+          "revenueConsensus": 11180,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/CRM/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2026",
+          "reportedDate": "2025-12-03",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.25,
+          "epsConsensus": 2.58,
+          "revenueConsensus": 10270,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/CRM/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/CRM/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2026",
+          "revenue": 41525,
+          "netIncome": 7457
+        },
+        {
+          "period": "FY 2025",
+          "revenue": 37895,
+          "netIncome": 6197
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 34857,
+          "netIncome": 4136
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 31352,
+          "netIncome": 208
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/crm/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 8,
@@ -2388,7 +2948,87 @@
       "qualificationNote": "Included per the owner’s updated policy: technical weakness no longer automatically excludes a profitable company. This is a Tier 3 research candidate, not a confirmed entry.",
       "fcfLatestMethod": "Conservative Q4 FY2026 derived minimum: FY2026 operating cash flow less 9M operating cash flow, minus Q4 property/equipment capex and the full-year internal-use software capitalization amount to avoid overstating quarterly FCF.",
       "fcfLatestSource": "SEC FY2026 10-K and Q3 FY2026 earnings release",
-      "fcfLatestVerifiedPositive": true
+      "fcfLatestVerifiedPositive": true,
+      "earningsSurprises": [
+        {
+          "period": "Q4 2026",
+          "reportedDate": "2026-08-25",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 4.03,
+          "epsConsensus": 3.29,
+          "revenueConsensus": 4270,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/INTU/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2026",
+          "reportedDate": "2026-05-20",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 12.8,
+          "epsConsensus": 12.28,
+          "revenueConsensus": 8530,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/INTU/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2026-02-26",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 4.15,
+          "epsConsensus": 3.1,
+          "revenueConsensus": 4530,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/INTU/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": "2025-11-20",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.34,
+          "epsConsensus": 2.51,
+          "revenueConsensus": 3760,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/INTU/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/INTU/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2026",
+          "revenue": 21448,
+          "netIncome": 4566
+        },
+        {
+          "period": "FY 2025",
+          "revenue": 18831,
+          "netIncome": 3869
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 16285,
+          "netIncome": 2963
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 14368,
+          "netIncome": 2384
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/intu/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 9,
@@ -2680,7 +3320,87 @@
       "tariff": "Medium",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q4 2026",
+          "reportedDate": null,
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.95,
+          "epsConsensus": 2.88,
+          "revenueConsensus": 1460,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RMD/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2026",
+          "reportedDate": null,
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.86,
+          "epsConsensus": 2.8,
+          "revenueConsensus": 1420,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RMD/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q2 2026",
+          "reportedDate": null,
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.81,
+          "epsConsensus": 2.71,
+          "revenueConsensus": 1390,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RMD/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": null,
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.55,
+          "epsConsensus": 2.5,
+          "revenueConsensus": 1330,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/RMD/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/RMD/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2026",
+          "revenue": 5653,
+          "netIncome": 1523
+        },
+        {
+          "period": "FY 2025",
+          "revenue": 5146,
+          "netIncome": 1401
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 4685,
+          "netIncome": 1021
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 4223,
+          "netIncome": 897.56
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/rmd/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 10,
@@ -2989,7 +3709,87 @@
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
       "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
-      "qualificationNote": "Included per the owner’s updated policy: technical weakness no longer automatically excludes a profitable company. This is a Tier 3 research candidate, not a confirmed entry."
+      "qualificationNote": "Included per the owner’s updated policy: technical weakness no longer automatically excludes a profitable company. This is a Tier 3 research candidate, not a confirmed entry.",
+      "earningsSurprises": [
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2026-08-05",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.26,
+          "epsConsensus": 2.55,
+          "revenueConsensus": 898.06,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/HUBS/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q1 2026",
+          "reportedDate": "2026-05-07",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.72,
+          "epsConsensus": 2.11,
+          "revenueConsensus": 864.02,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/HUBS/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2025",
+          "reportedDate": "2026-02-11",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 3.09,
+          "epsConsensus": 2.16,
+          "revenueConsensus": 830.46,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/HUBS/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2025",
+          "reportedDate": "2025-11-05",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.66,
+          "epsConsensus": 1.74,
+          "revenueConsensus": 786.63,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/HUBS/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/HUBS/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2025",
+          "revenue": 3131,
+          "netIncome": 45.91
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 2628,
+          "netIncome": 4.63
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 2170,
+          "netIncome": -164.51
+        },
+        {
+          "period": "FY 2022",
+          "revenue": 1731,
+          "netIncome": -107.35
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/hubs/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     },
     {
       "rank": 11,
@@ -3288,7 +4088,87 @@
       "tariff": "Medium",
       "tariffScoring": "Context only; no tariff-based exclusion or score deduction.",
       "primaryCheckedAt": "2026-10-07T14:13:37.230208Z",
-      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented."
+      "historicalValuationVerification": "Prior source-checked comparison carried forward; exact peer/historical multiple series not refreshed. No forward P/E or PEG invented.",
+      "earningsSurprises": [
+        {
+          "period": "Q1 2027",
+          "reportedDate": "2026-08-05",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.59,
+          "epsConsensus": 2.51,
+          "revenueConsensus": 1500,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/STE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q4 2026",
+          "reportedDate": "2026-05-11",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.83,
+          "epsConsensus": 2.86,
+          "revenueConsensus": 1600,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/STE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q3 2026",
+          "reportedDate": "2026-02-04",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.53,
+          "epsConsensus": 2.53,
+          "revenueConsensus": 1480,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/STE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        },
+        {
+          "period": "Q2 2026",
+          "reportedDate": "2025-11-05",
+          "epsBasis": "ADJUSTED",
+          "adjustedEps": 2.47,
+          "epsConsensus": 2.36,
+          "revenueConsensus": 1430,
+          "source": "Benzinga earnings history",
+          "sourceUrl": "https://www.benzinga.com/quote/STE/earnings-forecasts",
+          "sourceCheckedAsOf": "2026-10-07"
+        }
+      ],
+      "earningsSurpriseSource": {
+        "label": "Benzinga earnings history / Wall Street consensus",
+        "url": "https://www.benzinga.com/quote/STE/earnings-forecasts",
+        "checkedAsOf": "2026-10-07",
+        "epsBasis": "Adjusted / non-GAAP"
+      },
+      "annualFinancials": [
+        {
+          "period": "FY 2026",
+          "revenue": 5936,
+          "netIncome": 782.3
+        },
+        {
+          "period": "FY 2025",
+          "revenue": 5460,
+          "netIncome": 614.6
+        },
+        {
+          "period": "FY 2024",
+          "revenue": 5139,
+          "netIncome": 378.2
+        },
+        {
+          "period": "FY 2023",
+          "revenue": 4536,
+          "netIncome": 107.03
+        }
+      ],
+      "annualFinancialsSource": {
+        "label": "StockAnalysis financials overview",
+        "url": "https://stockanalysis.com/stocks/ste/financials/",
+        "checkedAsOf": "2026-10-07",
+        "units": "USD millions"
+      }
     }
   ],
   "rejected": [
@@ -3477,5 +4357,10 @@
       "lastReviewAsOf": "2026-10-07 manual generate with owner-updated filters"
     }
   ],
-  "verificationNote": "Production integrity audit: policy metadata aligned with the current master prompt; financial facts, research rank and quote cutoffs unchanged."
+  "verificationNote": "Production integrity audit: ranks and qualification unchanged; four-quarter consensus history and annual financial trend data added from identified public sources. Missing consensus must remain explicitly unverified in future snapshots.",
+  "dataEnhancements": {
+    "earningsConsensusHistory": "Four most recent reported quarters populated for every qualified company; EPS consensus is explicitly adjusted/non-GAAP.",
+    "financialGrowthCharts": "Eight-quarter GAAP revenue/net-income history plus four fiscal-year annual revenue/net-income history.",
+    "enhancedAsOf": "2026-10-07"
+  }
 }

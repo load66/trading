@@ -338,3 +338,30 @@ main.desk-page{width:min(100%,1080px);margin:0 auto;padding:14px 14px calc(30px 
 .surprise.miss{background:rgba(255,84,112,.10);color:#ff879b}
 .surprise.neutral,.surprise.unverified{background:rgba(255,255,255,.045);color:var(--muted)}
 .fcf-guidance{margin-top:8px!important;padding-top:8px;border-top:1px solid var(--line)}
+
+
+/* financial-growth-charts */
+.financial-growth{margin:18px 0 20px;padding:16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.018)}
+.financial-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
+.financial-chart{padding:12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.018);min-width:0}
+.financial-chart.empty{min-height:86px;display:flex;align-items:center}
+.financial-chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.financial-chart-head b{font-size:12px;letter-spacing:.02em}
+.financial-chart-head span{font-size:9px;color:var(--muted);text-align:right}
+.bar-row{display:grid;grid-template-columns:64px minmax(80px,1fr) 72px;align-items:center;gap:8px;min-height:26px}
+.bar-period{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-row>b{font-size:10px;text-align:right;font-variant-numeric:tabular-nums}
+.bar-track{height:9px;border-radius:999px;background:rgba(255,255,255,.055);overflow:hidden}
+.bar-fill{display:block;width:var(--bar-width);height:100%;border-radius:inherit;background:linear-gradient(90deg,rgba(75,160,255,.52),rgba(75,160,255,.92))}
+.bar-fill.income{background:linear-gradient(90deg,rgba(75,210,145,.48),rgba(75,210,145,.9))}
+.bar-row.negative .bar-fill.income{background:linear-gradient(90deg,rgba(255,105,120,.48),rgba(255,105,120,.9))}
+.bar-row.negative>b{color:var(--red)}
+.chart-source-row,.earnings-source-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px}
+.chart-source-row>span{font-size:10px;color:var(--muted);line-height:1.45}
+.earnings-source-row .history-note{margin:0;flex:1}
+@media(max-width:760px){
+  .financial-chart-grid{grid-template-columns:1fr}
+  .financial-growth{padding:12px;margin:14px 0 16px}
+  .bar-row{grid-template-columns:58px minmax(70px,1fr) 68px}
+  .chart-source-row,.earnings-source-row{align-items:flex-start;flex-direction:column}
+}

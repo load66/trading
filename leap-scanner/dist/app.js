@@ -100,6 +100,36 @@ function cashFlowPanel(c){
     '<p>'+safe(c.cash||c.fcfSummary||"Cash-flow commentary unavailable.")+'</p>'+
     '<p class="fcf-guidance"><b>FCF guidance:</b> '+safe(c.fcfGuidance||c.fcfGuidanceTrend||"Not separately stored in this snapshot; verify in the latest company guidance.")+'</p></div>';
 }
+function compactMillions(v){
+  if(!Number.isFinite(v))return"—";
+  const sign=v<0?"−":"",n=Math.abs(v);
+  if(n>=1000)return sign+"$"+(n/1000).toFixed(n>=10000?1:2)+"B";
+  return sign+"$"+n.toFixed(n>=100?0:n>=10?1:2)+"M";
+}
+function metricBarChart(title,items,key,kind){
+  const valid=(items||[]).filter(x=>Number.isFinite(x[key]));
+  if(!valid.length)return '<div class="financial-chart empty"><div class="financial-chart-head"><b>'+safe(title)+'</b><span>NO VERIFIED DATA</span></div></div>';
+  const max=Math.max(...valid.map(x=>Math.abs(x[key])),1);
+  const rows=valid.map(x=>{
+    const value=x[key],width=Math.max(3,Math.abs(value)/max*100);
+    return '<div class="bar-row '+(value<0?"negative":"positive")+'"><span class="bar-period">'+safe(x.period||"—")+'</span><div class="bar-track"><i class="bar-fill '+safe(kind)+'" style="--bar-width:'+width.toFixed(1)+'%"></i></div><b>'+compactMillions(value)+'</b></div>';
+  }).join("");
+  return '<div class="financial-chart"><div class="financial-chart-head"><b>'+safe(title)+'</b><span>USD · SCALE WITHIN CHART</span></div>'+rows+'</div>';
+}
+function financialTrendCharts(c){
+  const q=c.quarter||{},periods=(q.periods||[]).slice(0,8);
+  const quarterly=periods.map((period,i)=>({period,revenue:(q.revenues||[])[i],netIncome:(q.net||[])[i]}));
+  const annual=Array.isArray(c.annualFinancials)?c.annualFinancials.slice(0,4):[];
+  const latestAnnual=annual[0]||{},profitState=Number.isFinite(latestAnnual.netIncome)?latestAnnual.netIncome>0?"PROFITABLE":"NET LOSS":"UNVERIFIED";
+  const annualSource=c.annualFinancialsSource&&/^https:\/\//.test(c.annualFinancialsSource.url||"")?'<a class="source-link" href="'+safe(c.annualFinancialsSource.url)+'" target="_blank" rel="noopener">Annual financial source ↗</a>':"";
+  return '<section class="financial-growth"><div class="mini-section-head"><h4>Revenue & net income trends</h4><span class="'+(profitState==="PROFITABLE"?"good-text":profitState==="NET LOSS"?"bad-text":"")+'">'+profitState+'</span></div>'+
+    '<div class="financial-chart-grid">'+
+      metricBarChart("Quarterly revenue",quarterly,"revenue","revenue")+
+      metricBarChart("Quarterly GAAP net income",quarterly,"netIncome","income")+
+      metricBarChart("Annual revenue",annual,"revenue","revenue")+
+      metricBarChart("Annual GAAP net income",annual,"netIncome","income")+
+    '</div><div class="chart-source-row"><span>Quarterly: latest 8 reported periods · Annual: latest 4 completed fiscal years.</span>'+annualSource+'</div></section>';
+}
 function earningsQuality(c){
   const q=c.quarter||{},periods=(q.periods||[]).slice(0,4),eps=(q.eps||c.eps||[]),surprises=Array.isArray(c.earningsSurprises)?c.earningsSurprises:[];
   const resultBadge=v=>v?'<span class="surprise '+safe(String(v).toLowerCase().replace(/[^a-z]+/g,"-"))+'">'+safe(v)+'</span>':'<span class="surprise neutral">UNVERIFIED</span>';
@@ -112,7 +142,7 @@ function earningsQuality(c){
     const actual=basis==="GAAP"?eps[i]:["ADJUSTED","NON-GAAP"].includes(basis)?x.adjustedEps:null;
     const estimate=Number.isFinite(x.epsConsensus)?x.epsConsensus:x.consensus;
     const epsResult=Number.isFinite(actual)&&Number.isFinite(estimate)?Math.abs(actual-estimate)<.005?"MEET":actual>estimate?"BEAT":"MISS":null;
-    const epsCell=(epsConsensus!=="—"?'<b>'+epsConsensus+'</b><small>'+(basis?basis+" CONSENSUS":"BASIS UNVERIFIED")+'</small>':"—")+resultBadge(epsResult||null);
+    const epsCell=(epsConsensus!=="—"?'<b>'+epsConsensus+'</b><small>'+(basis?basis+" CONSENSUS":"BASIS UNVERIFIED")+'</small>':"—")+resultBadge(epsResult);
     const revActual=Number.isFinite(x.revenueActual)?money.format(x.revenueActual)+"M":(Array.isArray(q.revenues)&&Number.isFinite(q.revenues[i])?money.format(q.revenues[i])+"M":"—");
     const revConsensus=Number.isFinite(x.revenueConsensus)?money.format(x.revenueConsensus)+"M":"—";
     const revNumber=Number.isFinite(x.revenueActual)?x.revenueActual:(q.revenues||[])[i];
@@ -122,7 +152,8 @@ function earningsQuality(c){
   }).join("");
   const trend=n=>Number.isFinite(n)?(n>=0?"+":"")+n.toFixed(1)+"% YoY":"Prior loss / unverified";
   const gaapRows=periods.map((period,i)=>'<tr><th scope="row">'+safe(period)+'</th><td>'+(Number.isFinite((q.revenues||[])[i])?money.format(q.revenues[i])+"M":"—")+'<small>'+trend((q.revg||[])[i])+'</small></td><td>'+(Number.isFinite((q.net||[])[i])?money.format(q.net[i])+"M":"—")+'<small>'+trend((q.nyoy||[])[i])+'</small></td><td>'+(Number.isFinite(eps[i])?money.format(eps[i]):"—")+'</td></tr>').join("");
-  return '<div class="earnings-quality"><div class="mini-section-head"><h4>Four-quarter GAAP results</h4><span>SAME QUARTER YOY</span></div><table class="fundamental-table"><thead><tr><th>Fiscal quarter</th><th>Revenue</th><th>Net income</th><th>EPS</th></tr></thead><tbody>'+gaapRows+'</tbody></table><p class="history-note">USD millions except per-share EPS. '+safe(q.verification||"Verify historical figures in the linked filings.")+'</p><div class="mini-section-head"><h4>Earnings quality & surprise</h4><span>GAAP FIRST</span></div><div class="table-scroll"><table class="fundamental-table earnings-table"><thead><tr><th>Quarter</th><th>GAAP EPS</th><th>Adjusted EPS*</th><th>EPS vs estimate*</th><th>Revenue vs estimate*</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="history-note">*Adjusted EPS and consensus comparisons appear only when the snapshot stores the estimate basis. Never compare GAAP EPS against an adjusted-EPS consensus. Missing estimate data stays UNVERIFIED rather than being inferred.</p></div>';
+  const source=c.earningsSurpriseSource&&/^https:\/\//.test(c.earningsSurpriseSource.url||"")?'<a class="source-link" href="'+safe(c.earningsSurpriseSource.url)+'" target="_blank" rel="noopener">Consensus history source ↗</a>':"";
+  return '<div class="earnings-quality">'+financialTrendCharts(c)+'<div class="mini-section-head"><h4>Four-quarter GAAP results</h4><span>SAME QUARTER YOY</span></div><table class="fundamental-table"><thead><tr><th>Fiscal quarter</th><th>Revenue</th><th>Net income</th><th>EPS</th></tr></thead><tbody>'+gaapRows+'</tbody></table><p class="history-note">USD millions except per-share EPS. '+safe(q.verification||"Verify historical figures in the linked filings.")+'</p><div class="mini-section-head"><h4>Earnings quality & surprise</h4><span>GAAP + COMPARABLE CONSENSUS</span></div><div class="table-scroll"><table class="fundamental-table earnings-table"><thead><tr><th>Quarter</th><th>GAAP EPS</th><th>Adjusted EPS*</th><th>EPS vs estimate*</th><th>Revenue vs estimate*</th></tr></thead><tbody>'+rows+'</tbody></table></div><div class="earnings-source-row"><p class="history-note">*Adjusted EPS is compared only with adjusted/non-GAAP consensus. GAAP EPS remains separately visible and is never compared against an adjusted consensus. Missing comparable consensus stays UNVERIFIED.</p>'+source+'</div></div>';
 }
 function previousCandidate(c){
   return previousResearch&&Array.isArray(previousResearch.candidates)?previousResearch.candidates.find(x=>x.ticker===c.ticker&&x.qualified):null;

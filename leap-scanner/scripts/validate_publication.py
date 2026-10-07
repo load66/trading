@@ -83,10 +83,8 @@ for c in qualified:
         fail(f"{t}: latest-quarter free cash flow must be verified and positive", errors)
 
     surprises = c.get("earningsSurprises")
-    if surprises is None:
-        warnings.append(f"{t}: earnings-surprise history not stored; UI must show UNVERIFIED")
-    elif not isinstance(surprises, list):
-        fail(f"{t}: earningsSurprises must be an array when present", errors)
+    if not isinstance(surprises, list) or len(surprises) < 4:
+        fail(f"{t}: four-quarter earnings-surprise history is required; use explicit UNVERIFIED rows when comparable consensus is unavailable", errors)
     else:
         for i, row in enumerate(surprises[:4]):
             if not isinstance(row, dict):
@@ -96,22 +94,33 @@ for c in qualified:
             result = row.get("epsResult") or row.get("result")
             consensus = row.get("epsConsensus") if finite(row.get("epsConsensus")) else row.get("consensus")
             normalized_basis = str(basis or '').upper().replace('NON-GAAP', 'ADJUSTED')
-            actual = ((c.get('quarter') or {}).get('eps') or c.get('eps') or [None]*4)
-            actual = actual[i] if i < len(actual) and normalized_basis == 'GAAP' else row.get('adjustedEps') if normalized_basis == 'ADJUSTED' else None
-            if result and str(result).upper() != 'UNVERIFIED':
-                if normalized_basis not in {'GAAP', 'ADJUSTED'} or not finite(consensus) or not finite(actual):
-                    fail(f'{t}: EPS surprise requires a comparable actual, consensus and GAAP/adjusted basis', errors)
-                elif str(result).upper() != comparison(actual, consensus):
-                    fail(f'{t}: EPS surprise label contradicts the comparable actual and consensus', errors)
+            actuals = ((c.get('quarter') or {}).get('eps') or c.get('eps') or [None]*4)
+            actual = actuals[i] if i < len(actuals) and normalized_basis == 'GAAP' else row.get('adjustedEps') if normalized_basis == 'ADJUSTED' else None
+            explicitly_unverified = str(row.get('status') or '').upper() == 'UNVERIFIED'
+            if explicitly_unverified:
+                if not row.get('verificationReason'):
+                    fail(f'{t}: unverified earnings row requires verificationReason', errors)
+                continue
+            if normalized_basis not in {'GAAP', 'ADJUSTED'} or not finite(consensus) or not finite(actual):
+                fail(f'{t}: EPS surprise row requires comparable actual, consensus and explicit GAAP/adjusted basis', errors)
+            elif result and str(result).upper() != comparison(actual, consensus):
+                fail(f'{t}: EPS surprise label contradicts the comparable actual and consensus', errors)
+            revenues = ((c.get('quarter') or {}).get('revenues') or [])
+            actual_rev = row.get('revenueActual') if finite(row.get('revenueActual')) else revenues[i] if i < len(revenues) else None
+            estimate_rev = row.get('revenueConsensus')
+            if not finite(actual_rev) or not finite(estimate_rev):
+                fail(f'{t}: revenue surprise row requires reported revenue and consensus in matching USD millions', errors)
             rev_result = row.get('revenueResult')
-            if rev_result and str(rev_result).upper() != 'UNVERIFIED':
-                revenues = ((c.get('quarter') or {}).get('revenues') or [])
-                actual_rev = row.get('revenueActual') if finite(row.get('revenueActual')) else revenues[i] if i < len(revenues) else None
-                estimate_rev = row.get('revenueConsensus')
-                if not finite(actual_rev) or not finite(estimate_rev):
-                    fail(f'{t}: revenue surprise requires reported revenue and consensus in matching USD millions', errors)
-                elif str(rev_result).upper() != comparison(actual_rev, estimate_rev):
-                    fail(f'{t}: revenue surprise label contradicts actual and consensus', errors)
+            if rev_result and str(rev_result).upper() != comparison(actual_rev, estimate_rev):
+                fail(f'{t}: revenue surprise label contradicts actual and consensus', errors)
+
+    annual = c.get("annualFinancials")
+    if not isinstance(annual, list) or len(annual) < 4:
+        fail(f"{t}: four-year annual revenue/net-income history is required for growth charts", errors)
+    else:
+        for i, row in enumerate(annual[:4]):
+            if not isinstance(row, dict) or not row.get("period") or not finite(row.get("revenue")) or not finite(row.get("netIncome")):
+                fail(f"{t}: annualFinancials[{i}] requires period, revenue and netIncome", errors)
 
 funnel = research.get("researchFunnel") or {}
 if finite(funnel.get("qualifiedCount")) and int(funnel["qualifiedCount"]) != len(qualified):

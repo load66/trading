@@ -29,6 +29,8 @@ class PublicationIntegrity(unittest.TestCase):
             ('non-qualified plan', lambda r,m: m['candidatePlans'][0].update(ticker='FAKE')),
             ('duplicate ranks', lambda r,m: r['candidates'][1].update(rank=1)),
             ('wrong actionable count', lambda r,m: r['researchFunnel'].update(actionableToday=10)),
+            ('earnings history missing', lambda r,m: r['candidates'][0].pop('earningsSurprises')),
+            ('annual financial history missing', lambda r,m: r['candidates'][0].pop('annualFinancials')),
             ('ambiguous EPS basis', lambda r,m: r['candidates'][0].update(earningsSurprises=[dict(epsBasis='unknown',epsConsensus=1,epsResult='BEAT')])),
             ('adjusted actual missing', lambda r,m: r['candidates'][0].update(earningsSurprises=[dict(epsBasis='adjusted',epsConsensus=1,epsResult='BEAT')])),
         ]
