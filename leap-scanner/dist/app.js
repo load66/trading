@@ -46,14 +46,19 @@ function setupCard(c,compact){
   const contract=contractFor(c.ticker);
   const action=p.action||"RESEARCH ONLY";
   const event=p.eventRisk?'<div class="event-note">⚠ '+safe(p.eventRisk)+'</div>':"";
-  const ladder=(p.entry1||p.add2||p.finalAdd)?'<div class="entry-ladder"><div><span>ENTRY 1 · 30%</span><b>'+safe(p.entry1||"—")+'</b></div><div><span>ADD 2 · 30%</span><b>'+safe(p.add2||"—")+'</b></div><div><span>FINAL · 40%</span><b>'+safe(p.finalAdd||"—")+'</b></div></div>':"";
-  const more=compact?"":'<details class="card-more"><summary>Research details + thesis ⌄</summary><div class="deep-detail"><p><b>Why down:</b> '+safe(c.down)+'</p><p><b>Valuation:</b> '+safe(c.valuation)+'</p><p><b>Moat:</b> '+safe(c.moat)+'</p><p><b>Invalidation:</b> '+safe(c.invalidation)+'</p><p><b>Contract:</b> '+safe(contract&&contract.reference?contract.reference:c.leapQuality||"Verify live chain")+' · '+safe(contract&&contract.readiness?contract.readiness:c.optionNote||"")+'</p></div></details>';
+  const ladder=(p.entry1||p.add2||p.finalAdd)?'<div class="entry-ladder"><div><span>'+safe(p.entry1Label||"1ST MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.entry1||"—")+'</b></div><div><span>'+safe(p.add2Label||"2ND MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.add2||"—")+'</b></div><div><span>'+safe(p.finalAddLabel||"FINAL DEEP SUPPORT")+' · 40%</span><b>'+safe(p.finalAdd||"—")+'</b></div></div>':"";
+  const reasons=(p.entry1Reason||p.add2Reason||p.finalAddReason)?'<div class="support-reasons"><div><b>Why 1st support</b><p>'+safe(p.entry1Reason||"—")+'</p></div><div><b>Why 2nd support</b><p>'+safe(p.add2Reason||"—")+'</p></div><div><b>Why final support</b><p>'+safe(p.finalAddReason||"—")+'</p></div></div>':"";
+  const vm=c.valuationModel&&c.valuationModel.targets?c.valuationModel.targets:null;
+  const targetBlock=vm?'<div class="target-strip"><div><span>BEAR VALUE</span><b>'+money.format(vm.bear.blended)+'</b></div><div><span>BASE VALUE</span><b>'+money.format(vm.base.blended)+'</b></div><div><span>BULL VALUE</span><b>'+money.format(vm.bull.blended)+'</b></div></div>':"";
+  const sector='<div class="sector-line"><span>'+safe(c.sector||"Sector N/A")+'</span><b>'+safe(c.industry||"")+'</b></div>';
+  const sectorDetail=(c.sectorLongTermGood||c.sectorLongTermRisk)?'<div class="sector-box"><div><b>Sector tailwinds</b><p>'+safe((c.sectorLongTermGood||[]).join(" · "))+'</p></div><div><b>Sector risks</b><p>'+safe((c.sectorLongTermRisk||[]).join(" · "))+'</p></div></div>':"";
+  const more=compact?sectorDetail:'<details class="card-more"><summary>Research details + thesis ⌄</summary><div class="deep-detail">'+sectorDetail+'<p><b>Why down:</b> '+safe(c.down)+'</p><p><b>Valuation:</b> '+safe(c.valuation)+'</p><p><b>Moat:</b> '+safe(c.moat)+'</p><p><b>Invalidation:</b> '+safe(c.invalidation)+'</p><p><b>Target method:</b> '+safe(c.valuationModel&&c.valuationModel.method?c.valuationModel.method:"Recompute after earnings.")+'</p><p><b>Contract:</b> '+safe(contract&&contract.reference?contract.reference:c.leapQuality||"Verify live chain")+' · '+safe(contract&&contract.approval?contract.approval:(contract&&contract.readiness?contract.readiness:c.optionNote||""))+'</p></div></details>';
   const price=(p.price!=null?p.price:c.price);
   const rev=c.quarter&&c.quarter.revg&&c.quarter.revg[0]!=null?"+"+Number(c.quarter.revg[0]).toFixed(1)+"%":"—";
   return'<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'">'+
-    '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span></div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">'+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+
+    '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span></div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">'+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
     '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b></div><div><span>DRAWDOWN</span><b class="down">−'+pct(c.drawdown)+'</b></div><div><span>REV. YOY</span><b class="up">'+rev+'</b></div></div>'+
-    ladder+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+more+
+    targetBlock+ladder+reasons+'<p class="confirm"><b>Confirmation:</b> '+safe(p.confirmation||"Wait for support + intact thesis + price confirmation.")+'</p>'+event+more+
   '</article>';
 }
 function renderDesk(){
@@ -74,10 +79,21 @@ function renderSetups(){
   document.getElementById("setup-list").innerHTML=list.length?list.map(c=>setupCard(c,false)).join(""):'<div class="loading">No setups match this filter.</div>';
 }
 function contractCard(c){
-  const readiness=c.readiness||"VERIFY LIVE";
-  return'<article class="contract-card"><div class="contract-card-head"><div><h3>'+safe(c.ticker)+'</h3><div class="ref">'+safe(c.reference)+'</div></div><span class="readiness '+readinessTone(readiness)+'">'+safe(readiness)+'</span></div>'+
-  '<div class="contract-metrics"><div><span>ASK REF.</span><b>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</b></div><div><span>BREAKEVEN</span><b>'+(Number.isFinite(c.breakeven)?money.format(c.breakeven):"—")+'</b></div><div><span>OPEN INT.</span><b>'+(Number.isFinite(c.openInterest)?Number(c.openInterest).toLocaleString():"—")+'</b></div></div>'+
-  '<p><b>Target profile:</b> '+safe(c.preferred)+'</p><p style="margin-top:7px">'+safe(c.note)+'</p><a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">Delayed chain source ↗</a></article>';
+  const readiness=c.approval||c.readiness||"VERIFY LIVE";
+  const ft=c.fundamentalTargets||{};
+  const em=c.expirationMoneyness||{};
+  const stockAbove=Number.isFinite(c.stockAboveStrike)?money.format(c.stockAboveStrike):"—";
+  const delta=Number.isFinite(c.modeledDelta)?"~"+c.modeledDelta.toFixed(2):"LIVE VERIFY";
+  const iv=Number.isFinite(c.modeledIV)?(c.modeledIV*100).toFixed(1)+"%":"LIVE VERIFY";
+  const intrinsic=Number.isFinite(c.currentIntrinsic)?money.format(c.currentIntrinsic):"—";
+  const extrinsic=Number.isFinite(c.currentExtrinsic)?money.format(c.currentExtrinsic):"—";
+  return'<article class="contract-card"><div class="contract-card-head"><div><h3>'+safe(c.ticker)+'</h3><div class="ref">'+safe(c.reference)+'</div><small class="contract-exp">'+safe(c.expiration||"Expiration verify")+' · '+safe(c.preferredHorizonStatus||"")+'</small></div><span class="readiness '+readinessTone(readiness)+'">'+safe(readiness)+'</span></div>'+
+  '<div class="contract-metrics six"><div><span>DELTA</span><b>'+delta+'</b></div><div><span>OPEN INT.</span><b>'+(Number.isFinite(c.openInterest)?Number(c.openInterest).toLocaleString():"—")+'</b></div><div><span>ASK REF.</span><b>'+(Number.isFinite(c.ask)?money.format(c.ask):"—")+'</b></div><div><span>COST / 1</span><b>'+(Number.isFinite(c.costPerContract)?money.format(c.costPerContract):"—")+'</b></div><div><span>BREAKEVEN</span><b>'+(Number.isFinite(c.breakeven)?money.format(c.breakeven):"—")+'</b></div><div><span>MODELED IV</span><b>'+iv+'</b></div></div>'+
+  '<div class="contract-metrics three"><div><span>STOCK ABOVE STRIKE</span><b>'+stockAbove+'</b></div><div><span>INTRINSIC</span><b>'+intrinsic+'</b></div><div><span>EXTRINSIC</span><b>'+extrinsic+'</b></div></div>'+
+  '<div class="itm-grid"><div><span>BEAR '+(em.bear||"—")+'</span><b>'+ (Number.isFinite(ft.bear)?money.format(ft.bear):"—") +'</b></div><div><span>BASE '+(em.base||"—")+'</span><b>'+ (Number.isFinite(ft.base)?money.format(ft.base):"—") +'</b></div><div><span>BULL '+(em.bull||"—")+'</span><b>'+ (Number.isFinite(ft.bull)?money.format(ft.bull):"—") +'</b></div></div>'+
+  '<p class="coverage"><b>Fundamental ITM coverage:</b> '+safe(em.coverage||"Not modeled")+'</p>'+
+  '<div class="contract-reason"><b>Why this strike / why not</b><p>'+safe(c.selectionReason||c.note||"Verify live chain before entry.")+'</p></div>'+
+  '<p><b>Target profile:</b> '+safe(c.preferred)+'</p><p style="margin-top:7px"><b>Selection rule:</b> '+safe(c.selectionRule||"Use verified 0.70–0.85 delta ITM contracts.")+'</p><p style="margin-top:7px"><b>Greek note:</b> '+safe(c.deltaSource||"Live delta required.")+'</p><a class="source-link" href="'+safe(c.source)+'" target="_blank" rel="noopener">Delayed chain source ↗</a></article>';
 }
 function renderContracts(){const list=(market&&market.contractProfiles)||[];document.getElementById("contract-list").innerHTML=list.length?list.map(contractCard).join(""):'<div class="loading">No contract references loaded.</div>';}
 function renderResearch(){
