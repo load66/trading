@@ -445,7 +445,7 @@ When the owner sends the standalone command **generate** in the LEAPS project ch
 9. Never silently weaken the GAAP-profitability/business-quality gates merely to add more stocks.
 10. Never invent live option Greeks, IV, spreads or open interest.
 
-Scheduled 2 PM and intraday jobs are **market/entry-timing refreshes only**. They must use the latest manually approved research universe and must not add/remove candidates or overwrite fundamental research unless the owner explicitly uses **generate** in the project chat.
+The **2 PM weekday job is a complete detailed LEAPS research scan** and must read this MASTER_PROMPT.md first, re-run the broad-universe research funnel, add/remove/rescore candidates when evidence warrants, publish new research and market snapshots, and verify deployment. The **intraday watcher is market/entry-timing only** and must not change the core qualified universe or fundamental scores.
 
 
 ## Expiration Valuation Target Model
