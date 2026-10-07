@@ -212,7 +212,56 @@
         "Construction and manufacturing budgets are cyclical",
         "AI-native design tools could pressure pricing or seat growth",
         "Premium software multiples remain rate-sensitive"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 231.28,
+          "gaapPE": 29.97,
+          "priceToFCF": 17.03,
+          "impliedTrailingEPS": 7.7170503837170505,
+          "impliedTTMFCFPerShare": 13.580739870816206
+        },
+        "normalizedGrowth": {
+          "bear": 0.1335808328230251,
+          "base": 0.2671616656460502,
+          "bull": 0.3606682486221678
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 20.22975,
+            "pfcf": 11.495250000000002
+          },
+          "base": {
+            "pe": 26.973,
+            "pfcf": 15.327000000000002
+          },
+          "bull": {
+            "pe": 31.4685,
+            "pfcf": 18
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 206.99505143775772,
+            "fcfBased": 206.99505143775778,
+            "blended": 206.99505143775775
+          },
+          "base": {
+            "epsBased": 354.61136220325443,
+            "fcfBased": 354.6113622032545,
+            "blended": 354.61136220325443
+          },
+          "bull": {
+            "epsBased": 485.59023148854266,
+            "fcfBased": 488.80821892983073,
+            "blended": 487.1992252091867
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 2,
@@ -403,7 +452,56 @@
         "Hospital capital budgets can delay system placements",
         "Medical-device regulation and product-cycle execution matter",
         "Competition could pressure system pricing or procedure share"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 404.76,
+          "gaapPE": 46.61,
+          "priceToFCF": 44.48,
+          "impliedTrailingEPS": 8.683973396266895,
+          "impliedTTMFCFPerShare": 9.099820143884893
+        },
+        "normalizedGrowth": {
+          "bear": 0.11658089988096151,
+          "base": 0.23316179976192303,
+          "bull": 0.3147684296785961
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 31.46175,
+            "pfcf": 30.023999999999997
+          },
+          "base": {
+            "pe": 41.949,
+            "pfcf": 40.032
+          },
+          "bull": {
+            "pe": 48.9405,
+            "pfcf": 46.704
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 350.15013479754197,
+            "fcfBased": 350.150134797542,
+            "blended": 350.150134797542
+          },
+          "base": {
+            "epsBased": 583.7612164553539,
+            "fcfBased": 583.7612164553539,
+            "blended": 583.7612164553539
+          },
+          "bull": {
+            "epsBased": 786.6793269661911,
+            "fcfBased": 786.6793269661912,
+            "blended": 786.6793269661912
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 3,
@@ -599,7 +697,56 @@
         "Advertising is economically cyclical",
         "Traffic dependence on search/discovery platforms can change quickly",
         "Privacy, moderation and platform regulation are persistent risks"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 148.95,
+          "gaapPE": 34.72,
+          "priceToFCF": 28.13,
+          "impliedTrailingEPS": 4.290034562211981,
+          "impliedTTMFCFPerShare": 5.295058656238891
+        },
+        "normalizedGrowth": {
+          "bear": 0.15,
+          "base": 0.3,
+          "bull": 0.38
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 23.436,
+            "pfcf": 18.98775
+          },
+          "base": {
+            "pe": 31.248,
+            "pfcf": 25.317
+          },
+          "bull": {
+            "pe": 36.456,
+            "pfcf": 29.5365
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 137.6938113033438,
+            "fcfBased": 137.6938113033438,
+            "blended": 137.6938113033438
+          },
+          "base": {
+            "epsBased": 241.91096822139497,
+            "fcfBased": 241.910968221395,
+            "blended": 241.91096822139497
+          },
+          "bull": {
+            "epsBased": 322.81800630666845,
+            "fcfBased": 322.8180063066684,
+            "blended": 322.8180063066684
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 4,
@@ -792,7 +939,56 @@
         "AI-native tools may commoditize some creative workflows",
         "AI monetization must offset cannibalization and compute costs",
         "Mature seat growth can limit multiple expansion"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 238.12,
+          "gaapPE": 13.29,
+          "priceToFCF": 8.75,
+          "impliedTrailingEPS": 17.917231000752448,
+          "impliedTTMFCFPerShare": 27.213714285714286
+        },
+        "normalizedGrowth": {
+          "bear": 0.048518270184897384,
+          "base": 0.09703654036979477,
+          "bull": 0.13099932949922294
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 12,
+            "pfcf": 10.5
+          },
+          "base": {
+            "pe": 16,
+            "pfcf": 14
+          },
+          "bull": {
+            "pe": 20,
+            "pfcf": 18
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 239.19282288655234,
+            "fcfBased": 317.887261616228,
+            "blended": 278.54004225139016
+          },
+          "base": {
+            "epsBased": 353.092372271632,
+            "fcfBased": 469.2597627489988,
+            "blended": 411.1760675103154
+          },
+          "bull": {
+            "epsBased": 472.7060605153479,
+            "fcfBased": 646.1756788370371,
+            "blended": 559.4408696761925
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 5,
@@ -988,7 +1184,56 @@
         "Discretionary consulting budgets weaken in slow economies",
         "AI productivity may pressure labor-based billing rates",
         "Large-client deal timing can make bookings volatile"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 193.4,
+          "gaapPE": 14.26,
+          "priceToFCF": 9.92,
+          "impliedTrailingEPS": 13.562412342215989,
+          "impliedTTMFCFPerShare": 19.495967741935484
+        },
+        "normalizedGrowth": {
+          "bear": 0.03187624919978661,
+          "base": 0.06375249839957323,
+          "bull": 0.08606587283942387
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 12,
+            "pfcf": 10.5
+          },
+          "base": {
+            "pe": 16,
+            "pfcf": 14
+          },
+          "bull": {
+            "pe": 20,
+            "pfcf": 18
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 174.6547201110374,
+            "fcfBased": 219.6828901396642,
+            "blended": 197.1688051253508
+          },
+          "base": {
+            "epsBased": 249.372329001368,
+            "fcfBased": 313.6636325720332,
+            "blended": 281.5179807867006
+          },
+          "bull": {
+            "epsBased": 326.62040732093266,
+            "fcfBased": 422.5651519714566,
+            "blended": 374.59277964619463
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 6,
@@ -1175,7 +1420,56 @@
         "SMB health and consumer credit affect parts of the portfolio",
         "Tax-policy or filing-system changes could alter product economics",
         "Competition in accounting, tax and fintech remains intense"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 289.81,
+          "gaapPE": 17.61,
+          "priceToFCF": 8.94,
+          "impliedTrailingEPS": 16.457126632595116,
+          "impliedTTMFCFPerShare": 32.417225950783
+        },
+        "normalizedGrowth": {
+          "bear": 0.13090146353772394,
+          "base": 0.2618029270754479,
+          "bull": 0.3534339515518547
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 12,
+            "pfcf": 10.5
+          },
+          "base": {
+            "pe": 16,
+            "pfcf": 14
+          },
+          "bull": {
+            "pe": 20,
+            "pfcf": 18
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 260.45996670140465,
+            "fcfBased": 448.9219811980166,
+            "blended": 354.6909739497106
+          },
+          "base": {
+            "epsBased": 444.329284441753,
+            "fcfBased": 765.8343245684409,
+            "blended": 605.0818045050969
+          },
+          "bull": {
+            "epsBased": 650.3054696386585,
+            "fcfBased": 1152.8737570808835,
+            "blended": 901.589613359771
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 7,
@@ -1371,7 +1665,56 @@
         "AI agents could cannibalize traditional seat pricing",
         "Slower organic growth can keep valuation compressed",
         "Large acquisitions and leverage increase execution complexity"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 224.99,
+          "gaapPE": 20.85,
+          "priceToFCF": 12.22,
+          "impliedTrailingEPS": 10.790887290167865,
+          "impliedTTMFCFPerShare": 18.411620294599018
+        },
+        "normalizedGrowth": {
+          "bear": 0.10398225747300535,
+          "base": 0.2079645149460107,
+          "bull": 0.28075209517711447
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 14.07375,
+            "pfcf": 10.5
+          },
+          "base": {
+            "pe": 18.765,
+            "pfcf": 14
+          },
+          "bull": {
+            "pe": 21.892500000000002,
+            "pfcf": 18
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 189.72811829151027,
+            "fcfBased": 241.5160625642066,
+            "blended": 215.62209042785844
+          },
+          "base": {
+            "epsBased": 309.76163123400903,
+            "fcfBased": 394.31376952865315,
+            "blended": 352.0377003813311
+          },
+          "bull": {
+            "epsBased": 412.238864826254,
+            "fcfBased": 578.3103083838026,
+            "blended": 495.2745866050283
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 8,
@@ -1565,7 +1908,56 @@
         "SMB customers are more macro-sensitive and churn-prone",
         "Stock-based compensation remains economically significant",
         "AI hosting costs and larger competitors can pressure margins"
-      ]
+      ],
+      "valuationModel": {
+        "targetExpiration": "2029-01-19",
+        "horizonYears": 2.25,
+        "method": "Blended projected GAAP EPS × terminal P/E and projected FCF/share × terminal P/FCF. Growth is normalized from recent YoY revenue, GAAP net-income and FCF trends with conservative caps; terminal multiples are haircut from current valuation in Bear/Base cases.",
+        "trailingInputs": {
+          "price": 217.09,
+          "gaapPE": 76.71,
+          "priceToFCF": 16.45,
+          "impliedTrailingEPS": 2.8300091252770176,
+          "impliedTTMFCFPerShare": 13.196960486322189
+        },
+        "normalizedGrowth": {
+          "bear": 0.1396807621095383,
+          "base": 0.2793615242190766,
+          "bull": 0.3771380576957535
+        },
+        "terminalMultiples": {
+          "bear": {
+            "pe": 33.75,
+            "pfcf": 11.10375
+          },
+          "base": {
+            "pe": 45,
+            "pfcf": 14.805
+          },
+          "bull": {
+            "pe": 55,
+            "pfcf": 18
+          }
+        },
+        "targets": {
+          "bear": {
+            "epsBased": 128.18105810015854,
+            "fcfBased": 196.6553793372632,
+            "blended": 162.41821871871088
+          },
+          "base": {
+            "epsBased": 221.68445580774153,
+            "fcfBased": 340.10829210023695,
+            "blended": 280.89637395398927
+          },
+          "bull": {
+            "epsBased": 319.778938203208,
+            "fcfBased": 488.02913765374467,
+            "blended": 403.9040379284763
+          }
+        },
+        "warning": "Scenario valuation is a disciplined range, not a guaranteed price target. Recompute after earnings, guidance or a material change in margins/FCF."
+      }
     },
     {
       "rank": 9,
@@ -1847,7 +2239,7 @@
       "HUBS"
     ]
   },
-  "method": "Two-lane profitable-company LEAPS universe. Lane A seeks deep 30–70% drawdowns; Lane B admits high-quality profitable compounders on smaller pullbacks or major support/valuation resets. GAAP profitability, revenue quality, cash generation, valuation, moat and thesis integrity remain strict. Tariff exposure is not a qualification filter or score penalty. Tariff headlines may explain a temporary dip but do not automatically exclude hardware or med-tech businesses. Option quality remains provisional until live delta, IV and spreads are verified. Sector and industry context is included for every qualified company with explicit long-term tailwinds and structural risks.",
+  "method": "Two-lane profitable-company LEAPS universe. Lane A seeks deep 30–70% drawdowns; Lane B admits high-quality profitable compounders on smaller pullbacks or major support/valuation resets. GAAP profitability, revenue quality, cash generation, valuation, moat and thesis integrity remain strict. Tariff exposure is not a qualification filter or score penalty. Tariff headlines may explain a temporary dip but do not automatically exclude hardware or med-tech businesses. Option quality remains provisional until live delta, IV and spreads are verified. Sector and industry context is included for every qualified company with explicit long-term tailwinds and structural risks. Fundamental expiration targets now use a Bear/Base/Bull blended GAAP P/E + P/FCF model tied to Jan 2029. Contract selection must be tested against these targets rather than prior highs alone.",
   "qualificationModel": {
     "hardGates": [
       "GAAP profitable now",
