@@ -16,7 +16,7 @@ The current production architecture uses GitHub as source/fallback, Supabase for
 
 ## Upload a refreshed result
 
-Ask the assistant to update Leap Scanner with a new dated scan. The assistant should verify earnings, prices and high references; check long-dated option availability and liquidity; write a new dated JSON; regenerate cards; update the website's snapshot text and JSON reference; commit the files; and publish the app. No schedule or live quote connection is configured. GitHub stores durable research files; there is no browser-only upload state.
+Current publication is controlled by `GENERATE_WORKFLOW.md`. A full refresh verifies earnings, prices, high references, positive latest-quarter and TTM FCF, valuation, support and long-dated option quality; builds the latest research/market payloads; runs `scripts/validate_publication.py`; writes append-only Supabase snapshots; commits the validated fallback data; and verifies Railway deployment. The weekday 2 PM automation runs the same complete research workflow, while the intraday watcher is timing-only.
 
 The initial shortlist is profitable and has three or four recent reports showing revenue and net-income improvement against the year-earlier quarter. The broader list contains exceptions and must not be labeled as a strict-screen pass. All-time and 52-week high references are labeled separately. TTM net-income growth can include one-off items, which are described in candidate notes. SAP's overview figures use USD while quarterly filings report EUR.
 
