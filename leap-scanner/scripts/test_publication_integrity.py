@@ -8,11 +8,11 @@ RESEARCH = json.loads((ROOT/'dist/data/research-latest.json').read_text())
 MARKET = json.loads((ROOT/'dist/data/market-latest.json').read_text())
 
 class PublicationIntegrity(unittest.TestCase):
-    def check_payload(self, research, market, succeeds=False):
+    def check_payload(self, research, market, succeeds=False, legacy=True):
         with tempfile.TemporaryDirectory() as directory:
             r, m = Path(directory)/'research.json', Path(directory)/'market.json'
             r.write_text(json.dumps(research)); m.write_text(json.dumps(market))
-            result = subprocess.run(['python3', str(ROOT/'scripts/validate_publication.py'), str(r), str(m)], capture_output=True, text=True)
+            result = subprocess.run(['python3', str(ROOT/'scripts/validate_publication.py'), str(r), str(m)] + (['--allow-legacy-funnel'] if legacy else []), capture_output=True, text=True)
             self.assertEqual(result.returncode == 0, succeeds, result.stderr)
 
     def test_current_snapshot(self):
@@ -37,6 +37,18 @@ class PublicationIntegrity(unittest.TestCase):
         for name, mutate in mutations:
             with self.subTest(name=name):
                 r,m=copy.deepcopy(RESEARCH),copy.deepcopy(MARKET);mutate(r,m);self.check_payload(r,m)
+
+    def test_new_publications_must_reconcile(self):
+        clean_r, clean_m = copy.deepcopy(RESEARCH), copy.deepcopy(MARKET)
+        clean_r['researchFunnel']['deepReviewCount'] = len(clean_r['candidates']) + len(clean_r['rejected'])
+        clean_r['researchFunnel']['rejectedCount'] = len(clean_r['rejected'])
+        self.check_payload(clean_r, clean_m, succeeds=True, legacy=False)
+        dirty_r = copy.deepcopy(clean_r)
+        dirty_r['researchFunnel']['rejectedCount'] = 245
+        self.check_payload(dirty_r, clean_m, legacy=False)
+        dirty_r = copy.deepcopy(clean_r)
+        dirty_r['researchFunnel']['deepReviewCount'] = 47
+        self.check_payload(dirty_r, clean_m, legacy=False)
 
     def test_current_eligible_contract_and_invalid_variants(self):
         future = str(datetime.now(timezone.utc).year+2)+'-01-21'
