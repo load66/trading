@@ -13,8 +13,8 @@ function chicagoClock(date=new Date()){
 }
 function scheduleDue(date,latestKey,{hour=12,minute=30}={}){
   const c=chicagoClock(date);
-  return !['Sat','Sun'].includes(c.weekday)&&(c.hour*60+c.minute>=hour*60+minute)&&
-    c.hour*60+c.minute<(hour*60+minute+30)&&latestKey!==c.day;
+  // Catch up even after a restart later in the day; a job's durable key prevents duplicates.
+  return !['Sat','Sun'].includes(c.weekday)&&(c.hour*60+c.minute>=hour*60+minute)&&latestKey!==c.day;
 }
 function ensureEvidence(result,expectedStage,ticker){
   if(!result||result.verified!==true||result.ticker!==ticker||result.stage!==expectedStage||!result.source||
