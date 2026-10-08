@@ -31,8 +31,10 @@ def support_zone(value):
     values = [float(v.replace(',', '')) for v in matches]
     return (min(values), max(values)) if values else None
 
-research_path = Path(sys.argv[1] if len(sys.argv) > 1 else "dist/data/research-latest.json")
-market_path = Path(sys.argv[2] if len(sys.argv) > 2 else "dist/data/market-latest.json")
+args = [a for a in sys.argv[1:] if a != "--allow-legacy-funnel"]
+allow_legacy_funnel = "--allow-legacy-funnel" in sys.argv[1:]
+research_path = Path(args[0] if len(args) > 0 else "dist/data/research-latest.json")
+market_path = Path(args[1] if len(args) > 1 else "dist/data/market-latest.json")
 research = load(research_path)
 market = load(market_path)
 errors, warnings = [], []
@@ -131,8 +133,6 @@ for c in qualified:
 funnel = research.get("researchFunnel") or {}
 if finite(funnel.get("qualifiedCount")) and int(funnel["qualifiedCount"]) != len(qualified):
     fail(f"researchFunnel.qualifiedCount={funnel['qualifiedCount']} but {len(qualified)} candidates are qualified", errors)
-# Broad scans can retain only representative rejection examples, not a record for each
-# discovered stock. Never assume the curated rejected[] array is exhaustive.
 rejected_examples = research.get('rejected') or []
 counts = {'qualifiedCount': len(qualified)}
 counts.update({f'tier{tier}Count': sum(c.get('tier') == tier for c in qualified) for tier in [1, 2, 3]})
@@ -145,11 +145,23 @@ discovery = funnel.get('universeScanned')
 reviewed = funnel.get('deepReviewCount')
 rejected_total = funnel.get('rejectedCount')
 if not finite(discovery) or int(discovery) != discovery or discovery < len(qualified) + len(rejected_examples):
-    fail('researchFunnel.universeScanned must cover qualified names and listed rejections', errors)
-if not finite(reviewed) or int(reviewed) != reviewed or reviewed < len(qualified) + len(rejected_examples) or (finite(discovery) and reviewed > discovery):
-    fail('researchFunnel.deepReviewCount must cover qualified names and listed deep-review rejects without exceeding discovery', errors)
-if not finite(rejected_total) or int(rejected_total) != rejected_total or rejected_total < len(rejected_examples) or (finite(discovery) and rejected_total > discovery-len(qualified)):
-    fail('researchFunnel.rejectedCount must cover listed rejection examples without exceeding nonqualified discovered names', errors)
+    fail('researchFunnel.universeScanned must cover qualified and explicit rejected records', errors)
+if allow_legacy_funnel:
+    # Read-only compatibility for an existing historical snapshot: NEVER for NEW publication.
+    if not finite(reviewed) or int(reviewed) != reviewed or reviewed < len(qualified) + len(rejected_examples) or (finite(discovery) and reviewed > discovery):
+        fail('Legacy researchFunnel.deepReviewCount is out of bounds', errors)
+    if not finite(rejected_total) or int(rejected_total) != rejected_total or rejected_total < len(rejected_examples) or (finite(discovery) and rejected_total > discovery-len(qualified)):
+        fail('Legacy researchFunnel.rejectedCount is out of bounds', errors)
+    if reviewed != len(qualified) + len(rejected_examples) or rejected_total != len(rejected_examples):
+        warnings.append('HISTORICAL UNRECONCILED FUNNEL: must not be republished as newly completed research')
+else:
+    # Match the database CHECK constraint for every future full-research publication.
+    if not finite(rejected_total) or rejected_total != len(rejected_examples):
+        fail(f'researchFunnel.rejectedCount must equal explicit reviewed rejections {len(rejected_examples)}', errors)
+    if not finite(reviewed) or reviewed != len(qualified) + len(rejected_examples):
+        fail(f'researchFunnel.deepReviewCount must equal candidates + explicit rejected {len(qualified) + len(rejected_examples)}', errors)
+    if finite(discovery) and finite(reviewed) and reviewed > discovery:
+        fail('Deep reviews cannot exceed broad discovery count', errors)
 if set(research.get('shortlist') or []) != qualified_tickers:
     fail('research.shortlist must match qualified tickers', errors)
 if {p.get('ticker') for p in market.get('candidatePlans') or []} != qualified_tickers:
