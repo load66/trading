@@ -58,8 +58,21 @@ async function deadline(){
   x.adapters.financials=async({ticker})=>{tick+=32000;return evidence(ticker,'financials');};
   const r=await makeRunner({storage:x.storage,adapters:x.adapters,maxRunMs:60000,clock,concurrency:1,batchSize:1}).execute({runKey:'late',policyKey:'v1',tickers});
   assert.equal(r.published,false);assert.equal(r.result,'deadline_reached');assert.ok(x.rows.length>0&&x.rows.length<15);
-  assert.throws(()=>makeRunner({storage:x.storage,adapters:x.adapters,maxRunMs:20*60*1000+1}),/20min/);
-  assert.equal(DEFAULT_MAX_MS,19*60*1000);
+  assert.doesNotThrow(()=>makeRunner({storage:x.storage,adapters:x.adapters,maxRunMs:24*60*60*1000}));
+  assert.equal(DEFAULT_MAX_MS,null);
+}
+async function beyondTwentyMinutesStillCompletes(){
+  const x=setup();let virtualTime=0;
+  for(const stage of ['financials','issuer_events','valuation','public_support','leap_contract']){
+    const original=x.adapters[stage];
+    x.adapters[stage]=async args=>{virtualTime+=5*60*1000;return original(args);};
+  }
+  const r=await makeRunner({storage:x.storage,adapters:x.adapters,
+    clock:()=>virtualTime,concurrency:1,batchSize:1}).execute({runKey:'unbounded-75m',policyKey:'v1',tickers});
+  assert.equal(r.published,true,'do not stop after a performance target');
+  assert.equal(r.result,'completed');
+  assert.ok(r.elapsedMs>20*60*1000,'scan may legitimately take longer than 20 minutes');
+  assert.equal(x.rows.length,15);
 }
 function schedule(){
   // UTC 17:30 is 12:30 CDT in October, while UTC 18:30 is 12:30 CST in January.
@@ -70,4 +83,4 @@ function schedule(){
   assert.equal(chicagoClock(new Date('2026-10-08T17:30:00Z')).hour,12);
   assert.throws(()=>ensureEvidence({verified:true},'financials','ABC'),/Unverified financials/);
 }
-(async()=>{schedule();await happyPath();await failClosed();await deadline();console.log('PASS 20-minute deadline, DST schedule, checkpoints, fail-closed financials, hard-gate early exit and absent-provider blocker');})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{schedule();await happyPath();await failClosed();await deadline();await beyondTwentyMinutesStillCompletes();console.log('PASS unlimited default runtime, optional deadline, 75-minute simulated completion, DST, durable checkpoints, strict hard gates');})().catch(e=>{console.error(e);process.exitCode=1;});
