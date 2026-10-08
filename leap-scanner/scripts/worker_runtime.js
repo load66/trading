@@ -1,8 +1,8 @@
 'use strict';
-// Resumable, deadline-bounded research orchestration. Adapters must return verified evidence.
+// Resumable research orchestration with NO total run-time limit. Adapters must return verified evidence.
 // This module NEVER invents financials or publishes an incomplete scan.
 const {performance}=require('node:perf_hooks');
-const DEFAULT_MAX_MS=19*60*1000;
+const DEFAULT_MAX_MS=null; // No deadline: prioritize full completion over an arbitrary duration.
 const STAGES=['financials','issuer_events','valuation','public_support','leap_contract'];
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const validDecision=d=>d&&['qualified','rejected'].includes(d.status)&&typeof d.ticker==='string'&&
@@ -38,11 +38,11 @@ function ensureEvidence(result,expectedStage,ticker){
 }
 function makeRunner({storage,adapters,clock=()=>performance.now(),wallClock=()=>new Date(),sleep=delay,
   maxRunMs=DEFAULT_MAX_MS,concurrency=4,batchSize=5,heartbeatMs=10000,report=()=>{}}){
-  if(!storage||!adapters||maxRunMs<1000||maxRunMs>20*60*1000)throw Error('Invalid worker configuration: maxRunMs <=20min');
+  if(!storage||!adapters||(maxRunMs!=null&&(!Number.isFinite(maxRunMs)||maxRunMs<1000)))throw Error('Invalid optional run deadline');
   if(!Number.isInteger(concurrency)||concurrency<1||concurrency>5||!Number.isInteger(batchSize)||batchSize<1||batchSize>10)throw Error('Invalid batching');
   async function execute({runKey,policyKey,tickers,startedAt=null}){
     if(!runKey||!policyKey||!Array.isArray(tickers)||!tickers.length||new Set(tickers).size!==tickers.length)throw Error('Explicit run, policy and unique tickers required');
-    const began=clock(),deadline=began+maxRunMs,expiry=()=>deadline-clock(),out={runKey,policyKey,startedAt:startedAt||wallClock().toISOString(),result:'incomplete',reviewed:0,published:false,completed:0,failures:[],remaining:[],elapsedMs:0};
+    const began=clock(),deadline=maxRunMs==null?null:began+maxRunMs,expiry=()=>deadline==null?Infinity:deadline-clock(),out={runKey,policyKey,startedAt:startedAt||wallClock().toISOString(),result:'incomplete',reviewed:0,published:false,completed:0,failures:[],remaining:[],elapsedMs:0};
     const completed=await storage.load(runKey,policyKey);
     const verified=new Map((completed||[]).filter(x=>x.status==='verified'&&x.runKey===runKey&&x.policyKey===policyKey).map(x=>[x.ticker+':'+x.stage,x]));
     let stop=false,workError=null,lastHeartbeat=clock();
