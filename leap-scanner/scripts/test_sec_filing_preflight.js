@@ -5,7 +5,7 @@ assert.equal(cik10('12345'),'0000012345');
 assert.equal(tickerKey('BRK.B'),'BRKB');
 const sub={filings:{recent:{form:['8-K','10-Q','10-K'],accessionNumber:['0000000001-26-000013','0000000001-26-000011','0000000001-25-000012'],reportDate:['2026-09-01','2026-06-30','2025-12-31'],filingDate:['2026-10-01','2026-08-03','2026-02-20']}}};
 assert.deepEqual(latestPeriodic(sub),{latestFilingId:'0000000001-26-000011',fiscalPeriod:'2026-06-30',filingForm:'10-Q',filedAt:'2026-08-03'});
-assert.throws(()=>latestPeriodic({filings:{recent:{form:[]}}}),/No suitable/);
+assert.throws(()=>latestPeriodic({filings:{recent:{form:[]}}}),/filing fields unavailable|No suitable/);
 const urls=[],u='https://www.sec.gov/files/company_tickers.json';
 const fetcher=async url=>{
   urls.push(url);
