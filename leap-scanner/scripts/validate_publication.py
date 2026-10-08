@@ -162,6 +162,23 @@ else:
         fail(f'researchFunnel.deepReviewCount must equal candidates + explicit rejected {len(qualified) + len(rejected_examples)}', errors)
     if finite(discovery) and finite(reviewed) and reviewed > discovery:
         fail('Deep reviews cannot exceed broad discovery count', errors)
+# A completed Generate must have decisions for EVERY declared deep-review symbol.
+# Previously, 47 tickers were listed in deepReviewUniverse but only 20 had a decision.
+# This was not a completed broad research scan and may be read only as legacy history.
+if not allow_legacy_funnel:
+    deep_pool = research.get('deepReviewUniverse')
+    if not isinstance(deep_pool, list) or not deep_pool:
+        fail('Full research publication requires an explicit nonempty deepReviewUniverse', errors)
+    else:
+        normalized_pool = [str(t).strip().upper() for t in deep_pool]
+        if len(set(normalized_pool)) != len(normalized_pool) or any(not t for t in normalized_pool):
+            fail('deepReviewUniverse must contain unique nonempty tickers', errors)
+        decided = qualified_tickers | {str(x.get('ticker') or '').strip().upper() for x in rejected_examples if isinstance(x, dict)}
+        pending = sorted(set(normalized_pool) - decided)
+        if pending:
+            fail(f'Incomplete deep review: {len(pending)} selected tickers have no qualified/rejected decision: {", ".join(pending[:15])}' + (' ...' if len(pending) > 15 else ''), errors)
+        if not finite(reviewed) or reviewed < len(set(normalized_pool)):
+            fail('Deep review count must cover all explicitly selected tickers', errors)
 if set(research.get('shortlist') or []) != qualified_tickers:
     fail('research.shortlist must match qualified tickers', errors)
 if {p.get('ticker') for p in market.get('candidatePlans') or []} != qualified_tickers:
