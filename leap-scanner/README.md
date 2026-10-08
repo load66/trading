@@ -4,7 +4,7 @@ Production mobile-first LEAPS research and entry-planning dashboard.
 
 Permanent public app: https://leaps-desk.up.railway.app/
 
-The current production architecture uses GitHub as source/fallback, Supabase for append-only research and market snapshots, Railway for hosting, Massive + AlphaStocks + current web research for evidence, a complete detailed 2 PM weekday research scan, and an intraday market-timing watcher.
+The current production architecture uses GitHub as source/fallback, Supabase for append-only research and market snapshots, Railway for hosting, Massive + AlphaStocks + current web research for evidence, a complete detailed 12:30 PM weekday research scan, and an intraday market-timing watcher.
 
 `MASTER_PROMPT.md` is the canonical research-policy source. `GENERATE_WORKFLOW.md` defines the publication workflow. Historical sections below document earlier versions and must not override those two files.
 
@@ -16,7 +16,7 @@ The current production architecture uses GitHub as source/fallback, Supabase for
 
 ## Upload a refreshed result
 
-Current publication is controlled by `GENERATE_WORKFLOW.md`. A full refresh verifies earnings, prices, high references, positive latest-quarter and TTM FCF, valuation, support and long-dated option quality; builds the latest research/market payloads; runs `scripts/validate_publication.py`; writes append-only Supabase snapshots; commits the validated fallback data; and verifies Railway deployment. The weekday 2 PM automation runs the same complete research workflow, while the intraday watcher is timing-only.
+Current publication is controlled by `GENERATE_WORKFLOW.md`. A full refresh verifies earnings, prices, high references, positive latest-quarter and TTM FCF, valuation, support and long-dated option quality; builds the latest research/market payloads; runs `scripts/validate_publication.py`; writes append-only Supabase snapshots; commits the validated fallback data; and verifies Railway deployment. The weekday 12:30 PM automation runs the same complete research workflow, while the intraday watcher is timing-only.
 
 The initial shortlist is profitable and has three or four recent reports showing revenue and net-income improvement against the year-earlier quarter. The broader list contains exceptions and must not be labeled as a strict-screen pass. All-time and 52-week high references are labeled separately. TTM net-income growth can include one-off items, which are described in candidate notes. SAP's overview figures use USD while quarterly filings report EUR.
 
@@ -54,7 +54,7 @@ The dashboard now separates **audited company qualification** from **dated marke
 
 - `dist/data/strict-scan-YYYY-MM-DD.json` remains the fundamental research record.
 - `dist/data/market-latest.json` is the replaceable market-regime and staged-support layer.
-- The intraday layer may change without rewriting the audited company screen; the full 2 PM research scan can update qualification and scores.
+- The intraday layer may change without rewriting the audited company screen; the full 12:30 PM research scan can update qualification and scores.
 - A market trigger starts analysis; it never creates an automatic trade.
 
 Default market-dislocation thresholds:
@@ -66,13 +66,13 @@ Default market-dislocation thresholds:
 
 Stronger dip context is SPY <= -2.5% and/or QQQ <= -3.0%, especially with elevated volatility.
 
-Each qualified name can carry up to three underlying-stock support zones using a 30% / 30% / 40% staged plan. Adds require an intact thesis and price confirmation. Never average because an option premium alone is falling.
+Each qualified name can carry three published support zones using the 30% / 30% / 40% staged plan. Staged entries require reaching major support, an intact thesis and material-news review; no mandatory reversal confirmation or -2% to -5% daily-price move. Never average because an option premium alone is falling.
 
 The first dated entry map is prepared for the October 7, 2026 session using October 6 closing data. It correctly reports no A+ broad-market dip trigger. Live option contract selection remains separate and must verify expiration, delta, IV, bid/ask spread and open interest before any contract is chosen.
 
 ### Current automation
 
-1. **2:00 PM America/Chicago on U.S. trading weekdays:** run the complete detailed `MASTER_PROMPT.md` research workflow, including broad discovery, hard GAAP/revenue/FCF gates, rescoring, qualification changes, valuation, support and contract-readiness research.
+1. **12:30 PM America/Chicago on U.S. trading weekdays:** run the complete detailed `MASTER_PROMPT.md` research workflow, including broad discovery, hard GAAP/revenue/FCF gates, rescoring, qualification changes, valuation, support and contract-readiness research.
 2. **Intraday condition watch:** market/entry-timing only. It may refresh market regime, support/action labels, event risk and contract readiness, but it must not change the fundamental qualified universe or research scores.
 3. Every publication must pass `scripts/validate_publication.py` (or an equivalent integrity check) before Supabase/GitHub publication.
 4. Historical snapshots stay append-only. The public app always uses the permanent research rank; intraday action status never renumbers the qualified list.
@@ -90,7 +90,7 @@ The public LEAPS Desk is now designed mobile-first and backed by a public read-o
 - **Massive** — market price/history and technical support inputs when available.
 - **AlphaStocks** — company risk/news context.
 - **Current web research** — earnings, macro/event risk and option-chain verification when connected tools do not provide the needed fact.
-- **ChatGPT automations** — 2 PM daily scan plus intraday dip-condition watch.
+- **ChatGPT automations** — 12:30 PM daily scan plus intraday dip-condition watch.
 
 Public Supabase tables:
 - `public.leap_scans`
@@ -113,13 +113,22 @@ The current master instructions live in `MASTER_PROMPT.md`.
 
 Each qualified stock card contains its research, support plan and a LEAP contract disclosure, collapsed by default. Expansion is preserved during feed refreshes. The contract screen uses delta 0.60–0.75 inclusive with no premium/contract-cost cap or preferred sub-band. Among eligible calls with comparable current liquidity data and acceptable spreads, choose the highest open interest; the tightest spread as a percentage of midpoint breaks ties. Missing OI or bid/ask remains provisional. Existing dated references are not freshly verified liquidity winners.
 
-The app reads Supabase first and falls back to GitHub JSON if the database feed is temporarily unavailable.
+The app independently reads Supabase research and market snapshots, selects the latest actual scan-completion timestamps (not merely the last-uploaded rows), and retains the last good copy when either feed fails. GitHub JSON is the cold-start fallback. Public prices are dated observations, not claimed as live quotes.
 
 ### Research control
 
 - Sending **`generate`** in the LEAPS project chat runs the complete detailed research refresh immediately.
-- The **2 PM weekday job runs the same full research policy** and may add, remove, or rescore candidates when evidence warrants.
+- The **12:30 PM weekday job runs the same full research policy** and may add, remove, or rescore candidates when evidence warrants.
 - The **intraday watcher is timing-only** and cannot change fundamental qualification or research scores.
 - Supabase research snapshots are append-only history; GitHub `research-latest.json` is the public fallback.
 - `MASTER_PROMPT.md` is the single canonical policy source; duplicated documentation must not override it.
 - The public UI displays research-snapshot freshness separately from market-scan freshness.
+
+## Publication and regression protection (October 8, 2026)
+
+- Research selection is monotonic by `payload.scanCompletedAt`. A later INSERT containing old results cannot replace newer research; previous-rank comparisons skip duplicate completion timestamps.
+- The intraday market reader and research reader refresh independently, preserve their last good data through transient outages, and display partial/stale-data warnings. The frontend renders the research-completed and price-observed timestamps separately.
+- Financial details show quarterly and annual revenue/GAAP-net-income bar charts plus latest-quarter EPS and revenue BEAT/MEET/MISS only when comparably verified. Missing/adjusted-basis-incompatible consensus remains UNVERIFIED.
+- GitHub Actions `.github/workflows/leaps-desk-integrity.yml` validates saved publication payloads, publication rejections, rank/support/contract safeguards, private Alpaca isolation and independent browser-feed fallbacks on pushes and pull requests.
+- Local suite from `leap-scanner/`: `python3 scripts/validate_publication.py`, `python3 -m unittest discover -s scripts -p 'test_publication_integrity.py' -v`, `node scripts/test_desk_integrity.js`, `node scripts/test_alpaca_live.js`, and `node scripts/test_public_refresh.js`.
+- The 12:30 PM CT weekday full research run and 1:45 PM CT recovery check are separate enabled automations. Running on schedule, and publishing valid fresh snapshots, must be established from execution records; an enabled switch is not proof of successful future publication.
