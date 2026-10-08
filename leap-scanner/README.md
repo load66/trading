@@ -132,3 +132,13 @@ The app independently reads Supabase research and market snapshots, selects the 
 - GitHub Actions `.github/workflows/leaps-desk-integrity.yml` validates saved publication payloads, publication rejections, rank/support/contract safeguards, private Alpaca isolation and independent browser-feed fallbacks on pushes and pull requests.
 - Local suite from `leap-scanner/`: `python3 scripts/validate_publication.py`, `python3 -m unittest discover -s scripts -p 'test_publication_integrity.py' -v`, `node scripts/test_desk_integrity.js`, `node scripts/test_alpaca_live.js`, and `node scripts/test_public_refresh.js`.
 - The 12:30 PM CT weekday full research run and 1:45 PM CT recovery check are separate enabled automations. Running on schedule, and publishing valid fresh snapshots, must be established from execution records; an enabled switch is not proof of successful future publication.
+
+## Accuracy-preserving fast scanning (October 8, 2026)
+
+The recurring full research scan now follows `SCAN_OPTIMIZATION.md`: freshly screen 150–300+ companies in bulk, use preliminary evidence to prioritize 20–60+ detailed audits, and ALWAYS include previously qualified names and material-change flags. Deep review expands where evidence warrants, and the final qualified list has no numerical cap. Initial screening and reviewed/qualified/rejected counts are separate.
+
+Prior audited financial values may be reused only with a fresh matching official filing ID, fiscal period and same-run news/guidance verification; any missing proof triggers direct re-verification. Use `node scripts/plan_scan_work.js <discovery.json> <current-evidence.json> <verified-cache.json> [plan.json]` to generate a deterministic, checkpointed worklist. This utility never certifies or publishes research.
+
+New publications must pass `python3 scripts/validate_publication.py` with **strict exact** deep-review and rejection count reconciliation. The already-saved October 8 historical snapshot has unmatched deep-review metadata: only historical read-only validation may use `--allow-legacy-funnel`; NEVER use this flag for new publication. GitHub Actions checks both the legacy read path and strict future publication invariants, plus scan-work planner regressions.
+
+The 12:30 PM CT weekday research schedule and 1:45 PM recovery task use the optimized procedure; regular-session market updates remain independent and do not repeat fundamental research. Enabled schedules are not guarantees that future runs will finish; inspect actual immutable Supabase rows and execution records for success.
