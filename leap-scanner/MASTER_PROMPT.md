@@ -638,3 +638,95 @@ LEAPS Desk owner live-price mode must be zero-touch after the owner has authenti
 ## Owner Staged-Support Entry Override — October 7, 2026
 
 This section overrides older red-day or reversal language throughout this prompt and previous snapshots. For each fundamentally qualified company with a published three-zone support plan, current price inside the 1st, 2nd, or Final Deep Support zone marks the corresponding 30% / 30% / 40% staged underlying-stock entry. Do not require a −2% to −5% day move, intraday stabilization, VWAP reclaim, or reversal confirmation. If price is merely near a zone, show watch. If price moves outside a zone, recompute the state geometrically. Preserve business qualification, the intact-thesis requirement, material earnings/guidance/FCF damage checks, and the separate live LEAPS contract-quality requirements. A zone label does not assert that a particular option contract is approved or place an order. Do not average down solely because an option premium falls; use the next planned underlying support and recheck the thesis. Public prices are dated provider observations; owner Alpaca remains private.
+
+
+## Automated Research Source Hierarchy — October 7, 2026
+
+This section overrides older source-routing language that treats any single market-data provider as mandatory. The 2 PM research job must be resilient to provider entitlements, quotas, delays, and temporary failures. A source failure must never silently terminate the scan.
+
+### Phase order
+
+Run the scheduled research workflow in this order:
+1. Read this MASTER_PROMPT and the latest approved research + market snapshots.
+2. Verify source availability with the smallest safe read.
+3. Build the broad discovery universe.
+4. Apply hard business-quality gates and create the deep-review pool.
+5. Complete company research, scoring, support plans, event risk, and contract-readiness checks.
+6. Build complete research + market payloads in memory.
+7. Validate the paired payloads.
+8. Publish NEW immutable Supabase research and market rows FIRST.
+9. SELECT the just-written rows and verify payload.scanCompletedAt, qualified tickers, candidatePlans, and counts.
+10. Only after Supabase proof, update GitHub fallback files and verify Railway deployment.
+11. If any mandatory step fails, report PUBLICATION FAILURE with the exact failed step and last verified research completion time. Never present an enabled schedule or partial analysis as a completed publication.
+
+Do not spend most of the run producing narrative before publication. Publication proof is part of task completion.
+
+### Provider roles
+
+#### Unusual Whales — broad discovery + filing-based fundamentals
+Use Unusual Whales when available for:
+- Broad U.S. common-stock discovery via the stock screener, paging in blocks up to 50 rows.
+- Market-cap, volume, drawdown, moving-average, volatility and options-availability context.
+- Filing-based income statements, balance sheets and cash-flow statements.
+- Latest-quarter and TTM cash-flow verification.
+- Technical/indicator context and historical options/IV context when the endpoint entitlement permits it.
+
+The current free-plan market-data endpoints can be delayed by two trading sessions. Delayed Unusual Whales data is acceptable for DISCOVERY, historical technical context, and reported financial statements when clearly dated. It is NOT a live entry-price source and must not be labeled live.
+
+For free cash flow from Unusual Whales cash-flow statements:
+- FCF = operating_cashflow - capital_expenditures when capital_expenditures is returned as a positive expenditure magnitude.
+- Verify the latest reported quarter is > 0.
+- Sum the latest four reported quarters for TTM FCF and require > 0.
+- Cross-check material discrepancies against company/SEC primary reporting when practical.
+
+If the Unusual Whales live options chain or live market-state endpoint is unavailable because of plan entitlement, continue the research scan. Do not let that block stock qualification.
+
+#### Alpaca — market clock, price history, current internal verification, option Greeks/IV
+Use Alpaca when available for:
+- Official market clock/calendar checks.
+- Current IEX stock snapshots and bar history for owner/internal research validation.
+- Current option chain snapshots, bid/ask, implied volatility and Greeks when exposed by the connected entitlement.
+- Corporate-action checks when relevant.
+
+Owner Alpaca market data is private and must not be redistributed through the public LEAPS Desk. Do not copy owner Alpaca quotes into the public static snapshot merely because they are fresher. Public app publication must continue to use a source permitted for public display, while the authenticated owner overlay can use Alpaca privately.
+
+Alpaca option snapshots may provide current bid/ask, IV and Greeks but may not provide open interest. Missing OI means the contract cannot be certified as the highest-OI winner under the LEAPS policy. Keep it provisional unless OI is verified from another current source.
+
+#### TipRanks — quota-aware analyst / sentiment enrichment
+TipRanks is enrichment, not a hard dependency.
+- Call get_my_usage before any metered TipRanks research work.
+- Preserve monthly quota; do not use TipRanks for every company in the broad discovery universe.
+- Prefer one compact multi-ticker assets-data call for a final shortlist only when quota is comfortably available.
+- Useful fields include analyst consensus, price targets, Smart Score, news sentiment, hedge-fund sentiment, earnings dates, earnings history and analyst actions.
+- TipRanks values are secondary context and must not override filing-based GAAP profitability or FCF hard gates.
+
+If the quota is low or exhausted, skip TipRanks without failing the scan.
+
+#### Quartr — filings/transcripts when entitled
+Quartr is preferred for standardized filing values, earnings documents and transcripts WHEN the connected account has MCP entitlement.
+If Quartr returns subscription_required or another entitlement error, record Quartr as unavailable and continue with company/SEC filings, Unusual Whales filing-based financials, and other approved sources. Quartr availability must never be a publication gate.
+
+#### Massive / AlphaStocks / web / primary filings
+Massive and AlphaStocks remain useful when callable, but a premium/not-entitled endpoint must not abort the workflow.
+- Use available Massive endpoints for broad market/history/technicals when they respond successfully.
+- Use AlphaStocks for public quote observations and company context where appropriate.
+- Prefer company filings, SEC filings and company IR for disputed or thesis-critical reported facts.
+- Use current web research for news, guidance, catalysts and gaps not covered by connected providers.
+- Do not retry an unavailable premium endpoint repeatedly; switch to the fallback source that owns the needed field.
+
+### Broad-universe reliability rule
+
+The 2 PM scan must still BEGIN from a broad market universe. Preferred discovery route:
+1. Massive market-wide universe when callable.
+2. Otherwise Unusual Whales stock screener, paged to examine at least 150 and preferably 200–300 liquid U.S. common stocks/ADRs meeting the approximate market-cap and volume floor.
+3. If neither broad discovery route is callable, use the best available alternate universe source and explicitly mark the source limitation.
+
+Do not silently fall back to only yesterday's qualified list and call that a full broad-universe scan.
+
+### Contract-data source integrity
+
+Current stock qualification and contract verification are separate.
+- A stock may remain qualified when no current LEAPS contract can be certified.
+- Current bid/ask + IV + Greeks without current OI is insufficient for VERIFIED contract-ready status.
+- Delayed Unusual Whales or TipRanks option data may be used as reference only when its timestamp/delay is disclosed.
+- Never merge fields from mismatched timestamps into a synthetic "live" contract without explicitly labeling each field's source and observation time.
