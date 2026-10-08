@@ -25,7 +25,10 @@ const nyParts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {timeZone:"A
   weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(observed)
   .filter(x => ["weekday","hour","minute"].includes(x.type)).map(x => [x.type,x.value]));
 const nyMinute = Number(nyParts.hour)*60+Number(nyParts.minute);
-const regularSession = !["Sat","Sun"].includes(nyParts.weekday) && nyMinute >= 570 && nyMinute < 960;
+const regularHours = !["Sat","Sun"].includes(nyParts.weekday) && nyMinute >= 570 && nyMinute < 960;
+const regularSession = batch.marketOpen === true;
+const sessionStatus = regularSession ? "REGULAR SESSION" :
+  batch.marketOpen === false || !regularHours ? "MARKET CLOSED" : "SESSION UNVERIFIED";
 const source = "AlphaStocks public quote retrieved " + chicago + " America/Chicago; provider supplied no exchange trade timestamp";
 function zone(value) {
   const nums = (String(value || "").replace(/,/g,"").match(/\d+(?:\.\d+)?/g) || []).map(Number);
@@ -91,14 +94,17 @@ market.quoteObservation = {observedAt:stamp,displayedAtChicago:chicago+" America
 market.quoteCutoffs = {...market.quoteCutoffs,equities:stamp,vix:market.market.vix.observedAt};
 market.scanCompletedAt = stamp;
 market.preparedFor = date;
-market.marketSession = {...market.marketSession,status:regularSession?"REGULAR SESSION":"MARKET CLOSED",sessionDate:date,
-  verifiedAt:stamp,source:"Alpaca market clock (session status only; no private quote redistributed)"};
-market.marketState = regularSession ? "NORMAL DAY" : "MARKET CLOSED";
+market.marketSession = {...market.marketSession,status:sessionStatus,sessionDate:date,
+  verifiedAt:stamp,source:typeof batch.marketOpen === "boolean"
+    ? "Alpaca market clock (session status only; no private quote redistributed)"
+    : "U.S. Eastern market hours; holiday/early-close status unverified"};
+market.marketState = regularSession ? "NORMAL DAY" : sessionStatus;
 market.triggered = false;
 market.triggerReasons = [];
 market.stockEntryTriggers = [];
 const inZones = market.candidatePlans.filter(p => p.supportStatus.startsWith("AT ")).map(p => p.ticker);
-market.message = "Public price-only refresh" + (regularSession ? " during the regular session. " : " outside regular market hours. ") +
+market.message = "Public price-only refresh" + (regularSession ? " during the regular session. " :
+  sessionStatus === "MARKET CLOSED" ? " outside regular market hours. " : " with session status unverified. ") +
   (inZones.length ? inZones.join(", ")+" at published major support. " : "No qualified stock inside a published major support zone. ") +
   "Published research, VIX, technical levels and option references were not refreshed. Verify current material news, thesis and LEAPS contract before trading.";
 market.publicationMode = "public_price_only_refresh";
