@@ -868,6 +868,15 @@ For every full manual `generate` and every scheduled research scan:
 
 ### Publication boundary
 
+### Research count reconciliation — mandatory for every full publication
+
+- Before any NEW full-research snapshot, require `researchFunnel.qualifiedCount === candidates.length === candidate_count`.
+- Require `researchFunnel.rejectedCount === rejected.length`. This is the number of detailed reviewed rejections with stored reasons, NOT the entire discovered universe that was screened out.
+- Require `researchFunnel.deepReviewCount === candidates.length + rejected.length`. A larger broad-screen exclusion count must be stored separately as `screenedOutCount` (or stage-specific funnel counts), never relabeled `rejectedCount`.
+- The Supabase `leap_research_snapshots.leap_research_funnel_counts_guard` CHECK constraint enforces the counts above for new writes. The constraint was created NOT VALID to preserve historical rows, including an inconsistent earlier snapshot. Do not bypass, disable, or weaken it to force a publication.
+- Every full research publication must be backed by complete documented provider verification/checkpoints for its own run. A current `scanCompletedAt` alone, a new funnel annotation, or refreshing the market price does NOT make an unchanged older candidate payload freshly researched. If research verification is incomplete, preserve the last valid research snapshot and report a paused or failed run; price-only market refreshes can still publish independently.
+- Preserve the exact count of actually completed deep reviews. Do not report an intended deep-review pool size as completed reviews. Record any pending deep-review pool separately. If publication validation rejects a mismatched funnel, keep all checkpoints and report `PUBLICATION FAILURE` with the mismatch.
+
 Checkpoint data is WORK-IN-PROGRESS only and must never become production research automatically.
 
 Do not insert into `leap_research_snapshots`, `leap_scans`, or update GitHub latest fallback JSON until:
