@@ -570,34 +570,51 @@ async function load(){
   }
 }
 load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
+// A 1 KB metadata poll replaces repeatedly transferring 30 full historical JSON payloads.
+function shouldFetchPublishedPayload(rows,current,fromDatabase){
+  if(!fromDatabase||!current||!Array.isArray(rows)||!rows.length)return true;
+  const times=rows.map(x=>Date.parse(x.completion||"")).filter(Number.isFinite);
+  if(!times.length)return true; // Safe fallback for older/mock PostgREST.
+  const highest=Math.max(...times);
+  const currentTime=Date.parse(current.scanCompletedAt||"");
+  return !Number.isFinite(currentTime)||highest>currentTime;
+}
 let publicPollInFlight=false,lastPublicPollAt=0;
 async function pollLatest(){
   if(publicPollInFlight)return;
   publicPollInFlight=true;
   try{
+    const [marketHead,researchHead]=await Promise.allSettled([
+      sb("leap_scans","select=id,scan_time,completion:payload->>scanCompletedAt&order=scan_time.desc&limit=30"),
+      sb("leap_research_snapshots","select=id,snapshot_time,completion:payload->>scanCompletedAt&order=snapshot_time.desc&limit=30")
+    ]);
+    // Fetch full JSON only when a genuinely newer scan exists. A metadata failure
+    // conservatively triggers the original full-payload path (no missed updates).
+    const marketFull=marketHead.status!=="fulfilled"||shouldFetchPublishedPayload(marketHead.value,market,marketFromDatabase);
+    const researchFull=researchHead.status!=="fulfilled"||shouldFetchPublishedPayload(researchHead.value,research,researchFromDatabase);
     const [marketResult,researchResult]=await Promise.allSettled([
-      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=30"),
-      sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=30")
+      marketFull?sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=30"):Promise.resolve(null),
+      researchFull?sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=30"):Promise.resolve(null)
     ]);
     let changed=false,ignoredStale=false;
     const errors=[];
     if(marketResult.status==="fulfilled"){
-      const selected=selectPublished(marketResult.value,"scan_time");
-      if(selected.latest&&applyIfNotOlder(market,selected.latest.payload)){
+      const selected=marketFull?selectPublished(marketResult.value,"scan_time"):null;
+      if(selected?.latest&&applyIfNotOlder(market,selected.latest.payload)){
         if(!marketFromDatabase||selected.latest.scan_time!==marketSavedAt){market=selected.latest.payload;previousMarket=selected.previous?.payload||null;marketSavedAt=selected.latest.scan_time;changed=true;}
         marketFromDatabase=true;
       }
-      if(!selected.latest)errors.push("market");
-      ignoredStale=ignoredStale||selected.ignoredStaleUpload;
+      if(marketFull&&!selected?.latest)errors.push("market");
+      ignoredStale=ignoredStale||Boolean(selected?.ignoredStaleUpload);
     }else errors.push("market");
     if(researchResult.status==="fulfilled"){
-      const selected=selectPublished(researchResult.value,"snapshot_time");
-      if(selected.latest&&applyIfNotOlder(research,selected.latest.payload)){
+      const selected=researchFull?selectPublished(researchResult.value,"snapshot_time"):null;
+      if(selected?.latest&&applyIfNotOlder(research,selected.latest.payload)){
         if(!researchFromDatabase||selected.latest.snapshot_time!==researchSavedAt){research=selected.latest.payload;researchSavedAt=selected.latest.snapshot_time;previousResearch=selected.previous?.payload||null;changed=true;}
         researchFromDatabase=true;
       }
-      if(!selected.latest)errors.push("research");
-      ignoredStale=ignoredStale||selected.ignoredStaleUpload;
+      if(researchFull&&!selected?.latest)errors.push("research");
+      ignoredStale=ignoredStale||Boolean(selected?.ignoredStaleUpload);
     }else errors.push("research");
     const mode=errors.length?(errors.length===2?"REFRESH UNAVAILABLE":"PARTIAL REFRESH"):ignoredStale?"STALE UPLOAD IGNORED":
       marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK";
