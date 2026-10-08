@@ -1,10 +1,10 @@
-# LEAPS Desk — isolated 20-minute research worker
+# LEAPS Desk — uninterrupted, resumable research worker
 
 This is a separate Railway service from the existing Nginx frontend.
 
 ## Readiness (important)
 
-Runtime orchestration, durable checkpoints, 19-minute execution budget, strict publication gate, lease/heartbeat and daylight-saving-aware scheduling are implemented. The full autonomous research scan is NOT operational until a licensed server-side research provider adapter and secret keys are connected. ChatGPT MCP plugin connections do not automatically grant access to server-side API calls.
+Runtime orchestration, durable checkpoints, NO OVERALL TIME LIMIT, strict publication gate, lease/heartbeat and daylight-saving-aware scheduling are implemented. The 20-minute figure is an optional performance target, NOT an execution cutoff or publication shortcut. The full autonomous research scan is NOT operational until a licensed server-side research provider adapter and secret keys are connected. ChatGPT MCP plugin connections do not automatically grant access to server-side API calls.
 
 The service starts with LEAPS_WORKER_ENABLED=false. This is intentional: standby is safer than claiming a research scan that was never run.
 
@@ -33,7 +33,7 @@ Each stage returns original source, timestamp and verified=true; any missing sta
 
 ## Reliability
 
-The worker polls at 12:30 PM America/Chicago on weekdays (CDT/CST-safe). Each attempt is capped at 19 minutes of research processing (20-minute hard upper bound in runtime); an overrun produces a missed-SLA status, not a fake new list. Every five tickers are saved durably. Workers claim a DB lease, heartbeat, and release. A replacement process can resume saved evidence after lease expiry. No Slack is required.
+The worker starts daily research at 12:30 PM America/Chicago on weekdays (CDT/CST-safe) when no prior run is pending. There is NO 20-minute stop. A scan continues until all selected stocks have verified verdicts and validation/publishing succeeds; slow or unavailable providers cause checkpointed retry with backoff, not a fake result. A process restart or Railway deployment can resume from its durable checkpoints. Every five tickers are saved durably. Workers claim a DB lease, heartbeat, and release. A replacement process can resume saved evidence after lease expiry. No Slack is required.
 
 The paused October 8 57-name worklist can be opted into a safe resume only when real backend provider APIs and publisher are connected and tested. Its 50 secondary financial prescreens are NOT 50 fully completed deep reviews. The existing 11-stock approved list is preserved.
 
