@@ -20,12 +20,16 @@ jobs:
         working-directory: leap-scanner
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Block a stale fallback rewrite
+        run: node scripts/check_fallback_monotonic.js
       - name: Check saved research and market pair
         run: python3 scripts/validate_publication.py
       - name: Test publication rejections
