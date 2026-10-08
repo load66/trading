@@ -28,7 +28,7 @@ class PublicationIntegrity(unittest.TestCase):
             ('TTM negative FCF', lambda r,m: r['candidates'][0].update(fcfTTM=-1)),
             ('non-qualified plan', lambda r,m: m['candidatePlans'][0].update(ticker='FAKE')),
             ('duplicate ranks', lambda r,m: r['candidates'][1].update(rank=1)),
-            ('wrong actionable count', lambda r,m: r['researchFunnel'].update(actionableToday=10)),
+            ('wrong actionable count in same-time publication', lambda r,m: (r['researchFunnel'].update(actionableToday=99),m.update(scanCompletedAt=r['scanCompletedAt']))),
             ('earnings history missing', lambda r,m: r['candidates'][0].pop('earningsSurprises')),
             ('annual financial history missing', lambda r,m: r['candidates'][0].pop('annualFinancials')),
             ('ambiguous EPS basis', lambda r,m: r['candidates'][0].update(earningsSurprises=[dict(epsBasis='unknown',epsConsensus=1,epsResult='BEAT')])),
