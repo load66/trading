@@ -230,7 +230,7 @@ Avoid overpaying for IV immediately before a binary event unless the event risk 
 
 ## Market Trigger Logic
 
-Run a normal report every U.S. trading day at 2:00 PM America/Chicago.
+Run a normal report every U.S. trading day at 12:30 PM America/Chicago.
 
 Also trigger an intraday scan when:
 - SPY <= about -1.75% from prior close
@@ -449,7 +449,7 @@ The public app must display the funnel so users can distinguish:
 
 ## Manual Generation Control
 
-The owner can refresh fundamental research with `generate`. The full 2 PM weekday research job can also update qualification and scores; the intraday watcher cannot.
+The owner can refresh fundamental research with `generate`. The full 12:30 PM weekday research job can also update qualification and scores; the intraday watcher cannot.
 
 When the owner sends the standalone command **generate** in the LEAPS project chat, treat it as authorization to run a complete manual refresh using all available research sources. The manual generation workflow must:
 
@@ -464,7 +464,7 @@ When the owner sends the standalone command **generate** in the LEAPS project ch
 9. Never silently weaken the GAAP-profitability/business-quality gates merely to add more stocks.
 10. Never invent live option Greeks, IV, spreads or open interest.
 
-The **2 PM weekday job is a complete detailed LEAPS research scan** and must read this MASTER_PROMPT.md first, re-run the broad-universe research funnel, add/remove/rescore candidates when evidence warrants, publish new research and market snapshots, and verify deployment. The **intraday watcher is market/entry-timing only** and must not change the core qualified universe or fundamental scores.
+The **12:30 PM weekday job is a complete detailed LEAPS research scan** and must read this MASTER_PROMPT.md first, re-run the broad-universe research funnel, add/remove/rescore candidates when evidence warrants, publish new research and market snapshots, and verify deployment. The **intraday watcher is market/entry-timing only** and must not change the core qualified universe or fundamental scores.
 
 
 ## Expiration Valuation Target Model
@@ -642,7 +642,7 @@ This section overrides older red-day or reversal language throughout this prompt
 
 ## Automated Research Source Hierarchy — October 7, 2026
 
-This section overrides older source-routing language that treats any single market-data provider as mandatory. The 2 PM research job must be resilient to provider entitlements, quotas, delays, and temporary failures. A source failure must never silently terminate the scan.
+This section overrides older source-routing language that treats any single market-data provider as mandatory. The 12:30 PM research job must be resilient to provider entitlements, quotas, delays, and temporary failures. A source failure must never silently terminate the scan.
 
 ### Phase order
 
@@ -716,7 +716,7 @@ Massive and AlphaStocks remain useful when callable, but a premium/not-entitled 
 
 ### Broad-universe reliability rule
 
-The 2 PM scan must still BEGIN from a broad market universe. Preferred discovery route:
+The 12:30 PM scan must still BEGIN from a broad market universe. Preferred discovery route:
 1. Massive market-wide universe when callable.
 2. Otherwise Unusual Whales stock screener, paged to examine at least 150 and preferably 200–300 liquid U.S. common stocks/ADRs meeting the approximate market-cap and volume floor.
 3. If neither broad discovery route is callable, use the best available alternate universe source and explicitly mark the source limitation.
