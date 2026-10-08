@@ -44,3 +44,5 @@ jobs:
         run: node scripts/test_scan_optimizer.js
       - name: Test concurrent fetch, fallback, strict checkpoints and mocked benchmark
         run: node scripts/test_fast_scan_runtime.js
+      - name: Test SEC filing identity batch preflight and audit boundaries
+        run: node scripts/test_sec_filing_preflight.js
