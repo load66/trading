@@ -39,7 +39,7 @@ function createFastRunner({callProvider,saveCheckpoint,concurrency=4,batchSize=1
           stats.networkCalls++;
           stats.providerCalls[provider]=(stats.providerCalls[provider]||0)+1;
           const result=await callProvider({...job,provider},attempt);
-          if(result===null||result===undefined||result.verified===false)throw Object.assign(Error('Provider returned no verified evidence'),{status:422});
+          if(!result||result.verified!==true)throw Object.assign(Error('Provider returned no explicit verified evidence'),{status:422});
           successful.set(key,result);return result;
         }catch(e){
           lastError=e;
