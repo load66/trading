@@ -42,3 +42,5 @@ jobs:
         run: node scripts/test_public_refresh.js
       - name: Test optimized fast scan with strict financial proof
         run: node scripts/test_scan_optimizer.js
+      - name: Test concurrent fetch, fallback, strict checkpoints and mocked benchmark
+        run: node scripts/test_fast_scan_runtime.js
