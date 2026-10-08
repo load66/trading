@@ -40,6 +40,7 @@ class PublicationIntegrity(unittest.TestCase):
 
     def test_new_publications_must_reconcile(self):
         clean_r, clean_m = copy.deepcopy(RESEARCH), copy.deepcopy(MARKET)
+        clean_r['deepReviewUniverse'] = [c['ticker'] for c in clean_r['candidates']] + [c['ticker'] for c in clean_r['rejected']]
         clean_r['researchFunnel']['deepReviewCount'] = len(clean_r['candidates']) + len(clean_r['rejected'])
         clean_r['researchFunnel']['rejectedCount'] = len(clean_r['rejected'])
         self.check_payload(clean_r, clean_m, succeeds=True, legacy=False)
@@ -49,6 +50,18 @@ class PublicationIntegrity(unittest.TestCase):
         dirty_r = copy.deepcopy(clean_r)
         dirty_r['researchFunnel']['deepReviewCount'] = 47
         self.check_payload(dirty_r, clean_m, legacy=False)
+        # A scan with correct numeric totals must still be blocked when it has
+        # planned/selected newcomers without a completed, reasoned decision.
+        dirty_r = copy.deepcopy(clean_r)
+        dirty_r['deepReviewUniverse'].append('KLAC')
+        self.check_payload(dirty_r, clean_m, legacy=False)
+        dirty_r = copy.deepcopy(clean_r)
+        dirty_r['deepReviewUniverse'] = []
+        self.check_payload(dirty_r, clean_m, legacy=False)
+        dirty_r = copy.deepcopy(clean_r)
+        dirty_r['deepReviewUniverse'].append(clean_r['deepReviewUniverse'][0])
+        self.check_payload(dirty_r, clean_m, legacy=False)
+
 
     def test_current_eligible_contract_and_invalid_variants(self):
         future = str(datetime.now(timezone.utc).year+2)+'-01-21'
