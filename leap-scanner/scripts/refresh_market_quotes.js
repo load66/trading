@@ -96,7 +96,7 @@ market.scanCompletedAt = stamp;
 market.preparedFor = date;
 market.marketSession = {...market.marketSession,status:sessionStatus,sessionDate:date,
   verifiedAt:stamp,source:typeof batch.marketOpen === "boolean"
-    ? "Alpaca market clock (session status only; no private quote redistributed)"
+    ? "Verified U.S. exchange calendar and session hours"
     : "U.S. Eastern market hours; holiday/early-close status unverified"};
 market.marketState = regularSession ? "NORMAL DAY" : sessionStatus;
 market.triggered = false;
