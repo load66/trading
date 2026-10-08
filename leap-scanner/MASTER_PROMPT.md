@@ -764,3 +764,53 @@ Therefore:
 - Do not merge mismatched timestamps into a false live contract.
 
 Owner-mode option refresh may run more frequently than the public research scan because the data remains private. Roughly one-minute refresh is acceptable for the qualified universe; avoid unnecessary high-frequency chain polling.
+
+
+## Tiered Contract Fallback Ladder — October 7, 2026
+
+The owner wants every fundamentally qualified stock to receive the best available long-dated call candidate when a suitable chain exists. Do not use a single all-or-nothing contract filter. Search progressively through the following levels and STOP at the first level that produces at least one candidate.
+
+**Level 1 — Preferred**
+- 18–30 months to expiration.
+- ITM.
+- Delta 0.60–0.75.
+- Relative bid/ask spread <=5%.
+- Positive IV, valid bid and ask.
+- This remains the preferred LEAPS profile.
+
+**Level 2 — Flexible**
+- 12–36 months.
+- ITM.
+- Delta 0.55–0.80.
+- Relative spread <=7.5%.
+- Use only when no Level 1 candidate exists.
+
+**Level 3 — Extended**
+- 12–48 months.
+- ITM or approximately ATM; strike may be up to ~1% above the underlying.
+- Delta 0.50–0.85.
+- Relative spread <=10%.
+- This is a fallback contract, not equivalent quality to Level 1.
+
+**Level 4 — Wide Fallback**
+- 12–48 months.
+- Strike may be up to ~5% above the underlying.
+- Delta 0.40–0.90.
+- Relative spread <=15%.
+- Use only when Levels 1–3 are empty. Label clearly as a lower-quality fallback.
+
+**Level 5 — Reference Only**
+- Minimum 12 months remains an absolute floor.
+- Use the best available 12–48 month call with usable ask, IV and delta even when the normal spread/liquidity limits fail.
+- May extend to roughly 15% OTM only to identify an existing long-dated reference.
+- Must be labeled REFERENCE ONLY / NOT TRADE READY.
+- Never fabricate a candidate if no 12+ month chain exists.
+
+For all levels:
+- There is no premium or contract-cost cap.
+- Preserve current quote timestamps and source/feed labels.
+- Current OI is still required before final full verification when the source does not provide it.
+- A lower-level candidate must display its level and exactly what rule was relaxed.
+- Never display Level 2–5 as if it were identical to a Level 1 preferred contract.
+- If multiple candidates exist within the selected level, prefer the 18–30 month window, then tighter spread, then delta nearer ~0.675, then duration nearer ~24 months. Once current OI is independently verified, the canonical final decision becomes highest verified OI among otherwise acceptable candidates, then tighter spread.
+- Fundamental stock qualification remains separate from contract quality. A qualified stock can have only a Level 4/5 contract or no 12+ month contract at all.
