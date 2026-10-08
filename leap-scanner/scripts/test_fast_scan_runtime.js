@@ -63,8 +63,36 @@ async function failures(){
   const p=await runPool(Array.from({length:20},(_,i)=>i),4,async()=>{inflight++;assert.ok(inflight<=4);await nap(1);inflight--;return true;});
   assert.equal(p.maxConcurrencyObserved,4);
 }
+async function exhaustedFinancialDatasets(){
+  const saved=[],calls=[];
+  const runner=createFastRunner({
+    callProvider:async j=>{
+      calls.push(j.provider+':'+j.ticker);
+      if(j.provider==='Financial_Datasets')return {text:'Error fetching cash flow for KLAC: Your current balance is $0.00. Please add more credits to continue using the API.'};
+      return {verified:true,filingId:j.filingId,source:'SEC fallback'};
+    },
+    saveCheckpoint:async row=>saved.push(row),
+    batchSize:1,concurrency:1,maxAttempts:3
+  });
+  const names=['KLAC','APP','BSX'];
+  const jobs=names.map(ticker=>({ticker,phase:'filing',filingId:'2026-Q2',providers:['Financial_Datasets','SEC']}));
+  const out=await runner.execute(jobs,{runKey:'current-run',policyKey:'policy'});
+  assert.equal(out.allVerified,true);
+  assert.equal(out.publicationAllowed,false);
+  assert.deepEqual(out.results.map(x=>x.provider),['SEC','SEC','SEC']);
+  assert.equal(calls.filter(x=>x.startsWith('Financial_Datasets')).length,1,'Zero balance should disable provider after first observed failure');
+  assert.equal(out.stats.retries,0,'Do not retry a provider with exhausted credits');
+  assert.equal(saved.length,3);
+  const failing=createFastRunner({
+    callProvider:async()=>({text:'Your current balance is $0.00. Please add more credits to continue using the API.'}),
+    saveCheckpoint:async()=>{}
+  });
+  const blocked=await failing.execute([{ticker:'APP',provider:'Financial_Datasets',filingId:'2026-Q2'}],{runKey:'r',policyKey:'p'});
+  assert.equal(blocked.allVerified,false,'No other provider means fail closed');
+  assert.equal(blocked.results[0].status,'failed');
+}
 (async()=>{
-  const sequentialMs=await baseline(),fast=await concurrent();await failures();
+  const sequentialMs=await baseline(),fast=await concurrent();await failures();await exhaustedFinancialDatasets();
   // Descriptive synthetic benchmark only: never extrapolate to real provider latency.
   assert.ok(fast.elapsed<sequentialMs,'Mock concurrency must outperform serial mock requests');
   console.log('Optimized scan runtime tests passed. Synthetic 40-record latency baseline '+sequentialMs.toFixed(0)+'ms serial vs '+fast.elapsed.toFixed(0)+'ms concurrent (mocked, NOT a production speed claim).');
