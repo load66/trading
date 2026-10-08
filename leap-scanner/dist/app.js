@@ -459,6 +459,13 @@ function renderChanges(){
   const coverage=(!previousResearch||!previousMarket)?'<p class="change-caveat">'+(!previousResearch?"Previous research unavailable. ":"")+(!previousMarket?"Previous market plan unavailable.":"")+'</p>':"";
   el.innerHTML=changes.length?'<p class="change-caveat">Compared with the prior saved research and market snapshots. Price moves alone are excluded.</p>'+changes.slice(0,8).map(x=>'<p class="change-item"><b>'+safe(x.ticker)+'</b> '+safe(x.detail)+'</p>').join("")+(changes.length>8?'<p class="change-caveat">'+(changes.length-8)+' more changes in this comparison.</p>':"")+coverage:'<p class="change-caveat">'+(previousResearch||previousMarket?"No qualification, rank, score, or support-zone changes in the available previous snapshots.":"A previous published snapshot is needed to compare changes.")+'</p>'+coverage;
 }
+function documentedReviewCount(snapshot){
+  const qualified=(snapshot?.candidates||[]).filter(c=>c.qualified).length;
+  const rejected=(snapshot?.rejected||[]).length;
+  const reported=snapshot?.researchFunnel?.deepReviewCount;
+  const documented=qualified+rejected;
+  return {documented,reported,unreconciled:Number.isFinite(reported)&&reported!==documented};
+}
 function renderDesk(){
   const state=market&&market.marketState?market.marketState:"UNAVAILABLE";
   const ownerLive=typeof window!=="undefined"&&window.leapsOwnerPriceState?.active===true;
@@ -488,8 +495,10 @@ function renderDesk(){
   set("coverage-universe",f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString());
   set("coverage-qualified",f.qualifiedCount==null?allCards.length:Number(f.qualifiedCount).toLocaleString());
   set("coverage-actionable",buyCount.toLocaleString());
-  set("coverage-reviewed",f.deepReviewCount==null?"—":Number(f.deepReviewCount).toLocaleString());
-  const note=document.getElementById("coverage-note");if(note)note.textContent=f.universeDefinition||"Coverage details unavailable.";
+  const reviewCount=documentedReviewCount(research);
+  set("coverage-reviewed",reviewCount.documented.toLocaleString());
+  const note=document.getElementById("coverage-note");
+  if(note)note.textContent=(f.universeDefinition||"Coverage details unavailable.")+(reviewCount.unreconciled?" Historical count warning: "+reviewCount.reported+" reviews were reported, but only "+reviewCount.documented+" company outcomes are documented. Undocumented reviews are not treated as completed.":"");
   const rejected=(research&&research.rejected)||[];
   const re=document.getElementById("coverage-rejections");
   if(re)re.innerHTML=rejected.length?'<details class="card-more" data-detail-key="rejected"><summary>Reviewed · '+rejected.length+' not qualified ⌄</summary><div class="deep-detail">'+rejected.map(x=>'<p><b>'+safe(x.ticker)+':</b> '+safe(x.reason)+'</p>').join("")+'</div></details>':"";
