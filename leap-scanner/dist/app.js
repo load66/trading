@@ -488,32 +488,74 @@ function contractCard(c,embedded=false){
 function renderAll(){const openKeys=new Set(Array.from(document.querySelectorAll("details[data-detail-key][open]")).map(e=>e.dataset.detailKey));renderDesk();renderFreshness();document.querySelectorAll("details[data-detail-key]").forEach(e=>{e.open=openKeys.has(e.dataset.detailKey);});}
 
 async function load(){
+  // Market and research are independent publications: one failing endpoint must not discard the other.
+  const [marketResult,researchResult]=await Promise.allSettled([
+    sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=2"),
+    sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")
+  ]);
+  if(marketResult.status==="fulfilled"){
+    const scans=marketResult.value;
+    if(scans?.[0]?.payload){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;marketFromDatabase=true;}
+  }else console.info("Market snapshot fallback",marketResult.reason?.message||marketResult.reason);
+  if(researchResult.status==="fulfilled"){
+    const snapshots=researchResult.value;
+    if(snapshots?.[0]?.payload){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]?.payload||null;researchFromDatabase=true;}
+  }else console.info("Research snapshot fallback",researchResult.reason?.message||researchResult.reason);
+  if(!research)research=await json("data/research-latest.json");
+  if(!market)market=await json("data/market-latest.json");
+  const partialFailure=marketResult.status==="rejected"||researchResult.status==="rejected";
+  sourceMode(partialFailure?"PARTIAL DATA":marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
+  renderAll();
+  if(partialFailure){
+    const note=document.getElementById("feed-note");
+    if(note)note.textContent="One published source is temporarily unavailable. The most recent saved data or fallback is shown; verify each timestamp before trading.";
+  }
+}
+load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
+let publicPollInFlight=false,lastPublicPollAt=0;
+async function pollLatest(){
+  if(publicPollInFlight)return;
+  publicPollInFlight=true;
   try{
-    const results=await Promise.all([
+    // Preserve whichever side of the market/research pair is reachable.
+    const [marketResult,researchResult]=await Promise.allSettled([
       sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=2"),
       sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")
     ]);
-    const scans=results[0],res=results[1];
-    if(scans&&scans[0]&&scans[0].payload){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;marketFromDatabase=true;}
-    if(res&&res[0]&&res[0].payload){research=res[0].payload;researchSavedAt=res[0].snapshot_time;previousResearch=res[1]&&res[1].payload?res[1].payload:null;researchFromDatabase=true;}
-  }catch(e){console.info("Supabase fallback",e.message);}
-  if(!research)research=await json("data/research-latest.json");
-  if(!market)market=await json("data/market-latest.json");
-  sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
-  renderAll();
-}
-load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
-async function pollLatest(){
-  try{
-    const [scans,snapshots]=await Promise.all([sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=2"),sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")]);
     let changed=false;
-    if(scans&&scans[0]&&scans[0].payload){if(!marketFromDatabase||scans[0].scan_time!==marketSavedAt){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;changed=true;}marketFromDatabase=true;}
-    if(snapshots&&snapshots[0]&&snapshots[0].payload){if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]?.payload||null;changed=true;}researchFromDatabase=true;}
-    sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
+    const errors=[];
+    if(marketResult.status==="fulfilled"){
+      const scans=marketResult.value;
+      if(scans?.[0]?.payload){
+        if(!marketFromDatabase||scans[0].scan_time!==marketSavedAt){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;changed=true;}
+        marketFromDatabase=true;
+      }
+    }else errors.push("market");
+    if(researchResult.status==="fulfilled"){
+      const snapshots=researchResult.value;
+      if(snapshots?.[0]?.payload){
+        if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]?.payload||null;changed=true;}
+        researchFromDatabase=true;
+      }
+    }else errors.push("research");
+    const mode=errors.length?(errors.length===2?"REFRESH UNAVAILABLE":"PARTIAL REFRESH"):
+      marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK";
+    sourceMode(mode,marketSavedAt);
     if(changed)renderAll();else renderFreshness();
-  }catch(e){sourceMode("REFRESH UNAVAILABLE",marketSavedAt);document.getElementById("feed-note").textContent="Latest refresh unavailable. Showing the last saved snapshot; verify its price cutoff before acting.";const summary=document.getElementById("source-short");if(summary)summary.textContent="Refresh unavailable · saved prices "+shortTime(market?.quoteObservation?.observedAt);}
+    if(errors.length){
+      const note=document.getElementById("feed-note");
+      if(note)note.textContent="Latest "+errors.join(" and ")+" update unavailable. Showing the most recently saved observations; check timestamps before trading.";
+      const summary=document.getElementById("source-short");
+      if(summary)summary.textContent="Partial data · saved price cutoff "+shortTime(market?.quoteObservation?.observedAt);
+    }
+  }finally{
+    publicPollInFlight=false;
+    lastPublicPollAt=Date.now();
+  }
 }
-setInterval(pollLatest,60000);
+setInterval(()=>{if(document.visibilityState!=="hidden")pollLatest();},60000);
+window.addEventListener("focus",()=>{if(Date.now()-lastPublicPollAt>15000)pollLatest();});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&Date.now()-lastPublicPollAt>15000)pollLatest();});
 
 document.addEventListener("click",e=>{
   const focus=e.target.closest("[data-focus-ticker]");
