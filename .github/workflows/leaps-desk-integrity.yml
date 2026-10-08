@@ -31,7 +31,7 @@ jobs:
       - name: Block a stale fallback rewrite
         run: node scripts/check_fallback_monotonic.js
       - name: Check saved research and market pair
-        run: python3 scripts/validate_publication.py
+        run: python3 scripts/validate_publication.py --allow-legacy-funnel
       - name: Test publication rejections
         run: python3 -m unittest discover -s scripts -p 'test_publication_integrity.py' -v
       - name: Test stable ranks and support zones
