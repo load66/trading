@@ -1,0 +1,38 @@
+name: LEAPS Desk integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'leap-scanner/**'
+      - '.github/workflows/leaps-desk-integrity.yml'
+  pull_request:
+    paths:
+      - 'leap-scanner/**'
+      - '.github/workflows/leaps-desk-integrity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-publication-and-ui:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: leap-scanner
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check saved research and market pair
+        run: python3 scripts/validate_publication.py
+      - name: Test publication rejections
+        run: python3 -m unittest discover -s scripts -p 'test_publication_integrity.py' -v
+      - name: Test stable ranks and support zones
+        run: node scripts/test_desk_integrity.js
+      - name: Test owner/public price separation
+        run: node scripts/test_alpaca_live.js
+      - name: Test independent public refresh and true snapshot time
+        run: node scripts/test_public_refresh.js
