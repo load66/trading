@@ -806,6 +806,24 @@ The owner wants every fundamentally qualified stock to receive the best availabl
 - Must be labeled REFERENCE ONLY / NOT TRADE READY.
 - Never fabricate a candidate if no 12+ month chain exists.
 
+
+
+### Level 6 — Closest Available, Not LEAPS
+
+If Levels 1–5 produce no 12+ month contract because the accessible chain has no qualifying long-dated call, search shorter expirations only so the qualified stock still has something concrete to evaluate.
+
+Priority:
+1. Prefer roughly 6–12 months (about 180–364 DTE).
+2. If none exists, allow roughly 3–6 months (about 90–179 DTE) as a last reference.
+3. Require a usable ask, IV and delta; prefer positive bid and the tightest available spread.
+4. Prefer the longest DTE first, then tighter spread, then delta nearer stock-like behavior.
+5. Label every such result **LEVEL 6 · CLOSEST AVAILABLE — NOT LEAPS**.
+6. These contracts do NOT satisfy the 12-month LEAPS minimum, are not equivalent to Levels 1–2, and must never be marked VERIFIED ELIGIBLE solely because they are the only contracts available.
+7. Current OI still requires verification.
+8. If Alpaca has no usable 3+ month call at all, use a secondary options source during the scheduled/manual research scan. If no source can verify any usable contract, show **NO VERIFIED CONTRACT AVAILABLE** rather than inventing one.
+
+The purpose of Level 6 is coverage and transparency, not to redefine the LEAPS strategy.
+
 For all levels:
 - There is no premium or contract-cost cap.
 - Preserve current quote timestamps and source/feed labels.
