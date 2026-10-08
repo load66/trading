@@ -10,6 +10,10 @@ When the owner sends the standalone word:
 
 in the LEAPS ChatGPT project chat, perform a full research refresh and publish the results to the public app.
 
+## Accelerated screening without reducing audit quality
+
+For manual or scheduled full scans, read `SCAN_OPTIMIZATION.md` alongside `MASTER_PROMPT.md`. Broadly discover 150–300+ securities through batch feeds, rank them cheaply, then verify a prioritized 20–60+ deep-review pool, always including prior qualified names and material-news/earnings-change alerts. Only reuse old filing values with freshly verified identical filing ID/period and current news/guidance checks. Run at most five independent provider calls concurrently when permitted; checkpoint each group of up to ten tickers. Unreviewed preliminary survivors cannot be called rejected or qualified. Follow the MASTER_PROMPT full publication guard exactly; never hide incomplete research by publishing the old data with a new timestamp.
+
 ## Full refresh sequence
 
 1. Load `MASTER_PROMPT.md` and the latest approved research snapshot.
