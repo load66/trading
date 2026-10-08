@@ -46,3 +46,5 @@ jobs:
         run: node scripts/test_fast_scan_runtime.js
       - name: Test SEC filing identity batch preflight and audit boundaries
         run: node scripts/test_sec_filing_preflight.js
+      - name: Test uninterrupted resumable worker (including >20min simulated run)
+        run: node scripts/test_worker_runtime.js
