@@ -863,6 +863,7 @@ For every full manual `generate` and every scheduled research scan:
 7. Update `leap_scan_runs.completed_ticker_count`, `completed_batch_count`, `stage`, `status`, `updated_at`, and `last_error` after each batch.
 8. If a connector/tool/chat limit interrupts execution, set the run to `paused` when possible. Do not discard completed checkpoints.
 9. On the next continuation, read the checkpoints and skip all completed tickers/batches.
+   - Reconcile the actual saved completed `hard_gate_detail` checkpoint batch numbers, ticker lists, and `completed_ticker_count` against the immutable preliminary survivor order in the discovery checkpoint before resuming. If `metadata.resumeInstruction` is stale, use verified checkpoint contents and counters as the source of truth, update its pointer, and never re-run a verified completed batch.
 10. Provider failures for a batch may be checkpointed as failed with the exact error and retried later without redoing successful batches.
 
 ### Publication boundary
