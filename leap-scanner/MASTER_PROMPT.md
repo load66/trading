@@ -730,3 +730,37 @@ Current stock qualification and contract verification are separate.
 - Current bid/ask + IV + Greeks without current OI is insufficient for VERIFIED contract-ready status.
 - Delayed Unusual Whales or TipRanks option data may be used as reference only when its timestamp/delay is disclosed.
 - Never merge fields from mismatched timestamps into a synthetic "live" contract without explicitly labeling each field's source and observation time.
+
+
+## Alpaca Contract Pre-Screen — Owner Mode
+
+When the authenticated owner is using LEAPS Desk, the private Alpaca service may pre-screen the current long-dated call chain for qualified stocks. This is supplemental owner-only market data and must not be redistributed through the public static snapshot.
+
+Pre-screen rules:
+- Minimum 12 months to expiration.
+- Prefer 18–30 months when available.
+- Calls only.
+- Must be ITM relative to the current Alpaca underlying price.
+- Delta must be 0.60 through 0.75 inclusive.
+- Implied volatility must be present and positive.
+- Bid and ask must both be present and valid.
+- Relative bid/ask spread must be <=5% of midpoint; <=3% is better.
+- There is no premium or contract-cost cap.
+
+Alpaca pre-screen ranking:
+1. Prefer contracts inside the 18–30 month window.
+2. Prefer tighter relative bid/ask spread.
+3. Prefer delta closest to the center of the allowed band (~0.675).
+4. Prefer time to expiration near roughly 24 months as a final mechanical tiebreaker.
+
+The Alpaca option-chain snapshot may provide current bid/ask, IV, delta, gamma, theta, vega and quote timestamp but does not provide the current open-interest field required by the canonical final-selection rule.
+
+Therefore:
+- A contract found by Alpaca alone must be labeled **ALPACA PRE-SCREEN — OI VERIFY** or equivalent.
+- It must NOT be labeled VERIFIED ELIGIBLE solely from Alpaca.
+- Current open interest must still be verified from another current source before the system can apply the canonical highest-OI-wins rule.
+- Historical/delayed OI may be shown as context but cannot silently certify current OI.
+- If current OI later becomes available from a reliable source, rank otherwise eligible contracts by highest verified OI first, then tightest spread.
+- Do not merge mismatched timestamps into a false live contract.
+
+Owner-mode option refresh may run more frequently than the public research scan because the data remains private. Roughly one-minute refresh is acceptable for the qualified universe; avoid unnecessary high-frequency chain polling.
