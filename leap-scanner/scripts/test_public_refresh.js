@@ -28,9 +28,20 @@ ctx.rows={leap_scans:[mm(market,'2026-10-08T04:53:57Z')],leap_research_snapshots
 ctx.failed=new Set();
 ctx.renderCount=0;
 ctx.fallbacks={};
-ctx.fetchRows=async name=>{if(ctx.failed.has(name))throw Error('Simulated endpoint failure');return ctx.rows[name];};
+ctx.fullPayloadReads=0;
+ctx.metadataReads=0;
+ctx.fetchRows=async (name,query)=>{
+  if(ctx.failed.has(name))throw Error('Simulated endpoint failure');
+  const rows=ctx.rows[name];
+  if(query.includes('select=id,')){
+    ctx.metadataReads++;
+    return rows.map((row,i)=>({id:i+1,scan_time:row.scan_time,snapshot_time:row.snapshot_time,completion:row.payload?.scanCompletedAt}));
+  }
+  ctx.fullPayloadReads++;
+  return rows;
+};
 ctx.loadFallback=async name=>ctx.fallbacks[name]||null;
-vm.runInContext('sb=async function(table){return fetchRows(table)};json=async function(name){return loadFallback(name)};renderAll=function(){renderCount++};renderFreshness=function(){};',ctx);
+vm.runInContext('sb=async function(table,query){return fetchRows(table,query)};json=async function(name){return loadFallback(name)};renderAll=function(){renderCount++};renderFreshness=function(){};',ctx);
 const read=expression=>vm.runInContext(expression,ctx);
 const newMarket=copy(market);newMarket.scanCompletedAt='2026-10-08T06:00:00Z';
 const newerResearch=copy(research);newerResearch.scanCompletedAt='2026-10-08T07:00:00Z';
@@ -62,6 +73,10 @@ const newerResearch=copy(research);newerResearch.scanCompletedAt='2026-10-08T07:
   await read('pollLatest()');
   assert.equal(read('research.scanCompletedAt'),newerResearch.scanCompletedAt,'Newer in-memory scan cannot regress');
   assert.equal(read('market.scanCompletedAt'),newMarket.scanCompletedAt,'Newer in-memory market cannot regress');
+  const readsBefore=ctx.fullPayloadReads,metaBefore=ctx.metadataReads;
+  await read('pollLatest()');
+  assert.equal(ctx.fullPayloadReads,readsBefore,'No unchanged full JSON payloads should be downloaded on each poll');
+  assert.equal(ctx.metadataReads,metaBefore+2,'Both independent publication feeds use compact metadata reads');
   const summary=read('earningsAtAGlance({quarter:{revenues:[150],net:[20],eps:[2.5],revg:[12],nyoy:[8]},earningsSurprises:[{epsBasis:"ADJUSTED",epsConsensus:2.3,status:"UNVERIFIED"}]})');
   assert.ok(summary.includes('UNVERIFIED')&&!summary.includes('class="earnings-chip beat"'),'Do not invent EPS beats');
   assert.ok(ctx.renderCount>=3,'Successful independent publication updates must render');
