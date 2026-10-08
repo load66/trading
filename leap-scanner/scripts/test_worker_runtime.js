@@ -77,6 +77,7 @@ async function beyondTwentyMinutesStillCompletes(){
 function schedule(){
   // UTC 17:30 is 12:30 CDT in October, while UTC 18:30 is 12:30 CST in January.
   assert.equal(scheduleDue(new Date('2026-10-08T17:30:00Z'),null),true);
+  assert.equal(scheduleDue(new Date('2026-10-08T23:45:00Z'),null),true,'resume a missed launch any time later on the same workday');
   assert.equal(scheduleDue(new Date('2026-10-08T17:30:00Z'),'2026-10-08'),false);
   assert.equal(scheduleDue(new Date('2026-01-08T18:30:00Z'),null),true);
   assert.equal(scheduleDue(new Date('2026-10-10T17:30:00Z'),null),false);
