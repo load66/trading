@@ -5,7 +5,17 @@ const {performance}=require('node:perf_hooks');
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const code=e=>Number(e?.status||e?.statusCode||e?.response?.status||0);
 const retryable=e=>[408,425,429,500,502,503,504].includes(code(e))||Boolean(e?.transient);
-const entitlement=e=>/NOT_ENTITLED|SUBSCRIPTION_REQUIRED|NOT SUBSCRIBED/i.test(String(e?.code||e?.message||''));
+const unavailableMessage=value=>{
+  if(typeof value==='string')return value;
+  if(value&&typeof value==='object')return String(value.text||value.error||value.message||value.structuredContent?.error||'');
+  return '';
+};
+const entitlement=e=>/NOT_ENTITLED|SUBSCRIPTION_REQUIRED|NOT SUBSCRIBED|INSUFFICIENT[_ -]CREDITS|CURRENT BALANCE IS\\s*\\$?0(?:\\.0+)?|ADD MORE CREDITS|MONTHLY TOOL-CALL LIMIT/i.test(String(e?.code||'')+' '+unavailableMessage(e));
+const providerFailure=value=>{
+  const msg=unavailableMessage(value);
+  if(entitlement({message:msg}))return Object.assign(Error('Provider balance or entitlement unavailable: '+msg.slice(0,180)),{code:'NOT_ENTITLED',status:402});
+  return null;
+};
 function runPool(items,limit,fn){
   if(!Number.isInteger(limit)||limit<1||limit>10)throw Error('Invalid concurrency');
   let cursor=0,active=0,maxActive=0;
@@ -39,6 +49,8 @@ function createFastRunner({callProvider,saveCheckpoint,concurrency=4,batchSize=1
           stats.networkCalls++;
           stats.providerCalls[provider]=(stats.providerCalls[provider]||0)+1;
           const result=await callProvider({...job,provider},attempt);
+          const providerError=providerFailure(result);
+          if(providerError)throw providerError;
           if(!result||result.verified!==true)throw Object.assign(Error('Provider returned no explicit verified evidence'),{status:422});
           successful.set(key,result);return result;
         }catch(e){
@@ -110,4 +122,4 @@ function createFastRunner({callProvider,saveCheckpoint,concurrency=4,batchSize=1
   }
   return {execute,stats};
 }
-module.exports={runPool,createFastRunner,retryable,entitlement};
+module.exports={runPool,createFastRunner,retryable,entitlement,providerFailure};
