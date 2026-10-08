@@ -40,3 +40,5 @@ jobs:
         run: node scripts/test_alpaca_live.js
       - name: Test independent public refresh and true snapshot time
         run: node scripts/test_public_refresh.js
+      - name: Test optimized fast scan with strict financial proof
+        run: node scripts/test_scan_optimizer.js
