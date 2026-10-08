@@ -24,6 +24,26 @@ Use independent provider reads in bounded concurrency up to 5, subject to the ac
 
 The deterministic helper is `node scripts/plan_scan_work.js discovery.json current-evidence.json verified-cache.json plan.json`. It schedules work but never publishes. The 12:30 PM CT research job performs fundamentals; hourly public market updates never repeat financial due diligence.
 
+## Organize detailed work into three lanes
+
+After the batch financial and filing-identity passes, route every selected ticker into exactly one
+lane and checkpoint the complete routing list before more provider calls:
+
+| Lane | Entry rule | Required work | Exit |
+| --- | --- | --- | --- |
+| Hard-gate cross-check | A batch financial gate failed | Cross-check only the failing value against the identified primary filing. If confirmed, record a reasoned rejection; if contradicted or ambiguous, move the ticker to full review. | Rejected or rerouted |
+| Unchanged-evidence fast path | A previously audited ticker has the identical current accession and period | Check for new issuer/SEC material events after the prior review, then recompute current valuation, support and contract status. | Qualified or rejected |
+| New/changed full review | New ticker, changed filing, unclear provenance, or material event | Complete primary-source financial, business-quality, risk, valuation, support and contract review. | Qualified or rejected |
+
+Do not mix discovery rows, secondary headline triage, filing identity, and final decisions in one
+payload. Use a separate checkpoint stage for each. A headline aggregator can prioritize work, but
+cannot satisfy the issuer/SEC news gate. Filing identity proves the issuer, form, date, accession and
+URL; it does not prove the financial values extracted from that filing.
+
+For the resumable October 8 run, the routed workload is 7 hard-gate cross-checks, 11 unchanged-
+evidence fast-path reviews and 39 new/changed full reviews. This routing is operational state, not a
+published research result.
+
 ## Immutable publication boundary
 
 Before writing a NEW full-research snapshot, verify every reviewed company and reconcile precisely: `qualifiedCount = candidates.length`, `rejectedCount = rejected.length`, `deepReviewCount = candidates.length + rejected.length`. Store cheap-screen eliminations separately, e.g. `screenedOutCount`. The previous October 8 snapshot reported 47 deep reviews alongside 11 qualified and 9 explicit reviewed rejections; those historical counts are unreconciled and must not be copied into a new publication. The backend research table's strict count check must be respected.

@@ -1,0 +1,14 @@
+{
+  "fromScanCompletedAt": "2026-10-08T04:53:57.285147+00:00",
+  "toScanCompletedAt": "2026-10-07T14:13:37.230208Z",
+  "fromSha256": "c63019fd2402daf993b0e36161d20f081b438c5d30029ed4aa1543355ae8509f",
+  "toSha256": "1cad38b46ff5a906924f45dc5b6e5142fcc862cebdf79d9afbb7ea1fecc6aa00",
+  "quarantinedGitObject": "HEAD^:leap-scanner/dist/data/research-latest.json",
+  "resumeRunKey": "manual-2026-10-08-complete-broad-optimized-02",
+  "reason": "The newer fallback declared 47 deep reviews and 245 reviewed rejections, but stored decisions for only 11 qualified and 9 rejected companies. Restore the last strictly valid fallback while the optimized run resumes from verified checkpoints.",
+  "previousValidationErrors": [
+    "researchFunnel.rejectedCount must equal explicit reviewed rejections 9",
+    "researchFunnel.deepReviewCount must equal candidates + explicit rejected 20",
+    "Incomplete deep review: 34 selected tickers have no qualified/rejected decision"
+  ]
+}
