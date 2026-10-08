@@ -91,8 +91,36 @@ async function exhaustedFinancialDatasets(){
   assert.equal(blocked.allVerified,false,'No other provider means fail closed');
   assert.equal(blocked.results[0].status,'failed');
 }
+async function verifyCacheIsolation(){
+  const received=[];
+  const runner=createFastRunner({
+    callProvider:async j=>{
+      received.push({ticker:j.ticker,phase:j.phase,provider:j.provider});
+      return {verified:true,issuer:j.ticker,provider:j.provider,requestNumber:received.length};
+    },
+    saveCheckpoint:async()=>{},
+    concurrency:2,batchSize:10
+  });
+  const job={ticker:'AAA',phase:'financials',filingId:'2026-Q2',provider:'SEC',cacheKey:'shared-accession'};
+  const first=await runner.execute([job],{runKey:'scan-A',policyKey:'policy-1'});
+  const sameRun=await runner.execute([job],{runKey:'scan-A',policyKey:'policy-1'});
+  assert.equal(received.length,1,'Deduplication within the identical scan scope is allowed');
+  assert.equal(sameRun.results[0].evidence.requestNumber,first.results[0].evidence.requestNumber);
+  const nextRun=await runner.execute([job],{runKey:'scan-B',policyKey:'policy-1'});
+  assert.equal(received.length,2,'New scan must fetch new provider evidence');
+  assert.equal(nextRun.results[0].evidence.requestNumber,2);
+  await runner.execute([job],{runKey:'scan-A',policyKey:'policy-2'});
+  assert.equal(received.length,3,'Policy revision must fetch new provider evidence');
+  await runner.execute([job],{runKey:'scan-A',policyKey:'policy-1',phase:'support'});
+  assert.equal(received.length,4,'Different verification stage must fetch new provider evidence');
+  const secondIssuer={...job,ticker:'BBB'};
+  const shared=await runner.execute([job,secondIssuer],{runKey:'scan-C',policyKey:'policy-1'});
+  assert.equal(received.length,6,'Shared caller cache key must not merge distinct issuers');
+  assert.deepEqual(shared.results.map(x=>x.evidence.issuer),['AAA','BBB']);
+  assert.equal(shared.publicationAllowed,false,'Cache fixes never bypass publication checks');
+}
 (async()=>{
-  const sequentialMs=await baseline(),fast=await concurrent();await failures();await exhaustedFinancialDatasets();
+  const sequentialMs=await baseline(),fast=await concurrent();await failures();await exhaustedFinancialDatasets();await verifyCacheIsolation();
   // Descriptive synthetic benchmark only: never extrapolate to real provider latency.
   assert.ok(fast.elapsed<sequentialMs,'Mock concurrency must outperform serial mock requests');
   console.log('Optimized scan runtime tests passed. Synthetic 40-record latency baseline '+sequentialMs.toFixed(0)+'ms serial vs '+fast.elapsed.toFixed(0)+'ms concurrent (mocked, NOT a production speed claim).');

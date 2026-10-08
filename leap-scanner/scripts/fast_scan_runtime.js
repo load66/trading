@@ -37,8 +37,10 @@ function createFastRunner({callProvider,saveCheckpoint,concurrency=4,batchSize=1
   if(!Number.isInteger(maxAttempts)||maxAttempts<1||maxAttempts>4)throw Error('Max attempts 1..4');
   const flights=new Map(),successful=new Map(),disabledProviders=new Set();
   const stats={networkCalls:0,deduplicatedCalls:0,retries:0,failures:0,completed:0,failed:0,skippedVerified:0,maxConcurrent:0,providerFailures:{},providerCalls:{},batches:[]};
-  async function oneProvider(job,provider){
-    const key=provider+'|'+String(job.cacheKey||job.ticker+'|'+job.phase+'|'+job.filingId);
+  async function oneProvider(job,provider,scope){
+    // Never reuse provider evidence across scan runs, policy revisions or review stages.
+    // Include issuer identity even when a caller supplies a custom cacheKey.
+    const key=JSON.stringify([scope.runKey,scope.policyKey,scope.phase,provider,job.ticker,job.phase||scope.phase,job.filingId??null,job.cacheKey??null]);
     if(successful.has(key)){stats.deduplicatedCalls++;return successful.get(key);}
     if(flights.has(key)){stats.deduplicatedCalls++;return flights.get(key);}
     const fetch=async()=>{
@@ -70,13 +72,13 @@ function createFastRunner({callProvider,saveCheckpoint,concurrency=4,batchSize=1
     flights.set(key,pending);
     try{return await pending;}finally{flights.delete(key);}
   }
-  async function fetchWithFallback(job){
+  async function fetchWithFallback(job,scope){
     const providers=Array.isArray(job.providers)&&job.providers.length?job.providers:[job.provider];
     let last;
     for(const provider of providers){
       if(typeof provider!=='string'||!provider)throw Error('Explicit provider list required');
       try{
-        const value=await oneProvider(job,provider);
+        const value=await oneProvider(job,provider,scope);
         return {value,provider};
       }catch(e){last=e;}
     }
@@ -100,7 +102,7 @@ function createFastRunner({callProvider,saveCheckpoint,concurrency=4,batchSize=1
       const startedAt=clock().toISOString(),start=performance.now();
       const result=await runPool(chunk,concurrency,async job=>{
         if(verifiedSaved.has(job.ticker)){stats.skippedVerified++;return {...verifiedSaved.get(job.ticker),resumed:true};}
-        const response=await fetchWithFallback(job);
+        const response=await fetchWithFallback(job,{runKey,policyKey,phase});
         // The provider's answer is evidence, not a hard-gate certification.
         return {ticker:job.ticker,filingId:job.filingId||null,runKey,policyKey,phase,status:'verified',provider:response.provider,evidence:response.value};
       });
