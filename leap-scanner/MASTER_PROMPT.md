@@ -663,6 +663,16 @@ Do not spend most of the run producing narrative before publication. Publication
 
 ### Provider roles
 
+#### Financial Datasets — primary SEC-linked verification, when funded
+
+Use Financial Datasets as a high-throughput structured verification source when the account can return actual records:
+- Screen liquid, profitable equities via batch screening (discover supported filter names before submitting filters).
+- Retrieve recent 10-Q/10-K/8-K filing identity, issuer income and cash-flow statements, and dated financial metrics for the prioritized review pool.
+- Read current ticker-specific company news and earnings to identify potential material events; escalate disputes to issuer IR/SEC originals.
+- Validate identical fiscal quarters and year-ago periods, recompute quarterly and TTM FCF, distinguish GAAP from adjusted EPS, and cross-check issuer-defined FCF (including capitalized software or other company-specific cash reinvestment).
+
+**2026-10-08 confirmed provider limitation:** financial statement, filing, news and metrics calls all returned `Your current balance is $0.00. Please add more credits`. This is a provider response error, NOT valid financial data. On the first zero-credit, 402, entitlement or monthly-quota response, mark Financial Datasets unavailable for the remainder of that run and route verification to Unusual Whales filings, SEC/company IR, Massive, and other authorized independent sources. Never retry a zero-credit provider for every ticker; never invent or infer missing evidence. Do not loosen the financial gates or publish a partly verified run. A later run may retry with a single safe health read only after account credit status changes.
+
 #### Unusual Whales — broad discovery + filing-based fundamentals
 Use Unusual Whales when available for:
 - Broad U.S. common-stock discovery via the stock screener, paging in blocks up to 50 rows.
