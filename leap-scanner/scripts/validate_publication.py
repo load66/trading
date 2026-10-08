@@ -131,15 +131,25 @@ for c in qualified:
 funnel = research.get("researchFunnel") or {}
 if finite(funnel.get("qualifiedCount")) and int(funnel["qualifiedCount"]) != len(qualified):
     fail(f"researchFunnel.qualifiedCount={funnel['qualifiedCount']} but {len(qualified)} candidates are qualified", errors)
-counts = {'qualifiedCount': len(qualified), 'rejectedCount': len(research.get('rejected') or [])}
+# Broad scans can retain only representative rejection examples, not a record for each
+# discovered stock. Never assume the curated rejected[] array is exhaustive.
+rejected_examples = research.get('rejected') or []
+counts = {'qualifiedCount': len(qualified)}
 counts.update({f'tier{tier}Count': sum(c.get('tier') == tier for c in qualified) for tier in [1, 2, 3]})
 for key, actual in counts.items():
     if not finite(funnel.get(key)) or funnel[key] != actual:
         fail(f'researchFunnel.{key} must match actual count {actual}', errors)
 if any(c.get('tier') not in [1, 2, 3] for c in qualified):
     fail('Every qualified company requires Tier 1, 2 or 3', errors)
-if not finite(funnel.get('deepReviewCount')) or funnel['deepReviewCount'] != len(qualified) + len(research.get('rejected') or []):
-    fail('researchFunnel.deepReviewCount must reconcile qualified and reviewed-not-qualified companies', errors)
+discovery = funnel.get('universeScanned')
+reviewed = funnel.get('deepReviewCount')
+rejected_total = funnel.get('rejectedCount')
+if not finite(discovery) or int(discovery) != discovery or discovery < len(qualified) + len(rejected_examples):
+    fail('researchFunnel.universeScanned must cover qualified names and listed rejections', errors)
+if not finite(reviewed) or int(reviewed) != reviewed or reviewed < len(qualified) + len(rejected_examples) or (finite(discovery) and reviewed > discovery):
+    fail('researchFunnel.deepReviewCount must cover qualified names and listed deep-review rejects without exceeding discovery', errors)
+if not finite(rejected_total) or int(rejected_total) != rejected_total or rejected_total < len(rejected_examples) or (finite(discovery) and rejected_total > discovery-len(qualified)):
+    fail('researchFunnel.rejectedCount must cover listed rejection examples without exceeding nonqualified discovered names', errors)
 if set(research.get('shortlist') or []) != qualified_tickers:
     fail('research.shortlist must match qualified tickers', errors)
 if {p.get('ticker') for p in market.get('candidatePlans') or []} != qualified_tickers:
