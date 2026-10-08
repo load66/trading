@@ -4,10 +4,13 @@
   const LIVE_API="https://leaps-alpaca-live-production.up.railway.app";
   const STORAGE_KEY="leaps-owner-auth";
   const POLL_MS=15000;
+  const OPTIONS_POLL_MS=60000;
   const MAX_QUOTE_AGE_MS=300000;
-  let session=null, timer=null, liveQuotes={}, feed="iex", lastAsOf=null, liveState="off", liveError="", pollSerial=0;
+  let session=null, timer=null, optionsTimer=null, liveQuotes={}, liveContracts={}, feed="iex", lastAsOf=null, liveState="off", liveError="", pollSerial=0, optionSerial=0;
   window.leapsOwnerQuotes={};
   window.leapsOwnerPriceState={active:false};
+  window.leapsOwnerContracts={};
+  window.leapsOwnerContractState={active:false};
 
   function readSession(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");}catch{return null;}}
   function saveSession(s){
@@ -21,12 +24,22 @@
     session=null;
     localStorage.removeItem(STORAGE_KEY);
     clearQuotes();
+    clearContracts();
     liveState="off";
     liveError="";
     stopPolling();
+    stopOptionPolling();
     const panel=document.getElementById("alpaca-owner-panel");if(panel)panel.hidden=true;
     const toggle=document.getElementById("alpaca-owner-toggle");if(toggle)toggle.setAttribute("aria-expanded","false");
     updateUi();
+  }
+  function clearContracts(){
+    optionSerial++;
+    const had=Object.keys(liveContracts).length>0;
+    liveContracts={};
+    window.leapsOwnerContracts={};
+    window.leapsOwnerContractState={active:false};
+    if(had&&typeof window.renderAll==="function")window.renderAll();
   }
   function clearQuotes(){
     const hadQuotes=Object.keys(liveQuotes).length>0;
@@ -123,7 +136,43 @@
       if(serial===pollSerial&&session?.access_token)liveUnavailable(e?.message||"Live price unavailable");
     }
   }
+  async function pollOptions(){
+    if(document.visibilityState==="hidden"||!session?.access_token)return;
+    const serial=++optionSerial;
+    try{
+      session=await restoreSession();
+      if(!session||serial!==optionSerial)return;
+      const all=await qualifiedSymbols();
+      const symbols=all.filter(s=>s!=="SPY"&&s!=="QQQ");
+      if(!symbols.length){clearContracts();return;}
+      const token=session.access_token;
+      const r=await fetch(LIVE_API+"/options?symbols="+encodeURIComponent(symbols.join(",")),{headers:{Authorization:"Bearer "+token},cache:"no-store"});
+      const payload=await r.json().catch(()=>({}));
+      if(serial!==optionSerial||session?.access_token!==token||document.visibilityState==="hidden")return;
+      if(r.status===401){clearSession();return;}
+      if(!r.ok)throw new Error(payload.error||"Alpaca option screen failed");
+      const next={};
+      for(const symbol of symbols){
+        const c=payload?.contracts?.[symbol]?.candidates?.[0];
+        if(c)next[symbol]=c;
+      }
+      liveContracts=next;
+      window.leapsOwnerContracts=next;
+      window.leapsOwnerContractState={active:true,asOf:payload?.asOf||new Date().toISOString(),feed:payload?.optionsFeed||"indicative",count:Object.keys(next).length,total:symbols.length};
+      if(typeof window.renderAll==="function")window.renderAll();
+      decorate();
+    }catch(e){
+      window.leapsOwnerContractState={active:false,error:e?.message||"Option screen unavailable"};
+    }
+  }
+  function stopOptionPolling(){if(optionsTimer)clearTimeout(optionsTimer);optionsTimer=null;}
+  function scheduleOptions(){
+    stopOptionPolling();
+    if(!session?.access_token)return;
+    optionsTimer=setTimeout(async()=>{await pollOptions();scheduleOptions();},OPTIONS_POLL_MS);
+  }
   function stopPolling(){if(timer)clearTimeout(timer);timer=null;}
+
   function schedule(){
     stopPolling();
     if(!session?.access_token)return;
@@ -168,7 +217,7 @@
         ?"Private stock and ETF prices. Sign in once; your session refreshes automatically."
         :liveState==="error"
           ?"Live quotes are unavailable. Saved prices are shown while automatic retries continue."
-          :"Qualified stocks, SPY and QQQ refresh about every 15 seconds. VIX stays on the saved snapshot.";
+          :"Qualified stocks, SPY and QQQ refresh about every 15 seconds. LEAPS contracts are privately pre-screened from Alpaca about once per minute; current OI still requires independent verification.";
     }
     if(signed&&liveState==="live"&&lastAsOf&&Date.now()-Date.parse(lastAsOf)>45000){
       liveUnavailable("Quotes are stale; showing scheduled snapshot");
@@ -201,8 +250,9 @@
         liveState="ready";
         updateUi();
         close();
-        await poll();
+        await Promise.all([poll(),pollOptions()]);
         schedule();
+        scheduleOptions();
       }catch(err){note.textContent=err?.message||"Sign in failed";}
     });
     section.querySelector("#alpaca-signout").addEventListener("click",clearSession);
@@ -213,16 +263,17 @@
     session=await restoreSession();
     if(session)liveState="ready";
     updateUi();
-    if(session){await poll();schedule();}
-    window.addEventListener("focus",()=>{if(session){poll();schedule();}});
+    if(session){await Promise.all([poll(),pollOptions()]);schedule();scheduleOptions();}
+    window.addEventListener("focus",()=>{if(session){poll();pollOptions();schedule();scheduleOptions();}});
     document.addEventListener("visibilitychange",()=>{
       if(!session)return;
       if(document.visibilityState==="hidden"){
         pollSerial++;
         clearQuotes();
+        clearContracts();
         liveState="ready";
         updateUi();
-      }else{poll();schedule();}
+      }else{poll();pollOptions();schedule();scheduleOptions();}
     });
     setInterval(()=>{if(session&&lastAsOf)updateUi();},1000);
   }
