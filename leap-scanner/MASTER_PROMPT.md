@@ -832,3 +832,62 @@ For all levels:
 - Never display Level 2–5 as if it were identical to a Level 1 preferred contract.
 - If multiple candidates exist within the selected level, prefer the 18–30 month window, then tighter spread, then delta nearer ~0.675, then duration nearer ~24 months. Once current OI is independently verified, the canonical final decision becomes highest verified OI among otherwise acceptable candidates, then tighter spread.
 - Fundamental stock qualification remains separate from contract quality. A qualified stock can have only a Level 4/5 contract or no 12+ month contract at all.
+
+
+## Resumable Scan Checkpoints — October 7, 2026
+
+Full LEAPS research scans must be interruption-safe. Do not require one uninterrupted chat/tool execution to complete hundreds of provider calls.
+
+Use Supabase project `ppsljqaaanpkksxbpalk` backend-only checkpoint tables:
+- `public.leap_scan_runs` — one row per manual/scheduled full research run.
+- `public.leap_scan_checkpoints` — one row per completed stage/batch.
+
+These tables are internal only. RLS is enabled, client roles are denied, and they must never be exposed in the public LEAPS Desk UI.
+
+### Run lifecycle
+
+For every full manual `generate` and every scheduled research scan:
+
+1. Before doing expensive research, inspect `leap_scan_runs` for the newest non-completed run of the same mode/date.
+2. If a compatible paused/running run exists, RESUME it instead of restarting.
+3. Create a new run only when no compatible run exists, the previous run is completed/failed/superseded, or the canonical research policy/universe definition materially changed.
+4. Persist the discovery universe and exact funnel metadata immediately after discovery.
+5. Break detailed hard-gate verification into small batches, normally 10 tickers per batch.
+6. After each batch, write a `leap_scan_checkpoints` row containing:
+   - stage
+   - batch number
+   - exact tickers
+   - pass/fail results
+   - verified financial metrics needed to resume
+   - completion timestamp
+7. Update `leap_scan_runs.completed_ticker_count`, `completed_batch_count`, `stage`, `status`, `updated_at`, and `last_error` after each batch.
+8. If a connector/tool/chat limit interrupts execution, set the run to `paused` when possible. Do not discard completed checkpoints.
+9. On the next continuation, read the checkpoints and skip all completed tickers/batches.
+10. Provider failures for a batch may be checkpointed as failed with the exact error and retried later without redoing successful batches.
+
+### Publication boundary
+
+Checkpoint data is WORK-IN-PROGRESS only and must never become production research automatically.
+
+Do not insert into `leap_research_snapshots`, `leap_scans`, or update GitHub latest fallback JSON until:
+- all required research stages have completed,
+- the full candidate set has been reconstructed from checkpoints,
+- hard gates and score/rank validations pass,
+- support plans and contract statuses cover every qualified stock,
+- the paired research/market payloads are complete.
+
+Only then:
+1. publish new immutable production rows,
+2. SELECT them back and prove publication,
+3. update GitHub fallback files,
+4. verify Railway.
+
+If the final publication step fails, keep the completed scan run/checkpoints so publication can be retried without rerunning research.
+
+### Batch sizing
+
+Default detailed filing verification batch size: 10 tickers.
+Reduce to 5 when a provider is slow or returning large historical payloads.
+Never make one orchestration call contain enough nested connector calls to risk hitting the execution/tool-call ceiling.
+
+Accuracy remains more important than speed. Checkpointing is specifically intended to preserve strict verification while eliminating restarts caused by long executions.
