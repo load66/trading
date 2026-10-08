@@ -359,8 +359,14 @@ function attentionRows(allCards){
 }
 function renderAttention(allCards){
   const rows=attentionRows(allCards),inZone=rows.filter(x=>x.s.state==="in").length,near=rows.length-inZone;
-  const count=document.getElementById("attention-count"),list=document.getElementById("attention-list");
+  const count=document.getElementById("attention-count"),list=document.getElementById("attention-list"),source=document.getElementById("attention-source");
   if(count)count.textContent=inZone+" at support · "+near+" near";
+  if(source){
+    const owner=typeof window!=="undefined"?window.leapsOwnerPriceState:null;
+    const observed=market?.quoteObservation?.observedAt||market?.market?.spy?.observedAt;
+    const age=Date.now()-Date.parse(observed||"");
+    source.textContent=owner?.active?"Owner Alpaca "+String(owner.feed||"IEX").toUpperCase()+" recent quotes for "+owner.count+" of "+owner.total+" symbols; others use the saved snapshot.":"Public snapshot observed "+formatTime(observed)+"."+(Number.isFinite(age)&&age>90*60000?" Saved prices; confirm current quotes before acting.":"");
+  }
   if(!list)return;
   list.innerHTML=rows.length?rows.map(({c,p,s,e})=>{
     const price=Number(p.price),contract=contractFor(c.ticker);
