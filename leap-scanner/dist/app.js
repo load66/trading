@@ -8,7 +8,7 @@ const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"});
 const shortDateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-let research=null,previousResearch=null,market=null,marketSavedAt=null,researchSavedAt=null,marketFromDatabase=false,researchFromDatabase=false,activeFilter="all";
+let research=null,previousResearch=null,market=null,previousMarket=null,marketSavedAt=null,researchSavedAt=null,marketFromDatabase=false,researchFromDatabase=false,activeFilter="all";
 
 async function sb(table,query){
   const r=await fetch(SB_URL+"/rest/v1/"+table+"?"+query,{headers:{apikey:SB_KEY},cache:"no-store"});
@@ -23,7 +23,6 @@ async function json(path){
 function toast(msg){const e=document.getElementById("toast");e.textContent=msg;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200);}
 function normalizedStatus(value){return String(value||"").trim().toUpperCase().replace(/^[^A-Z]+/,"");}
 function actionTone(value){const a=normalizedStatus(value);if(a==="HIGH-CONVICTION DIP"||a.startsWith("BUY ZONE")||a.startsWith("ADD ZONE"))return"buy";if(a.includes("BROKEN")||a.includes("AVOID")||a.includes("DO NOT"))return"stop";return"watch";}
-function actionRank(value){const a=normalizedStatus(value),order=["HIGH-CONVICTION DIP","BUY ZONE — ENTRY 1","ADD ZONE","NEAR SUPPORT — WATCH","WAIT FOR REVERSAL","WATCH"],rank=order.indexOf(a);return rank<0?6:rank;}
 function readinessTone(value){const r=normalizedStatus(value);if(/\b(?:NO CONTRACT APPROVED|NOT(?: FULLY)? APPROVED|POOR|AVOID|REJECT(?:ED)?|FAILED)\b/.test(r))return"bad";if(/\b(?:DELAYED|MODELED|REFERENCE|VERIFY|VERIFICATION|UNVERIFIED|WAIT|WATCH|NOT READY)\b/.test(r))return"reference";return["APPROVED","FULLY APPROVED","LIVE VERIFIED"].includes(r)?"good":"reference";}
 function readinessLabel(value){const tone=readinessTone(value);return tone==="good"?"APPROVED":tone==="bad"?"NOT APPROVED":"REFERENCE · VERIFY LIVE";}
 function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
@@ -72,9 +71,13 @@ function planFor(t){
   return base&&q?{...base,price:q.price,todayPct:Number.isFinite(q.dayChangePct)?q.dayChangePct:base.todayPct,quoteObservedAt:q.observedAt,livePriceSource:"ALPACA "+String(q.feed||"IEX").toUpperCase()}:base;
 }
 function stageAction(p){
-  const status=entryTimingStatus(p);
-  if(status.tone==="buy")return status.label;
-  return p&&p.action||"RESEARCH ONLY";
+  return entryTimingStatus(p).label;
+}
+function supportEvidence(value){
+  // Saved research may contain retired reversal instructions; keep the technical evidence.
+  return String(value||"").replace(/The stock is already testing this zone, so a hold\/reclaim is required\./gi,"")
+    .replace(/;?\s*requires? a support hold\/reclaim\./gi,".")
+    .replace(/;?\s*require a hold\/reclaim rather than buying a straight breakdown\./gi,".").trim();
 }
 function contractDelta(c){return Number.isFinite(c.delta)?c.delta:Number.isFinite(c.modeledDelta)?c.modeledDelta:null;}
 function contractSpread(c){
@@ -232,17 +235,6 @@ function matchesFilter(c){
   if(activeFilter==="contract")return Boolean(contractFor(c.ticker));
   return true;
 }
-function todayPriority(c){
-  const p=planFor(c.ticker)||{},a=normalizedStatus(p.action),support=supportTiming(p),entry=entryTimingStatus(p);
-  if(entry.tone==="buy")return 0;
-  if(actionTone(a)==="buy")return 1;
-  if(support.state==="in")return 2;
-  if(support.state==="near")return 3;
-  if(a.includes("WAIT FOR REVERSAL"))return 4;
-  if(a==="WATCH")return 5;
-  if(a.includes("DO NOT"))return 7;
-  return 6;
-}
 function supportTimingBadge(p){
   const s=supportTiming(p),e=entryTimingStatus(p);
   const pctText=Number.isFinite(s.distancePct)&&s.distancePct>0?" · "+(s.distancePct*100).toFixed(1)+"% above zone":"";
@@ -252,7 +244,7 @@ function setupCard(c,compact){
   const p=planFor(c.ticker)||{},contract=contractFor(c.ticker),historical=historicalContractFor(c.ticker),action=stageAction(p);
   const event=p.eventRisk?'<div class="event-note">⚠ '+safe(p.eventRisk)+'</div>':"";
   const ladder=(p.entry1||p.add2||p.finalAdd)?'<div class="entry-ladder"><div><span>'+safe(p.entry1Label||"1ST MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.entry1||"—")+'</b></div><div><span>'+safe(p.add2Label||"2ND MAJOR SUPPORT")+' · 30%</span><b>'+safe(p.add2||"—")+'</b></div><div><span>'+safe(p.finalAddLabel||"FINAL DEEP SUPPORT")+' · 40%</span><b>'+safe(p.finalAdd||"—")+'</b></div></div>':"";
-  const reasons=(p.entry1Reason||p.add2Reason||p.finalAddReason)?'<div class="support-reasons"><div><b>Why this is the 1st buy area</b><p>'+safe(p.entry1Reason||"—")+'</p></div><div><b>Why this is the 2nd buy area</b><p>'+safe(p.add2Reason||"—")+'</p></div><div><b>Why this is the final deep-buy area</b><p>'+safe(p.finalAddReason||"—")+'</p></div></div>':"";
+  const reasons=(p.entry1Reason||p.add2Reason||p.finalAddReason)?'<div class="support-reasons"><div><b>Why this is the 1st buy area</b><p>'+safe(supportEvidence(p.entry1Reason)||"—")+'</p></div><div><b>Why this is the 2nd buy area</b><p>'+safe(supportEvidence(p.add2Reason)||"—")+'</p></div><div><b>Why this is the final deep-buy area</b><p>'+safe(supportEvidence(p.finalAddReason)||"—")+'</p></div></div>':"";
   const vm=c.valuationModel&&c.valuationModel.targets?c.valuationModel.targets:null;
   const targetBlock=vm?'<div class="target-strip"><div><span>BEAR VALUE</span><b>'+money.format(vm.bear.blended)+'</b><small>Conservative case</small></div><div><span>BASE VALUE</span><b>'+money.format(vm.base.blended)+'</b><small>Central case</small></div><div><span>BULL VALUE</span><b>'+money.format(vm.bull.blended)+'</b><small>Strong execution</small></div></div>':"";
   const sector='<div class="sector-line"><span>'+safe(c.sector||"Sector N/A")+'</span><b>'+safe(c.industry||"")+'</b></div>';
@@ -262,7 +254,7 @@ function setupCard(c,compact){
   const rev=c.quarter&&c.quarter.revg&&c.quarter.revg[0]!=null?(Number(c.quarter.revg[0])>=0?"+":"")+Number(c.quarter.revg[0]).toFixed(1)+"%":"—";
   const contractSummary=contract?'<span class="contract-ready">VERIFIED ELIGIBLE</span>':historical?'<span class="contract-reference-only">HISTORICAL / VERIFY</span>':'<span class="contract-none">NO VERIFIED CONTRACT</span>';
   const optionBody=contract?contractCard(contract,true):'<section class="contract-pending"><p>No current contract has complete verified delta, IV, bid/ask and OI that passes the 0.60–0.75 delta / ≤5% spread rules.</p>'+(historical?'<div class="historical-reference"><b>Saved reference only</b><span>'+safe(historical.reference||"Historical chain reference")+'</span><small>'+safe(historical.sourceAsOf||"Timestamp unavailable")+'</small></div>':"")+'</section>';
-  return '<article class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'" data-ticker="'+safe(c.ticker)+'">'+
+  return '<article id="stock-'+safe(c.ticker)+'" class="setup-card '+(actionTone(action)==="buy"?"actionable":"")+'" data-ticker="'+safe(c.ticker)+'">'+
     '<div class="setup-top"><div class="ticker-block"><div class="ticker-row"><span class="rank-badge">#'+safe(c.rank||"—")+'</span><span class="ticker">'+safe(c.ticker)+'</span><span class="score">'+c.score+'/100</span>'+rankMovement(c)+'</div><div class="company">'+safe(c.company)+'</div><span class="lane-tag">Tier '+safe(c.tier||"—")+' · '+safe(c.strategyLane||"Qualified")+'</span></div><span class="action '+actionTone(action)+'">'+safe(action)+'</span></div>'+sector+
     '<div class="setup-meta"><div><span>PRICE</span><b>'+money.format(price)+'</b><small>'+fmtMove(p.todayPct)+' today</small></div><div><span>DRAWDOWN</span><b class="down">−'+pct(drawdown)+'</b><small>52W high '+money.format(c.high)+'</small></div><div><span>REV. YOY</span><b class="up">'+rev+'</b><small>Latest quarter</small></div></div>'+
     qualificationGates(c)+rankMovementDetail(c)+supportTimingBadge(p)+
@@ -360,14 +352,70 @@ function renderRobinhoodAlerts(allCards){
   const note=document.getElementById("robinhood-alert-note");
   if(note)note.textContent="Generated from the current qualified list and latest published support plan. Auto-refreshes every 60 seconds; list additions/removals and support changes update this section automatically.";
 }
+function attentionRows(allCards){
+  return allCards.map(c=>({c,p:planFor(c.ticker)||{}})).map(x=>({...x,s:supportTiming(x.p),e:entryTimingStatus(x.p)}))
+    .filter(x=>x.s.state==="in"||x.s.state==="near")
+    .sort((a,b)=>(a.s.state==="in"?0:1)-(b.s.state==="in"?0:1)||a.c.rank-b.c.rank);
+}
+function renderAttention(allCards){
+  const rows=attentionRows(allCards),inZone=rows.filter(x=>x.s.state==="in").length,near=rows.length-inZone;
+  const count=document.getElementById("attention-count"),list=document.getElementById("attention-list");
+  if(count)count.textContent=inZone+" at support · "+near+" near";
+  if(!list)return;
+  list.innerHTML=rows.length?rows.map(({c,p,s,e})=>{
+    const price=Number(p.price),contract=contractFor(c.ticker);
+    const label=s.state==="in"&&e.tone==="buy"?"STOCK IN ENTRY ZONE":e.label;
+    return '<a class="attention-row '+safe(e.tone)+'" href="#stock-'+safe(c.ticker)+'" data-focus-ticker="'+safe(c.ticker)+'"><span class="attention-symbol"><b>#'+safe(c.rank)+' '+safe(c.ticker)+'</b><small>'+safe(c.company)+'</small></span><span class="attention-position"><b>'+money.format(price)+'</b><small>'+safe(s.label)+'</small></span><span class="attention-decision"><b>'+safe(label)+'</b><small>'+(contract?'Verified contract available':'Contract check needed')+'</small></span><span class="attention-arrow" aria-hidden="true">↗</span></a>';
+  }).join(""):'<p class="attention-empty">No qualified stock is at or within about 1% above a planned support zone in the current price view. The full research list remains below.</p>';
+}
+function publishedChanges(){
+  const changes=[],current=(research&&research.candidates)||[],prior=(previousResearch&&previousResearch.candidates)||[];
+  const scoreFactors=(c,before)=>{
+    const now=c.scoreBreakdown||{},was=before.scoreBreakdown||{};
+    return Object.keys(now).filter(k=>Number.isFinite(now[k])&&Number.isFinite(was[k])&&now[k]!==was[k])
+      .sort((a,b)=>Math.abs(now[b]-was[b])-Math.abs(now[a]-was[a]))
+      .slice(0,2).map(k=>k+" "+(now[k]>was[k]?"+":"")+(now[k]-was[k])).join(" · ");
+  };
+  if(previousResearch){
+    const oldQualified=new Map(prior.filter(c=>c.qualified).map(c=>[c.ticker,c]));
+    const newQualified=new Map(current.filter(c=>c.qualified).map(c=>[c.ticker,c]));
+    const rejected=new Map(((research&&research.rejected)||[]).map(c=>[c.ticker,c]));
+    for(const [ticker,c] of newQualified){
+      const before=oldQualified.get(ticker);
+      if(!before){changes.push({kind:"research",ticker,detail:"Newly qualified at research rank #"+c.rank+"; see current qualification gates and research"});continue;}
+      const factors=scoreFactors(c,before);
+      if(c.rank!==before.rank)changes.push({kind:"research",ticker,detail:"Research rank #"+before.rank+" → #"+c.rank+(c.score!==before.score?" · score "+before.score+" → "+c.score:"")+(factors?" · score factors: "+factors:"")});
+      else if(c.score!==before.score)changes.push({kind:"research",ticker,detail:"Research score "+before.score+" → "+c.score+"; rank remains #"+c.rank+(factors?" · score factors: "+factors:"")});
+    }
+    for(const [ticker] of oldQualified)if(!newQualified.has(ticker))changes.push({kind:"research",ticker,detail:"No longer qualified"+(rejected.get(ticker)?.reason?": "+rejected.get(ticker).reason:"; review current research")});
+  }
+  if(previousMarket){
+    const oldPlans=new Map(((previousMarket&&previousMarket.candidatePlans)||[]).map(p=>[p.ticker,p]));
+    for(const p of ((market&&market.candidatePlans)||[])){
+      const old=oldPlans.get(p.ticker);
+      if(!old||!current.some(c=>c.ticker===p.ticker&&c.qualified))continue;
+      for(const [key,name] of [["entry1","1st support"],["add2","2nd support"],["finalAdd","Final support"]]){
+        if(String(p[key]||"")!==String(old[key]||""))changes.push({kind:"support",ticker:p.ticker,detail:name+" "+String(old[key]||"unavailable")+" → "+String(p[key]||"unavailable")+(p[key+"ChangeReason"]?" · change reason: "+p[key+"ChangeReason"]:p[key+"Reason"]?" · current support basis: "+supportEvidence(p[key+"Reason"]):" · change reason unavailable")});
+      }
+    }
+  }
+  return changes;
+}
+function renderChanges(){
+  const el=document.getElementById("change-list"),count=document.getElementById("change-count");if(!el)return;
+  const changes=publishedChanges();
+  if(count)count.textContent=changes.length?changes.length+" published change"+(changes.length===1?"":"s"):previousResearch||previousMarket?"No plan or rank changes":"Previous scan unavailable";
+  const coverage=(!previousResearch||!previousMarket)?'<p class="change-caveat">'+(!previousResearch?"Previous research unavailable. ":"")+(!previousMarket?"Previous market plan unavailable.":"")+'</p>':"";
+  el.innerHTML=changes.length?'<p class="change-caveat">Compared with the prior saved research and market snapshots. Price moves alone are excluded.</p>'+changes.slice(0,8).map(x=>'<p class="change-item"><b>'+safe(x.ticker)+'</b> '+safe(x.detail)+'</p>').join("")+(changes.length>8?'<p class="change-caveat">'+(changes.length-8)+' more changes in this comparison.</p>':"")+coverage:'<p class="change-caveat">'+(previousResearch||previousMarket?"No qualification, rank, score, or support-zone changes in the available previous snapshots.":"A previous published snapshot is needed to compare changes.")+'</p>'+coverage;
+}
 function renderDesk(){
   const state=market&&market.marketState?market.marketState:"UNAVAILABLE";
   const ownerLive=typeof window!=="undefined"&&window.leapsOwnerPriceState?.active===true;
-  document.getElementById("market-state").textContent=state;
+  document.getElementById("market-state").textContent=state==="NORMAL DAY"?"NO BROAD-MARKET DIP":state;
   const trig=document.getElementById("trigger-pill");
   trig.textContent=ownerLive?"PUBLISHED SCAN":market&&market.triggered?"DIP TRIGGER ACTIVE":"NO DIP TRIGGER";
   trig.className="state-pill "+(market&&market.triggered?"hot":"good");
-  document.getElementById("market-message").textContent=(market?.triggered?"Broad-market dip trigger active. Review the support zones below.":"No broad-market dip trigger. Review qualified stocks at planned support below.")+(ownerLive?" Owner prices refresh automatically.":"");
+  document.getElementById("market-message").textContent=(market?.triggered?"Broad-market dip trigger active.":"No broad-market dip trigger.")+" Individual stocks may still reach an entry zone; see Needs attention below."+(ownerLive?" Owner prices refresh automatically.":"");
   const published=document.getElementById("published-assessment");if(published)published.textContent=market?.message||"No published assessment available.";
   document.getElementById("market-grid").innerHTML=marketStat("SPY",market&&market.market?market.market.spy:null)+marketStat("QQQ",market&&market.market?market.market.qqq:null)+marketStat("VIX",market&&market.market?market.market.vix:null);
 
@@ -375,21 +423,15 @@ function renderDesk(){
     const ar=Number.isFinite(a.rank)?a.rank:Infinity,br=Number.isFinite(b.rank)?b.rank:Infinity;
     return ar-br||b.score-a.score||String(a.ticker).localeCompare(String(b.ticker));
   });
+  renderAttention(allCards);
+  renderChanges();
   const visible=allCards.filter(matchesFilter);
   document.getElementById("top-setups").innerHTML=visible.length?visible.map(c=>setupCard(c,false)).join(""):'<div class="loading">No qualified setups match this filter.</div>';
   const count=document.getElementById("filter-count");if(count)count.textContent=visible.length+" of "+allCards.length;
   document.querySelectorAll("[data-filter]").forEach(b=>b.classList.toggle("active",b.dataset.filter===activeFilter));
 
   const buyCount=allCards.filter(c=>entryTimingStatus(planFor(c.ticker)||{}).tone==="buy").length;
-  const geometricSupportCount=allCards.filter(c=>{const s=supportTiming(planFor(c.ticker)||{});return s.state==="in"||s.state==="near";}).length;
-  const supportCount=geometricSupportCount;
-  const waitCount=allCards.filter(c=>entryTimingStatus(planFor(c.ticker)||{}).label.includes("WAIT")).length;
-  const stopCount=allCards.filter(c=>entryTimingStatus(planFor(c.ticker)||{}).tone==="stop").length;
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  set("decision-buy",buyCount);set("decision-support",supportCount);set("decision-wait",waitCount);set("decision-stop",stopCount);
-  const today=allCards.slice().sort((a,b)=>todayPriority(a)-todayPriority(b)||a.rank-b.rank).slice(0,3);
-  const topToday=document.getElementById("decision-top3");
-  if(topToday)topToday.innerHTML=today.map(c=>{const p=planFor(c.ticker)||{};return '<span><b>#'+safe(c.rank)+' '+safe(c.ticker)+'</b><small>'+safe(stageAction(p))+'</small></span>';}).join("");
 
   const f=(research&&research.researchFunnel)||{};
   set("coverage-universe",f.universeScanned==null?"—":Number(f.universeScanned).toLocaleString());
@@ -437,11 +479,11 @@ function renderAll(){const openKeys=new Set(Array.from(document.querySelectorAll
 async function load(){
   try{
     const results=await Promise.all([
-      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=1"),
+      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=2"),
       sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")
     ]);
     const scans=results[0],res=results[1];
-    if(scans&&scans[0]&&scans[0].payload){market=scans[0].payload;marketSavedAt=scans[0].scan_time;marketFromDatabase=true;}
+    if(scans&&scans[0]&&scans[0].payload){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;marketFromDatabase=true;}
     if(res&&res[0]&&res[0].payload){research=res[0].payload;researchSavedAt=res[0].snapshot_time;previousResearch=res[1]&&res[1].payload?res[1].payload:null;researchFromDatabase=true;}
   }catch(e){console.info("Supabase fallback",e.message);}
   if(!research)research=await json("data/research-latest.json");
@@ -452,10 +494,10 @@ async function load(){
 load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
 async function pollLatest(){
   try{
-    const [scans,snapshots]=await Promise.all([sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=1"),sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")]);
+    const [scans,snapshots]=await Promise.all([sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=2"),sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")]);
     let changed=false;
-    if(scans&&scans[0]&&scans[0].payload){if(!marketFromDatabase||scans[0].scan_time!==marketSavedAt){market=scans[0].payload;marketSavedAt=scans[0].scan_time;changed=true;}marketFromDatabase=true;}
-    if(snapshots&&snapshots[0]&&snapshots[0].payload){if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]&&snapshots[1].payload?snapshots[1].payload:null;changed=true;}researchFromDatabase=true;}
+    if(scans&&scans[0]&&scans[0].payload){if(!marketFromDatabase||scans[0].scan_time!==marketSavedAt){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;changed=true;}marketFromDatabase=true;}
+    if(snapshots&&snapshots[0]&&snapshots[0].payload){if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]?.payload||null;changed=true;}researchFromDatabase=true;}
     sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
     if(changed)renderAll();else renderFreshness();
   }catch(e){sourceMode("REFRESH UNAVAILABLE",marketSavedAt);document.getElementById("feed-note").textContent="Latest refresh unavailable. Showing the last saved snapshot; verify its price cutoff before acting.";const summary=document.getElementById("source-short");if(summary)summary.textContent="Refresh unavailable · saved prices "+shortTime(market?.quoteObservation?.observedAt);}
@@ -463,6 +505,12 @@ async function pollLatest(){
 setInterval(pollLatest,60000);
 
 document.addEventListener("click",e=>{
+  const focus=e.target.closest("[data-focus-ticker]");
+  if(focus){
+    e.preventDefault();activeFilter="all";renderAll();
+    document.getElementById("stock-"+focus.dataset.focusTicker)?.scrollIntoView({behavior:"smooth",block:"start"});
+    return;
+  }
   const copy=e.target.closest("[data-copy-price]");
   if(copy){
     const value=copy.dataset.copyPrice;

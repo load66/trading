@@ -29,6 +29,17 @@ assert.equal(vm.runInContext('entryTimingStatus({price:224.5,entry1:"$221–225"
 assert.equal(vm.runInContext('entryTimingStatus({price:225.2,todayPct:-3,entry1:"$221–225",add2:"$198–203",finalAdd:"$154–160",action:"WAIT FOR REVERSAL",thesisStatus:"INTACT"}).label',ctx),'NEAR SUPPORT — WATCH','Near support is not an entry');
 assert.equal(vm.runInContext('nextRobinhoodAlert({price:414.46,entry1:"$390–396",add2:"$378–384",finalAdd:"$345–355"}).target',ctx),396,'Next alert should be first uncrossed support');
 assert.equal(vm.runInContext('nextRobinhoodAlert({price:227.6,entry1:"$234–238",add2:"$223–228",finalAdd:"$209–213"}).target',ctx),213,'Already-crossed/in-zone supports must advance to the next lower alert');
+assert.equal(vm.runInContext('stageAction({price:225.2,entry1:"$221–225",add2:"$198–203",finalAdd:"$154–160",action:"WAIT FOR REVERSAL",thesisStatus:"INTACT"})',ctx),'NEAR SUPPORT — WATCH','Legacy action wording must not override current geometric support state');
+assert.ok(!vm.runInContext('supportEvidence("$221–225 supports price. The stock is already testing this zone, so a hold/reclaim is required.")',ctx).includes('required'),'Legacy reversal advice is removed from current support evidence');
+assert.equal(vm.runInContext('attentionRows(research.candidates.filter(c=>c.qualified)).every(x=>x.s.state==="in"||x.s.state==="near")',ctx),true,'Attention rows contain only stocks at or near current supports');
+const previousMarket=JSON.parse(JSON.stringify(market));
+const previousResearch=JSON.parse(JSON.stringify(research));
+previousMarket.candidatePlans.find(p=>p.ticker==='CRM').entry1='$215–219';
+previousResearch.candidates.find(c=>c.ticker==='CRM').score-=1;
+vm.runInContext('previousMarket='+JSON.stringify(previousMarket)+';previousResearch='+JSON.stringify(previousResearch),ctx);
+const changes=vm.runInContext('publishedChanges()',ctx);
+assert.ok(changes.some(x=>x.ticker==='CRM'&&x.detail.includes('1st support $215–219 → $221–225')),'Saved support revision is visible');
+assert.ok(changes.some(x=>x.ticker==='CRM'&&x.detail.includes('Research score')),'Saved research score revision is visible');
 assert.equal(vm.runInContext('research.candidates.filter(c=>c.qualified).filter(c=>planFor(c.ticker)).length',ctx),research.candidates.filter(c=>c.qualified).length,'Every qualified ticker must have a market plan');
 const currentIV=vm.runInContext('contractCard('+JSON.stringify(base)+',true)',ctx);
 assert.ok(currentIV.includes('Implied volatility <span>reported</span>')&&currentIV.includes('30.0%'));

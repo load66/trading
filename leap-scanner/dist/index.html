@@ -11,8 +11,8 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="stylesheet" href="styles.css?v=20261007-support-timing-v2">
 <link rel="stylesheet" href="alpaca-live.css?v=20261007-owner-menu-v1">
-<link rel="stylesheet" href="desk-refine.css?v=20261007-compact-v1">
-<script src="app.js?v=20261007-compact-v1" defer></script>
+<link rel="stylesheet" href="desk-refine.css?v=20261007-public-focus-v1">
+<script src="app.js?v=20261007-public-focus-v1" defer></script>
 <script src="alpaca-live.js?v=20261007-owner-menu-v1" defer></script>
 </head>
 <body>
@@ -25,7 +25,7 @@
 <main class="desk-page">
   <section class="hero" id="market">
     <div class="hero-top">
-      <div><span class="kicker">MARKET REGIME</span><h1 id="market-state">Loading…</h1></div>
+      <div><span class="kicker">BROAD MARKET</span><h1 id="market-state">Loading…</h1></div>
       <span class="state-pill" id="trigger-pill">SCANNING</span>
     </div>
     <p id="market-message">Loading the latest automated LEAPS scan.</p>
@@ -44,19 +44,21 @@
     </details>
   </section>
 
+  <section class="attention-panel" aria-label="Stocks needing attention">
+    <div class="attention-head"><div><span class="kicker">STOCK ENTRY WATCH</span><h2>Needs attention</h2></div><span id="attention-count" class="attention-count">Loading…</span></div>
+    <p class="attention-intro">Qualified stocks at or near their published major support zones. Contract checks are separate.</p>
+    <div id="attention-list" class="attention-list"><p class="attention-empty">Loading support zones…</p></div>
+  </section>
+
+  <section class="change-panel" aria-label="Published plan changes">
+    <details id="change-details"><summary><span>What changed</span><span id="change-count">Checking saved scans…</span></summary><div id="change-list" class="change-list"></div></details>
+  </section>
+
   <section class="quick-guide" aria-label="How to use the LEAPS Desk">
     <details>
       <summary><b>How to use this desk</b><span>Quality → Support → Contract <i aria-hidden="true">⌄</i></span></summary>
       <ol><li>Check the green business-quality gates.</li><li>Wait for the price to enter a planned major support zone.</li><li>Verify current LEAPS contract data before trading.</li></ol>
     </details>
-  </section>
-
-  <section class="decision-bar" id="decision-bar" aria-label="Today's LEAPS decision summary">
-    <div class="decision-stat"><span>ENTRY ZONES</span><b id="decision-buy">—</b></div>
-    <div class="decision-stat"><span>AT / NEAR SUPPORT</span><b id="decision-support">—</b></div>
-    <div class="decision-stat"><span>WAIT</span><b id="decision-wait">—</b></div>
-    <div class="decision-stat"><span>DO NOT ADD</span><b id="decision-stop">—</b></div>
-    <div class="decision-top"><span>TOP 3 TO WATCH TODAY</span><div id="decision-top3"></div></div>
   </section>
 
   <section class="desk-section" id="setups">

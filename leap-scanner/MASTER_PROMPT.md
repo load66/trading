@@ -170,10 +170,10 @@ Analyze:
 - Failed breakdown / undercut-and-rally
 - Base formation
 - Higher lows
-- VWAP/reclaim confirmation during intraday dip scans
+- VWAP/reclaim behavior as optional technical context during intraday scans; never an entry gate
 
 Classify:
-- CONFIRMED REVERSAL
+- REVERSAL OBSERVED (context only)
 - BUILDING BASE
 - EARLY BOTTOM
 - AT MAJOR SUPPORT
@@ -247,11 +247,14 @@ Macro/VIX triggers the scanner. It does NOT trigger the trade.
 Give every qualified company one:
 - HIGH-CONVICTION DIP
 - BUY ZONE — ENTRY 1
-- ADD ZONE
+- ADD ZONE — ADD 2
+- ADD ZONE — FINAL ADD
 - NEAR SUPPORT — WATCH
-- WAIT FOR REVERSAL
+- WAIT (outside a planned support zone)
 - DO NOT ADD YET
 - THESIS BROKEN — AVOID
+
+Derive staged entry labels from current underlying price versus the published support zones, with an intact thesis and material-news check. A red-day threshold or reversal is not required. A stock-zone label does not assert an approved LEAPS contract.
 
 ## Score — 100 Points
 
@@ -272,7 +275,7 @@ First show:
 Rank | Ticker | Lane | Price | Drawdown | Revenue Trend | GAAP Profit Trend | FCF | Valuation | Technical State | Action | LEAP Quality | Score
 
 Then:
-- TOP 3 DIP-BUY OPPORTUNITIES
+- TOP 3 SUPPORT-ENTRY WATCH OPPORTUNITIES
 - BEST OVERALL LEAPS
 - HIGHEST BOUNCE POTENTIAL
 - SAFEST QUALITY COMPOUNDERS
@@ -294,8 +297,7 @@ For each top candidate show:
 
 Be strict on business quality, but flexible on drawdown for elite profitable compounders.
 
-If no A+ entry exists, say:
-NO A+ LEAP ENTRY TODAY — WAIT.
+If no qualified stock is in a planned support zone, say so. If a stock is in a support zone but no current LEAPS contract is verified, show the underlying-stock zone and the separate contract-check status.
 
 
 
@@ -322,10 +324,7 @@ Classify:
 - STILL FALLING
 - TECHNICALLY BROKEN
 
-Use weak technical structure to reduce Technical Quality points and inform support quality, while preserving the staged support-entry rule:
-- WAIT FOR REVERSAL
-- DO NOT ADD YET
-- THESIS BROKEN — AVOID only when the business thesis itself is broken or technical failure is confirmed alongside material fundamental deterioration.
+Use weak technical structure to reduce Technical Quality points and inform support quality. It does not create a reversal requirement for a staged entry inside a published support zone. Use DO NOT ADD YET when the material-news or thesis check blocks an add; use THESIS BROKEN — AVOID only when the business thesis itself is broken or technical failure is confirmed alongside material fundamental deterioration.
 
 A profitable company such as HUBS, INTU, ADSK or ISRG may remain in the qualified research universe while technically weak if GAAP profitability, revenue, cash flow, balance sheet, valuation and the long-term thesis remain acceptable. Inclusion is not a buy signal.
 
@@ -551,6 +550,8 @@ Every selected contract must still:
 If live delta, IV, spread or OI cannot be verified, label them clearly as modeled/delayed/unverified and do not call the contract fully approved.
 
 ## Publication Integrity Gate
+
+Compare each new publication with the previous saved research and market snapshots. Preserve permanent research rank and distinguish business ranking from current support urgency. For a changed support zone, publish a concise `entry1ChangeReason`, `add2ChangeReason`, or `finalAddChangeReason` beside the existing support rationale when the cause can be verified; otherwise state that the cause is unverified. For qualification changes, record the hard-gate evidence or exact rejection reason. For rank changes, record the changed score factors. The public desk shows these recorded facts in a compact "What changed" view; it must not infer a causal explanation from price movement alone.
 
 Before publishing any new research or market snapshot, validate the complete payload with `scripts/validate_publication.py` or an equivalent check.
 
