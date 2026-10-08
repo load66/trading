@@ -8,7 +8,22 @@ const pct=n=>Number.isFinite(n)?(n*100).toFixed(1)+"%":"—";
 const safe=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"});
 const shortDateFmt=new Intl.DateTimeFormat("en-US",{timeZone:"America/Chicago",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-let research=null,previousResearch=null,market=null,previousMarket=null,marketSavedAt=null,researchSavedAt=null,marketFromDatabase=false,researchFromDatabase=false,activeFilter="all";
+let research=null,previousResearch=null,market=null,previousMarket=null,marketSavedAt=null,researchSavedAt=null,marketFromDatabase=false,researchFromDatabase=false,activeFilter="all",feedMode="CONNECTING";
+// Publication order is based on the genuine research completion time, not upload time.
+function completionMs(row){const t=Date.parse(row?.payload?.scanCompletedAt||"");return Number.isFinite(t)?t:-Infinity;}
+function selectPublished(rows,savedField){
+  const valid=(Array.isArray(rows)?rows:[]).filter(row=>row&&row.payload&&Number.isFinite(completionMs(row)));
+  valid.sort((a,b)=>completionMs(b)-completionMs(a)||(Date.parse(b[savedField]||"")||0)-(Date.parse(a[savedField]||"")||0));
+  const latest=valid[0]||null;
+  const previous=latest?valid.find(row=>completionMs(row)<completionMs(latest))||null:null;
+  const ignoredStaleUpload=Boolean(latest&&rows[0]&&completionMs(rows[0])<completionMs(latest));
+  return {latest,previous,ignoredStaleUpload};
+}
+function applyIfNotOlder(current,incoming){
+  return incoming&&(!current||completionMs({payload:incoming})>=completionMs({payload:current}));
+}
+function quoteCutoff(){return market?.quoteObservation?.observedAt||market?.market?.spy?.observedAt||marketSavedAt;}
+
 
 async function sb(table,query){
   const r=await fetch(SB_URL+"/rest/v1/"+table+"?"+query,{headers:{apikey:SB_KEY},cache:"no-store"});
@@ -28,7 +43,7 @@ function readinessLabel(value){const tone=readinessTone(value);return tone==="go
 function fmtMove(n){if(!Number.isFinite(n))return"—";return(n>=0?"+":"")+n.toFixed(2)+"%";}
 function formatTime(value){const time=new Date(value||"");return Number.isNaN(time.getTime())?"Timestamp unrecorded":dateFmt.format(time);}
 function shortTime(value){const time=new Date(value||"");return Number.isNaN(time.getTime())?"time unavailable":shortDateFmt.format(time);}
-function sourceMode(mode,time){const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="DATABASE SNAPSHOT"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=formatTime(time);}
+function sourceMode(mode,time){feedMode=mode;const m=document.getElementById("data-mode");m.textContent=mode;m.style.color=mode==="DATABASE SNAPSHOT"?"var(--green)":"var(--amber)";document.getElementById("fresh-time").textContent=formatTime(time||quoteCutoff());}
 function renderFreshness(){
   document.getElementById("market-saved-time").textContent=formatTime(marketSavedAt||market&&market.scanCompletedAt);
   document.getElementById("research-saved-time").textContent=formatTime(researchSavedAt||research&&research.scanCompletedAt);
@@ -44,7 +59,7 @@ function renderFreshness(){
     if(summary)summary.textContent="Owner Alpaca "+String(owner.feed||"IEX").toUpperCase()+" · "+owner.count+"/"+owner.total+" recent · "+shortTime(owner.asOf);
     return;
   }
-  sourceMode(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
+  sourceMode(feedMode==="CONNECTING"?(marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK"):feedMode,quoteCutoff());
   cutoff.textContent=savedCutoff;
   const observed=Date.parse(market&&market.market&&market.market.spy&&market.market.spy.observedAt||"");
   const age=Number.isFinite(observed)?Math.max(0,Math.floor((Date.now()-observed)/60000)):null;
@@ -488,27 +503,36 @@ function contractCard(c,embedded=false){
 function renderAll(){const openKeys=new Set(Array.from(document.querySelectorAll("details[data-detail-key][open]")).map(e=>e.dataset.detailKey));renderDesk();renderFreshness();document.querySelectorAll("details[data-detail-key]").forEach(e=>{e.open=openKeys.has(e.dataset.detailKey);});}
 
 async function load(){
-  // Market and research are independent publications: one failing endpoint must not discard the other.
+  // Read enough immutable rows to survive stale reuploads; never trust insertion order as scan order.
   const [marketResult,researchResult]=await Promise.allSettled([
-    sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=2"),
-    sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")
+    sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=30"),
+    sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=30")
   ]);
+  let ignoredStale=false,partialFailure=false;
   if(marketResult.status==="fulfilled"){
-    const scans=marketResult.value;
-    if(scans?.[0]?.payload){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;marketFromDatabase=true;}
-  }else console.info("Market snapshot fallback",marketResult.reason?.message||marketResult.reason);
+    const selected=selectPublished(marketResult.value,"scan_time");
+    if(selected.latest&&applyIfNotOlder(market,selected.latest.payload)){
+      market=selected.latest.payload;previousMarket=selected.previous?.payload||null;marketSavedAt=selected.latest.scan_time;marketFromDatabase=true;
+    }
+    ignoredStale=ignoredStale||selected.ignoredStaleUpload;
+    if(!selected.latest)partialFailure=true;
+  }else{partialFailure=true;console.info("Market snapshot fallback",marketResult.reason?.message||marketResult.reason);}
   if(researchResult.status==="fulfilled"){
-    const snapshots=researchResult.value;
-    if(snapshots?.[0]?.payload){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]?.payload||null;researchFromDatabase=true;}
-  }else console.info("Research snapshot fallback",researchResult.reason?.message||researchResult.reason);
+    const selected=selectPublished(researchResult.value,"snapshot_time");
+    if(selected.latest&&applyIfNotOlder(research,selected.latest.payload)){
+      research=selected.latest.payload;researchSavedAt=selected.latest.snapshot_time;previousResearch=selected.previous?.payload||null;researchFromDatabase=true;
+    }
+    ignoredStale=ignoredStale||selected.ignoredStaleUpload;
+    if(!selected.latest)partialFailure=true;
+  }else{partialFailure=true;console.info("Research snapshot fallback",researchResult.reason?.message||researchResult.reason);}
   if(!research)research=await json("data/research-latest.json");
   if(!market)market=await json("data/market-latest.json");
-  const partialFailure=marketResult.status==="rejected"||researchResult.status==="rejected";
-  sourceMode(partialFailure?"PARTIAL DATA":marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK",marketSavedAt);
+  const mode=partialFailure?"PARTIAL DATA":ignoredStale?"STALE UPLOAD IGNORED":marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK";
+  sourceMode(mode,quoteCutoff());
   renderAll();
-  if(partialFailure){
+  if(partialFailure||ignoredStale){
     const note=document.getElementById("feed-note");
-    if(note)note.textContent="One published source is temporarily unavailable. The most recent saved data or fallback is shown; verify each timestamp before trading.";
+    if(note)note.textContent=ignoredStale?"An older scan was uploaded later. The latest genuinely completed scan remains displayed; check the dated price observation.":"One published source is unavailable. The most recent saved data or fallback is shown; verify timestamps before trading.";
   }
 }
 load().catch(e=>{console.error(e);sourceMode("LOAD ERROR");toast("Data could not load");});
@@ -517,37 +541,43 @@ async function pollLatest(){
   if(publicPollInFlight)return;
   publicPollInFlight=true;
   try{
-    // Preserve whichever side of the market/research pair is reachable.
     const [marketResult,researchResult]=await Promise.allSettled([
-      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=2"),
-      sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=2")
+      sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=30"),
+      sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=30")
     ]);
-    let changed=false;
+    let changed=false,ignoredStale=false;
     const errors=[];
     if(marketResult.status==="fulfilled"){
-      const scans=marketResult.value;
-      if(scans?.[0]?.payload){
-        if(!marketFromDatabase||scans[0].scan_time!==marketSavedAt){market=scans[0].payload;previousMarket=scans[1]?.payload||null;marketSavedAt=scans[0].scan_time;changed=true;}
+      const selected=selectPublished(marketResult.value,"scan_time");
+      if(selected.latest&&applyIfNotOlder(market,selected.latest.payload)){
+        if(!marketFromDatabase||selected.latest.scan_time!==marketSavedAt){market=selected.latest.payload;previousMarket=selected.previous?.payload||null;marketSavedAt=selected.latest.scan_time;changed=true;}
         marketFromDatabase=true;
       }
+      if(!selected.latest)errors.push("market");
+      ignoredStale=ignoredStale||selected.ignoredStaleUpload;
     }else errors.push("market");
     if(researchResult.status==="fulfilled"){
-      const snapshots=researchResult.value;
-      if(snapshots?.[0]?.payload){
-        if(!researchFromDatabase||snapshots[0].snapshot_time!==researchSavedAt){research=snapshots[0].payload;researchSavedAt=snapshots[0].snapshot_time;previousResearch=snapshots[1]?.payload||null;changed=true;}
+      const selected=selectPublished(researchResult.value,"snapshot_time");
+      if(selected.latest&&applyIfNotOlder(research,selected.latest.payload)){
+        if(!researchFromDatabase||selected.latest.snapshot_time!==researchSavedAt){research=selected.latest.payload;researchSavedAt=selected.latest.snapshot_time;previousResearch=selected.previous?.payload||null;changed=true;}
         researchFromDatabase=true;
       }
+      if(!selected.latest)errors.push("research");
+      ignoredStale=ignoredStale||selected.ignoredStaleUpload;
     }else errors.push("research");
-    const mode=errors.length?(errors.length===2?"REFRESH UNAVAILABLE":"PARTIAL REFRESH"):
+    const mode=errors.length?(errors.length===2?"REFRESH UNAVAILABLE":"PARTIAL REFRESH"):ignoredStale?"STALE UPLOAD IGNORED":
       marketFromDatabase&&researchFromDatabase?"DATABASE SNAPSHOT":marketFromDatabase||researchFromDatabase?"MIXED SOURCES":"DATED FALLBACK";
-    sourceMode(mode,marketSavedAt);
+    sourceMode(mode,quoteCutoff());
     if(changed)renderAll();else renderFreshness();
-    if(errors.length){
+    if(errors.length||ignoredStale){
       const note=document.getElementById("feed-note");
-      if(note)note.textContent="Latest "+errors.join(" and ")+" update unavailable. Showing the most recently saved observations; check timestamps before trading.";
-      const summary=document.getElementById("source-short");
-      if(summary)summary.textContent="Partial data · saved price cutoff "+shortTime(market?.quoteObservation?.observedAt);
+      if(note)note.textContent=ignoredStale?"An outdated research upload was ignored. The most recently completed scan is displayed.": "Latest "+errors.join(" and ")+" update unavailable. Showing saved observations; check timestamps before trading.";
     }
+  }catch(e){
+    console.error("Public refresh error",e);
+    sourceMode("REFRESH ERROR",quoteCutoff());
+    const note=document.getElementById("feed-note");
+    if(note)note.textContent="Unexpected refresh error. The last known good market and research snapshots remain displayed.";
   }finally{
     publicPollInFlight=false;
     lastPublicPollAt=Date.now();
