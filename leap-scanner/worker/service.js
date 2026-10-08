@@ -7,9 +7,9 @@ const os=require('node:os');
 const path=require('node:path');
 const {execFile}=require('node:child_process');
 const {promisify}=require('node:util');
-const {makeRunner,scheduleDue}=require('../scripts/worker_runtime');
+const {makeRunner,scheduleDue,chicagoClock}=require('../scripts/worker_runtime');
 const runCommand=promisify(execFile);
-const RUN_MS=19*60*1000,RETRY_MS=60*1000;
+const RETRY_MS=60*1000; // Worker remains available and keeps resuming until publication.
 const enabled=process.env.LEAPS_WORKER_ENABLED==='true';
 const env={
   supabase:process.env.SUPABASE_URL||'',
@@ -23,7 +23,7 @@ const missing=()=>[
   ...(!env.adapter?['LEAPS_RESEARCH_ADAPTER_URL']:[]),
   ...(!env.token?['LEAPS_RESEARCH_ADAPTER_TOKEN']:[])
 ];
-let state={enabled,mode:enabled?(missing().length?'standby_missing_credentials':'ready'):'standby_disabled',missing:missing(),lastRun:null,lastError:null,startedAt:new Date().toISOString(),deadlineMinutes:19};
+let state={enabled,mode:enabled?(missing().length?'standby_missing_credentials':'ready'):'standby_disabled',missing:missing(),lastRun:null,lastError:null,startedAt:new Date().toISOString(),maxRunMinutes:null,performanceTargetMinutes:20};
 const log=(level,event,detail={})=>console.log(JSON.stringify({level,event,at:new Date().toISOString(),...detail}));
 function safeURL(input){const u=new URL(input);if(u.protocol!=='https:')throw Error('Only HTTPS endpoint allowed');return u;}
 async function httpJSON(url,{method='GET',body,headers={},attempts=2,timeoutMs=14000}={}){
@@ -136,7 +136,7 @@ async function runOne(run){
         if(info.status!=='completed')await db('leap_scan_runs?id=eq.'+run.id,{method:'PATCH',body:{
           status:'paused',stage:'worker_pending_audit',last_error:JSON.stringify({status:info.status,failures:info.failures?.slice(0,3),remaining:info.remaining?.length}).slice(0,1500),
           updated_at:new Date().toISOString(),
-          metadata:{...(run.metadata||{}),workerEligible:true,lastAttemptDate:new Date().toISOString().slice(0,10),lastRuntimeMs:info.elapsedMs,
+          metadata:{...(run.metadata||{}),workerEligible:true,lastAttemptAt:new Date().toISOString(),nextRetryAt:new Date(Date.now()+(info.failures?.length?10*60*1000:30*1000)).toISOString(),lastRuntimeMs:info.elapsedMs,
             finalAuditCount:info.completed,publicationAllowed:false}
         }});
       }
@@ -145,14 +145,15 @@ async function runOne(run){
       stage,async(args)=>adapter(stage,args,args.signal)
     ]));
     adapters.publish=async({decisions})=>publishPair(run,decisions);
-    const worker=makeRunner({storage,adapters,maxRunMs:RUN_MS,concurrency:4,batchSize:5,
-      report:x=>log('info','worker_checkpoint',{runKey:x.runKey,stage:x.stage,progress:x.done,remainingMs:x.remainingMs})});
+    const worker=makeRunner({storage,adapters,concurrency:4,batchSize:5,
+      report:x=>log('info','worker_checkpoint',{runKey:x.runKey,stage:x.stage,progress:x.done})});
     const result=await worker.execute({runKey:run.run_key,policyKey:run.metadata?.policyKey||'worker_v1',tickers:names,startedAt:run.started_at});
     state.lastRun={id:run.id,result:result.result,published:result.published,elapsedMs:result.elapsedMs,reviewed:result.reviewed};
-    state.mode=result.published?'idle':'waiting_next_scan';
+    state.mode=result.published?'idle':'waiting_retry';
     if(!result.published)log('warn','scan_incomplete',{id:run.id,status:result.result,remaining:result.remaining.length,failures:result.failures.length});
   }catch(e){
-    state.lastError=String(e.message).slice(0,250);state.mode='standby_error';
+    state.lastError=String(e.message).slice(0,250);state.mode='waiting_retry';
+    try{await db('leap_scan_runs?id=eq.'+run.id,{method:'PATCH',body:{status:'paused',stage:'worker_pending_audit',last_error:state.lastError,updated_at:new Date().toISOString(),metadata:{...(run.metadata||{}),workerEligible:true,publicationAllowed:false,nextRetryAt:new Date(Date.now()+10*60*1000).toISOString()}}});}catch(e){log('error','persist_worker_error_failed',{message:String(e.message).slice(0,150)});}
     log('error','worker_run_error',{runId:run.id,error:state.lastError});
   }finally{
     if(heartbeat)clearInterval(heartbeat);
@@ -164,15 +165,16 @@ async function tick(){
   if(busy||!enabled||missing().length)return;
   busy=true;
   try{
-    const candidates=await db('leap_scan_runs?status=in.(paused,queued)&order=updated_at.asc&select=id,run_key,status,stage,started_at,metadata,updated_at&limit=30');
-    const day=new Date().toISOString().slice(0,10);
-    let eligible=(candidates||[]).find(r=>r.metadata?.workerEligible===true&&r.metadata?.lastAttemptDate!==day);
+    const candidates=await db('leap_scan_runs?status=in.(paused,queued,running)&order=updated_at.asc&select=id,run_key,status,stage,started_at,metadata,updated_at&limit=30');
+    const pending=(candidates||[]).filter(r=>r.metadata?.workerEligible===true);
+    let eligible=pending.find(r=>!r.metadata?.nextRetryAt||Date.parse(r.metadata.nextRetryAt)<=Date.now());
+    if(!eligible&&pending.length){state.mode='waiting_retry';return;}
     if(!eligible){
       const now=new Date();
       const r=await db('leap_scan_runs?mode=eq.worker&select=run_key&order=started_at.desc&limit=1');
       const latest=(r||[])[0]?.run_key?.slice(-10)||null;
       if(scheduleDue(now,latest)){
-        const local=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(now);
+        const local=chicagoClock(now).day;
         const runKey='worker-'+local;
         const rows=await db('leap_scan_runs',{method:'POST',body:{
           run_key:runKey,status:'queued',stage:'discovery',mode:'worker',
@@ -194,7 +196,7 @@ function start(){
     if(req.url!=='/health'){res.writeHead(404);return res.end();}
     res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});
     res.end(JSON.stringify(state));
-  }).listen(port,'0.0.0.0',()=>log('info','worker_boot',{port,enabled,missing:missing(),maxRunMinutes:RUN_MS/60000}));
+  }).listen(port,'0.0.0.0',()=>log('info','worker_boot',{port,enabled,missing:missing(),maxRunMinutes:null,performanceTargetMinutes:20}));
   if(enabled&&missing().length)log('error','worker_standby_missing_server_config',{missing:missing()});
   if(enabled&&!missing().length){void tick();setInterval(()=>void tick(),RETRY_MS);}
 }
