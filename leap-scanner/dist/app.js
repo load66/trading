@@ -536,11 +536,26 @@ function contractCard(c,embedded=false){
 }
 function renderAll(){const openKeys=new Set(Array.from(document.querySelectorAll("details[data-detail-key][open]")).map(e=>e.dataset.detailKey));renderDesk();renderFreshness();document.querySelectorAll("details[data-detail-key]").forEach(e=>{e.open=openKeys.has(e.dataset.detailKey);});}
 
+// Transfer only the latest and previous genuinely completed publications on cold load.
+async function readPublishedRows(table,timeField,knownHead){
+  try{
+    const head=knownHead||await sb(table,"select=id,"+timeField+",completion:payload->>scanCompletedAt&order="+timeField+".desc&limit=30");
+    const items=Array.isArray(head)?head.filter(x=>Number.isFinite(Number(x.id))&&Number.isFinite(Date.parse(x.completion||""))):[];
+    items.sort((a,b)=>Date.parse(b.completion)-Date.parse(a.completion)||(Date.parse(b[timeField]||"")||0)-(Date.parse(a[timeField]||"")||0));
+    const latest=items[0],previous=items.find(x=>Date.parse(x.completion)<Date.parse(latest?.completion||""));
+    const ids=[latest?.id,previous?.id].filter(Number.isFinite);
+    if(ids.length){
+      const slim=await sb(table,"select=payload,"+timeField+"&id=in.("+ids.join(",")+")");
+      if(Array.isArray(slim)&&slim.some(x=>x.payload?.scanCompletedAt===latest?.completion))return slim;
+    }
+  }catch(e){console.info("Falling back to dated publication rows",e?.message||e);}
+  return sb(table,"select=payload,"+timeField+"&order="+timeField+".desc&limit=30");
+}
 async function load(){
   // Read enough immutable rows to survive stale reuploads; never trust insertion order as scan order.
   const [marketResult,researchResult]=await Promise.allSettled([
-    sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=30"),
-    sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=30")
+    readPublishedRows("leap_scans","scan_time"),
+    readPublishedRows("leap_research_snapshots","snapshot_time")
   ]);
   let ignoredStale=false,partialFailure=false;
   if(marketResult.status==="fulfilled"){
@@ -593,8 +608,8 @@ async function pollLatest(){
     const marketFull=marketHead.status!=="fulfilled"||shouldFetchPublishedPayload(marketHead.value,market,marketFromDatabase);
     const researchFull=researchHead.status!=="fulfilled"||shouldFetchPublishedPayload(researchHead.value,research,researchFromDatabase);
     const [marketResult,researchResult]=await Promise.allSettled([
-      marketFull?sb("leap_scans","select=payload,scan_time&order=scan_time.desc&limit=30"):Promise.resolve(null),
-      researchFull?sb("leap_research_snapshots","select=payload,snapshot_time&order=snapshot_time.desc&limit=30"):Promise.resolve(null)
+      marketFull?readPublishedRows("leap_scans","scan_time",marketHead.status==="fulfilled"?marketHead.value:null):Promise.resolve(null),
+      researchFull?readPublishedRows("leap_research_snapshots","snapshot_time",researchHead.status==="fulfilled"?researchHead.value:null):Promise.resolve(null)
     ]);
     let changed=false,ignoredStale=false;
     const errors=[];
