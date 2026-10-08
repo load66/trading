@@ -45,5 +45,10 @@ const currentIV=vm.runInContext('contractCard('+JSON.stringify(base)+',true)',ct
 assert.ok(currentIV.includes('Implied volatility <span>reported</span>')&&currentIV.includes('30.0%'));
 const modeled=vm.runInContext('contractCard('+JSON.stringify({...base,iv:null,modeledIV:.43})+',true)',ctx);
 assert.ok(modeled.includes('Implied volatility <span>modeled</span>')&&modeled.includes('~43.0%'));
+const reported=vm.runInContext('documentedReviewCount({candidates:[{qualified:true}],rejected:[{ticker:"OLD"}],researchFunnel:{deepReviewCount:47}})',ctx);
+assert.equal(reported.documented,2,'Only listed reviewed outcomes count');
+assert.equal(reported.unreconciled,true,'Historical deep-review pool mismatch requires prominent warning');
+const consistent=vm.runInContext('documentedReviewCount({candidates:[{qualified:true}],rejected:[{ticker:"OLD"}],researchFunnel:{deepReviewCount:2}})',ctx);
+assert.equal(consistent.unreconciled,false,'Reconciled daily scans must not display a false warning');
 console.log('Desk integrity passed: permanent ranks, filters, comparable earnings, Robinhood alert targets, current/modeled IV, no cost cap, OI/spread ranking, and eligibility boundaries.');
 
