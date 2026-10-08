@@ -10,7 +10,7 @@ const unavailableMessage=value=>{
   if(value&&typeof value==='object')return String(value.text||value.error||value.message||value.structuredContent?.error||'');
   return '';
 };
-const entitlement=e=>/NOT_ENTITLED|SUBSCRIPTION_REQUIRED|NOT SUBSCRIBED|INSUFFICIENT[_ -]CREDITS|CURRENT BALANCE IS\\s*\\$?0(?:\\.0+)?|ADD MORE CREDITS|MONTHLY TOOL-CALL LIMIT/i.test(String(e?.code||'')+' '+unavailableMessage(e));
+const entitlement=e=>/NOT_ENTITLED|SUBSCRIPTION_REQUIRED|NOT SUBSCRIBED|INSUFFICIENT[_ -]CREDITS|CURRENT BALANCE IS\s*\$?0(?:\.0+)?|ADD MORE CREDITS|MONTHLY TOOL-CALL LIMIT/i.test(String(e?.code||'')+' '+unavailableMessage(e));
 const providerFailure=value=>{
   const msg=unavailableMessage(value);
   if(entitlement({message:msg}))return Object.assign(Error('Provider balance or entitlement unavailable: '+msg.slice(0,180)),{code:'NOT_ENTITLED',status:402});
