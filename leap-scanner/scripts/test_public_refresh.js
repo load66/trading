@@ -4,6 +4,7 @@ const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/st
 const root=path.resolve(__dirname,'..');
 const app=fs.readFileSync(path.join(root,'dist/app.js'),'utf8');
 const before=app.split('load().catch(')[0];
+const metadata=app.slice(app.indexOf('function shouldFetchPublishedPayload('),app.indexOf('let publicPollInFlight='));
 const poll=app.slice(app.indexOf('let publicPollInFlight='),app.indexOf('\nsetInterval(()=>'));
 assert.ok(before.includes('function selectPublished(')&&poll.includes('async function pollLatest()'));
 const elements=new Map();
@@ -13,7 +14,7 @@ const document={
   visibilityState:'visible'
 };
 const ctx=vm.createContext({console,document,window:{},Intl,Date,Number,Math,Promise});
-vm.runInContext(before+'\n'+poll,ctx);
+vm.runInContext(before+'\n'+metadata+'\n'+poll,ctx);
 const research=JSON.parse(fs.readFileSync(path.join(root,'dist/data/research-latest.json'),'utf8'));
 const market=JSON.parse(fs.readFileSync(path.join(root,'dist/data/market-latest.json'),'utf8'));
 const copy=o=>JSON.parse(JSON.stringify(o));
